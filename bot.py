@@ -16,11 +16,11 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 
 # --- ⚙️ CONFIGURATION ---
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8687617595:AAEOeTwFDWquCAH3t497srDtrSRXM9Kaq4g")
-ADMIN_ID = int(os.getenv("ADMIN_ID", "1234567890"))  # ⚠️ CHANGE
+ADMIN_ID = int(os.getenv("ADMIN_ID", "7898928200"))  # ⚠️ CHANGE
 
 # Channel IDs
-CHANNEL_1_ID = int(os.getenv("CHANNEL_1_ID", "-1001234567890"))  # ⚠️ CHANGE
-CHANNEL_2_ID = int(os.getenv("CHANNEL_2_ID", "-1001234567890"))  # ⚠️ CHANGE
+CHANNEL_1_ID = int(os.getenv("CHANNEL_1_ID", "-1003240507339"))  # ⚠️ CHANGE
+CHANNEL_2_ID = int(os.getenv("CHANNEL_2_ID", "-1003806004135"))  # ⚠️ CHANGE
 
 LINK_1 = os.getenv("LINK_1", "https://t.me/+dP7xLb3AoE1jNmRl")
 LINK_2 = os.getenv("LINK_2", "https://t.me/+9vuPcr9LJ8piODdl")
