@@ -11,6 +11,7 @@ import os
 import sys
 import urllib.request
 import shutil
+import zipfile
 from datetime import datetime, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from telegram.constants import ParseMode, ChatAction
@@ -59,42 +60,26 @@ ADMIN_STATE = {}
 # --- 🔧 SETUP VERIFY SCRIPT ---
 
 def download_verify_script():
-    """Download verify script"""
+    """Download verify script with multiple fallback methods"""
     if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
         return True
     
-    methods = [
-        # Method 1: Direct download
-        lambda: download_file(VERIFY_SCRIPT_URL, VERIFY_SCRIPT),
-        # Method 2: Git clone
-        lambda: clone_with_git(),
-        # Method 3: ZIP download
-        lambda: download_zip(),
-    ]
+    logger.info("Downloading verify script...")
     
-    for method in methods:
-        try:
-            if method():
-                if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
-                    logger.info("✅ Verify script ready!")
-                    return True
-        except Exception as e:
-            logger.error(f"Method failed: {e}")
-            continue
-    
-    return False
-
-def download_file(url, filename):
+    # Method 1: Direct URL download
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        req = urllib.request.Request(VERIFY_SCRIPT_URL, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=30) as r:
-            with open(filename, 'wb') as f:
-                f.write(r.read())
-        return os.path.exists(filename) and os.path.getsize(filename) > 500
-    except:
-        return False
-
-def clone_with_git():
+            content = r.read()
+            if len(content) > 500:
+                with open(VERIFY_SCRIPT, 'wb') as f:
+                    f.write(content)
+                logger.info("✅ Downloaded via direct URL")
+                return True
+    except Exception as e:
+        logger.warning(f"Direct download failed: {e}")
+    
+    # Method 2: Git clone
     try:
         if os.path.exists("temp_repo"):
             shutil.rmtree("temp_repo", ignore_errors=True)
@@ -105,19 +90,19 @@ def clone_with_git():
                 if file.endswith('.py'):
                     shutil.copy(os.path.join("temp_repo", file), file)
             shutil.rmtree("temp_repo", ignore_errors=True)
-            return True
-        return False
+            if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
+                logger.info("✅ Cloned via git")
+                return True
     except:
-        return False
-
-def download_zip():
+        pass
+    
+    # Method 3: ZIP download
     try:
         zip_url = "https://github.com/CyberSuraj/verify_india/archive/refs/heads/main.zip"
         req = urllib.request.Request(zip_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=60) as r:
             with open("repo.zip", 'wb') as f:
                 f.write(r.read())
-        import zipfile
         with zipfile.ZipFile("repo.zip", 'r') as zf:
             for name in zf.namelist():
                 if 'verify_india.py' in name:
@@ -125,40 +110,43 @@ def download_zip():
                         dst.write(src.read())
                     break
         os.remove("repo.zip")
-        return os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500
-    except:
-        return False
+        if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
+            logger.info("✅ Extracted from ZIP")
+            return True
+    except Exception as e:
+        logger.warning(f"ZIP download failed: {e}")
+    
+    logger.error("❌ All download methods failed!")
+    return False
 
 def run_verify_script(choice, value):
-    """Run verify script - with better error handling"""
+    """Run verify script and return output"""
     if not os.path.exists(VERIFY_SCRIPT):
         if not download_verify_script():
             return None
     
     try:
-        # Use sys.executable for Railway compatibility
         result = subprocess.run(
             [sys.executable, VERIFY_SCRIPT],
             input=f"{choice}\n{value}\n0\n",
-            capture_output=True, text=True, timeout=25,
-            cwd=os.path.dirname(os.path.abspath(VERIFY_SCRIPT)) or "."
+            capture_output=True, text=True, timeout=25
         )
         
-        if result.returncode != 0:
-            logger.error(f"Script error: {result.stderr[:200]}")
+        output = result.stdout.strip() if result.stdout else ""
+        error = result.stderr.strip() if result.stderr else ""
         
-        if result.stdout and len(result.stdout) > 20:
-            return result.stdout
+        # Return whatever has more content
+        if len(output) > len(error) and len(output) > 20:
+            return output
+        elif len(error) > 20:
+            return error
         
-        if result.stderr and len(result.stderr) > 20:
-            return result.stderr
-            
         return None
     except subprocess.TimeoutExpired:
         logger.error("Script timeout")
         return None
     except Exception as e:
-        logger.error(f"Script run error: {e}")
+        logger.error(f"Script error: {e}")
         return None
 
 def clean_text(text):
@@ -169,7 +157,7 @@ def get_settings():
     try:
         with open(SETTINGS_FILE, 'r') as f: return json.load(f)
     except:
-        d = {"bypass_maintenance":False,"bypass_msg":"Bypass maintenance.","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True}
+        d = {"bypass_maintenance":False,"bypass_msg":"","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True}
         save_settings(d); return d
 
 def save_settings(data):
@@ -183,9 +171,7 @@ def load_json(filename):
     except: return {}
 
 def save_json(filename, data):
-    try:
-        with open(filename, 'w') as f: json.dump(data, f, indent=2)
-    except: pass
+    with open(filename, 'w') as f: json.dump(data, f, indent=2)
 
 def get_user(user_id):
     users = load_json(USERS_FILE)
@@ -263,29 +249,29 @@ async def loading_animation(msg, name):
         except: break
 
 async def show_verification_page(update, context):
+    caption = (
+        f"<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
+        f"<b>┃  🤖 {BOT_NAME}  ┃</b>\n"
+        f"<b>┃  @{BOT_USERNAME}    ┃</b>\n"
+        f"<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
+        f"<b>🔒 ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ</b>\n"
+        f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ</b>\n\n"
+        f"<b>📱 ᴛɢ ɪᴅ → ɴᴜᴍʙᴇʀ</b>\n"
+        f"<b>🏦 ɪꜰꜱᴄ ʙᴀɴᴋ ɪɴꜰᴏ</b>\n"
+        f"<b>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</b>\n"
+        f"<b>📞 ᴍᴏʙɪʟᴇ ᴏꜱɪɴᴛ</b>\n"
+        f"<b>🆔 ᴀᴀᴅʜᴀᴀʀ ꜰᴀᴍɪʟʏ</b>\n"
+        f"<b>🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ</b>\n\n"
+        f"<b>👑 @Hexh4ckerOFC</b>"
+    )
     try:
         bot = await context.bot.get_me()
         photos = await context.bot.get_user_profile_photos(bot.id, limit=1)
-        caption = (
-            f"<b>╭━━━━━━━━━━━━━━━━━━╮</b>\n"
-            f"<b>┃  🤖 {BOT_NAME}  ┃</b>\n"
-            f"<b>┃  @{BOT_USERNAME}    ┃</b>\n"
-            f"<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
-            f"<b>🔒 ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ</b>\n"
-            f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ</b>\n\n"
-            f"<b>📱 ᴛɢ ɪᴅ → ɴᴜᴍʙᴇʀ</b>\n"
-            f"<b>🏦 ɪꜰꜱᴄ ʙᴀɴᴋ ɪɴꜰᴏ</b>\n"
-            f"<b>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</b>\n"
-            f"<b>📞 ᴍᴏʙɪʟᴇ ᴏꜱɪɴᴛ</b>\n"
-            f"<b>🆔 ᴀᴀᴅʜᴀᴀʀ ꜰᴀᴍɪʟʏ</b>\n"
-            f"<b>🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ</b>\n\n"
-            f"<b>👑 @Hexh4ckerOFC</b>"
-        )
         if photos and photos.photos:
             await update.message.reply_photo(photo=photos.photos[0][-1].file_id, caption=caption, parse_mode=ParseMode.HTML)
-        else:
-            await update.message.reply_text(caption, parse_mode=ParseMode.HTML)
+            return
     except: pass
+    await update.message.reply_text(caption, parse_mode=ParseMode.HTML)
     
     buttons = [
         [InlineKeyboardButton("📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟷", url=LINK_1)],
@@ -352,19 +338,19 @@ async def ifsc_lookup(session, code):
 
 async def bypass_lookup(session, link):
     s = get_settings()
-    if s.get("bypass_maintenance",False): return f"<blockquote>🛠️ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</blockquote>\n<blockquote>{s.get('bypass_msg','')}</blockquote>"
+    if s.get("bypass_maintenance",False): return f"<blockquote>🛠️ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</blockquote>"
     data = await api_fetch(session, f"{SHORTLINK_API}{link}", timeout=20)
     if not data: return "<blockquote>❌ Service unavailable</blockquote>"
     if isinstance(data, dict):
         r = data.get('bypassed_url') or data.get('url') or str(data)
         return f"<blockquote expandable>✨ 🔗 ʙʏᴘᴀꜱꜱᴇᴅ</blockquote>\n<blockquote>🔗 <code>{str(r)}</code></blockquote>"
-    return f"<blockquote expandable>✨ 🔗 Result</blockquote>\n<blockquote>🔗 <code>{str(data)}</code></blockquote>"
+    return f"<blockquote>🔗 <code>{str(data)}</code></blockquote>"
 
 # --- 📊 PARSING ---
 
 def parse_single_record(rt):
     d = {}
-    for f, l in {'Name':'👤 Name',"Father's Name":'👨 Father','Mother\'s Name':'👩 Mother','Mobile':'📱 Mobile','Alternative Number':'📞 Alternative','Address':'📍 Address','Email':'📧 Email','Circle':'📡 Circle'}.items():
+    for f, l in {'Name':'👤 Name',"Father's Name":'👨 Father','Mobile':'📱 Mobile','Alternative Number':'📞 Alternative','Address':'📍 Address','Email':'📧 Email','Circle':'📡 Circle'}.items():
         m = re.search(rf'{re.escape(f)}:\s*([^\n]+)', rt, re.IGNORECASE)
         if m and m.group(1).strip() not in ['None','','N/A','null']: d[l] = m.group(1).strip()
     return d if d else None
@@ -385,11 +371,7 @@ def parse_all_records(raw):
     if not recs:
         s = parse_single_record(raw)
         if s: recs.append(s)
-    ur = []; sc = set()
-    for r in recs:
-        c = tuple(sorted(r.items()))
-        if c not in sc: sc.add(c); ur.append(r)
-    return ur
+    return recs
 
 def format_aadhaar_result(raw):
     recs = parse_all_records(raw)
@@ -397,7 +379,7 @@ def format_aadhaar_result(raw):
     r = f"<blockquote expandable>✨ 🆔 ᴀᴀᴅʜᴀᴀʀ</blockquote>\n<blockquote>📊 Records: {len(recs)}</blockquote>\n"
     for i, rec in enumerate(recs, 1):
         if len(recs) > 1: r += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
-        for k in ['👤 Name','👨 Father','👩 Mother','📱 Mobile','📞 Alternative','📍 Address','📧 Email','📡 Circle']:
+        for k in ['👤 Name','👨 Father','📱 Mobile','📞 Alternative','📍 Address','📧 Email','📡 Circle']:
             if k in rec: r += f"<blockquote>{k}: <code>{rec[k]}</code></blockquote>\n"
     return r
 
@@ -435,15 +417,15 @@ async def admin_panel(update, context):
     s = get_settings()
     kb = [
         [InlineKeyboardButton("🎫 Generate Code", callback_data="ad_gen")],
-        [InlineKeyboardButton("📋 Codes | 👥 Users", callback_data="ad_codes")],
+        [InlineKeyboardButton("📋 Codes", callback_data="ad_codes")],
         [InlineKeyboardButton("🎁 Add Credits", callback_data="ad_credit")],
         [InlineKeyboardButton("📢 Broadcast", callback_data="ad_bcast")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} TG ID", callback_data="ad_tgid"),
-         InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} IFSC", callback_data="ad_ifsc")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} Bypass", callback_data="ad_bypass_toggle"),
-         InlineKeyboardButton(f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} Mobile", callback_data="ad_mobile")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} Aadhaar", callback_data="ad_aadhaar"),
-         InlineKeyboardButton(f"{'🟢' if s.get('rc_enabled',True) else '🔴'} RC", callback_data="ad_rc")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} TG ID", callback_data="ad_tgid")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} IFSC", callback_data="ad_ifsc")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} Bypass", callback_data="ad_bypass")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} Mobile", callback_data="ad_mobile")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} Aadhaar", callback_data="ad_aadhaar")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('rc_enabled',True) else '🔴'} RC", callback_data="ad_rc")],
         [InlineKeyboardButton("❌ Close", callback_data="ad_close")]
     ]
     txt = f"<blockquote>👑 Admin</blockquote>\n<blockquote>👥 {len(load_json(USERS_FILE))} | 🎫 {len(load_json(REDEEM_FILE))}</blockquote>"
@@ -456,19 +438,19 @@ async def admin_callback(update, context):
     d = q.data; s = get_settings()
     if d == "ad_close": await q.message.delete()
     elif d == "ad_codes":
-        codes = load_json(REDEEM_FILE); users = load_json(USERS_FILE)
-        txt = f"<blockquote>👥 {len(users)} | 🎫 {len(codes)}</blockquote>\n"
-        for c, v in list(codes.items())[-10:]: txt += f"<blockquote>{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr</blockquote>\n"
+        codes = load_json(REDEEM_FILE)
+        txt = f"<blockquote>🎫 Codes ({len(codes)})</blockquote>\n"
+        for c, v in list(codes.items())[-15:]: txt += f"<blockquote>{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr</blockquote>\n"
         await q.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_gen": ADMIN_STATE[q.from_user.id] = "gen"; await q.message.edit_text("<blockquote>🎫 Credits:</blockquote>\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_credit": ADMIN_STATE[q.from_user.id] = "credit"; await q.message.edit_text("<blockquote>🎁 ID AMOUNT:</blockquote>\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_bcast": ADMIN_STATE[q.from_user.id] = "bcast"; await q.message.edit_text("<blockquote>📢 Message:</blockquote>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 Back", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-    elif d == "ad_tgid": s["tgid_enabled"] = not s.get("tgid_enabled",True); save_settings(s); await q.answer(f"TG ID: {'ON' if s['tgid_enabled'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
-    elif d == "ad_ifsc": s["ifsc_enabled"] = not s.get("ifsc_enabled",True); save_settings(s); await q.answer(f"IFSC: {'ON' if s['ifsc_enabled'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
-    elif d == "ad_bypass_toggle": s["bypass_enabled"] = not s.get("bypass_enabled",True); save_settings(s); await q.answer(f"Bypass: {'ON' if s['bypass_enabled'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
-    elif d == "ad_mobile": s["mobile_enabled"] = not s.get("mobile_enabled",True); save_settings(s); await q.answer(f"Mobile: {'ON' if s['mobile_enabled'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
-    elif d == "ad_aadhaar": s["aadhaar_enabled"] = not s.get("aadhaar_enabled",True); save_settings(s); await q.answer(f"Aadhaar: {'ON' if s['aadhaar_enabled'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
-    elif d == "ad_rc": s["rc_enabled"] = not s.get("rc_enabled",True); save_settings(s); await q.answer(f"RC: {'ON' if s['rc_enabled'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
+    elif d in ["ad_tgid","ad_ifsc","ad_bypass","ad_mobile","ad_aadhaar","ad_rc"]:
+        key = d.replace("ad_","") + "_enabled"
+        s[key] = not s.get(key, True)
+        save_settings(s)
+        await q.answer(f"{'ON' if s[key] else 'OFF'}", show_alert=True)
+        await admin_panel(update, context)
     elif d == "ad_back": await admin_panel(update, context)
     await q.answer()
 
@@ -507,6 +489,7 @@ async def verify_cb(update, context):
 async def msg_handler(update, context):
     try:
         uid = update.effective_user.id; txt = update.message.text.strip()
+        
         if uid == ADMIN_ID and uid in ADMIN_STATE:
             state = ADMIN_STATE.pop(uid)
             if state == "gen":
@@ -567,7 +550,7 @@ async def msg_handler(update, context):
             context.user_data['mode'] = 'VEHICLE_INDIA'
             m = await update.message.reply_text("<blockquote>🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n<blockquote>Enter vehicle number</blockquote>\n<i>KA01AB3256</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
-        elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "👥 ɪɴᴠɪᴛᴇ"]:
+        elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"]:
             user = get_user(uid)
             bot_username = context.bot.username or BOT_USERNAME
             link = f"https://t.me/{bot_username}?start={user['invite_code']}"
@@ -584,7 +567,7 @@ async def msg_handler(update, context):
                     context.user_data['mode'] = None; return
                 user = get_user(uid)
                 if user.get("credits", 0) <= 0:
-                    await update.message.reply_text("<blockquote>❌ No credits!</blockquote>\n<blockquote>🔄 +5 daily | 👥 +3 invite | 💎 Buy</blockquote>", parse_mode=ParseMode.HTML)
+                    await update.message.reply_text("<blockquote>❌ No credits</blockquote>\n<blockquote>🔄 +5 daily | 👥 +3 invite</blockquote>", parse_mode=ParseMode.HTML)
                     context.user_data['mode'] = None; return
                 await run_query(update, context, mode, txt)
                 context.user_data['mode'] = None
@@ -593,8 +576,7 @@ async def msg_handler(update, context):
 
 async def run_query(update, context, mode, query):
     if not await net_ok():
-        m = await update.message.reply_text("<blockquote>🔴 No internet</blockquote>", parse_mode=ParseMode.HTML)
-        asyncio.create_task(auto_del(m)); return
+        await update.message.reply_text("<blockquote>🔴 No internet</blockquote>", parse_mode=ParseMode.HTML); return
     
     await update.message.reply_chat_action(ChatAction.TYPING)
     names = {'TG':'📱','IFSC':'🏦','SHORTLINK':'🔗','AADHAAR':'🆔','MOBILE':'📞','VEHICLE_INDIA':'🚘'}
@@ -603,12 +585,12 @@ async def run_query(update, context, mode, query):
     
     try:
         if mode in ['AADHAAR','MOBILE','VEHICLE_INDIA']:
-            # Try to ensure script is available
+            # Ensure script exists
             if not os.path.exists(VERIFY_SCRIPT):
                 download_verify_script()
             
             if not os.path.exists(VERIFY_SCRIPT):
-                result = "<blockquote>❌ Service unavailable. Admin needs to install verify script.</blockquote>"
+                result = "<blockquote>❌ Script missing</blockquote>"
             else:
                 cm = {'AADHAAR':'2','MOBILE':'1','VEHICLE_INDIA':'4'}
                 raw = run_verify_script(cm[mode], query)
@@ -621,8 +603,6 @@ async def run_query(update, context, mode, query):
                         result = format_mobile_result(raw)
                     elif mode == 'AADHAAR':
                         result = format_aadhaar_result(raw)
-                    else:
-                        result = None
                     
                     if not result:
                         result = "<blockquote>❌ No records found</blockquote>"
@@ -630,8 +610,8 @@ async def run_query(update, context, mode, query):
                         try: await lt
                         except asyncio.CancelledError: pass
                         final = f"{result}\n{SEP}\n<blockquote>💰 No credit deducted</blockquote>{FOOTER}"
-                        sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
-                        asyncio.create_task(auto_del(sent)); return
+                        await st.edit_text(final, parse_mode=ParseMode.HTML)
+                        asyncio.create_task(auto_del(st)); return
                 else:
                     result = "<blockquote>❌ No response from server</blockquote>"
         else:
@@ -648,28 +628,31 @@ async def run_query(update, context, mode, query):
         
         user = get_user(update.effective_user.id)
         final = f"{result}\n{SEP}\n<blockquote>💰 CR: {user.get('credits',0)} | ⏱ {AUTO_DELETE_TIME}s</blockquote>{FOOTER}"
-        sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
-        asyncio.create_task(auto_del(sent))
+        await st.edit_text(final, parse_mode=ParseMode.HTML)
+        asyncio.create_task(auto_del(st))
     except Exception as e:
-        lt.cancel(); logger.error(f"Query: {e}")
+        lt.cancel()
+        logger.error(f"Query: {e}")
         try: await st.edit_text(f"<blockquote>⚠️ Error</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
         except: pass
 
 def main():
-    print("🔄 Setting up Hex Terminal...")
+    print("🔄 Setting up...")
     
     # Download verify script
-    if download_verify_script():
-        print("✅ Verify script ready!")
-    else:
-        print("⚠️ India lookup features may not work")
+    download_verify_script()
     
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(verify_cb, pattern="^verify$"))
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
+    
     print(f"✅ {BOT_NAME} Ready!")
+    print(f"📱 TG ID | 🏦 IFSC | 🔗 Bypass")
+    if os.path.exists(VERIFY_SCRIPT):
+        print(f"📞 Mobile | 🆔 Aadhaar | 🚘 RC")
+    
     app.run_polling()
 
 if __name__ == '__main__':
