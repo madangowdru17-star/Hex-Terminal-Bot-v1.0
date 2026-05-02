@@ -32,12 +32,9 @@ LOOKUP_API = "https://tgchatid.vercel.app/api/lookup?number="
 IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
 
-# Verify Script - Multiple download sources
+# Verify Script
 VERIFY_SCRIPT = "verify_india.py"
-VERIFY_SCRIPT_URLS = [
-    "https://raw.githubusercontent.com/CyberSuraj/verify_india/main/verify_india.py",
-    "https://raw.githubusercontent.com/CyberSuraj/verify_india/master/verify_india.py",
-]
+VERIFY_SCRIPT_URL = "https://raw.githubusercontent.com/CyberSuraj/verify_india/main/verify_india.py"
 GITHUB_REPO = "https://github.com/CyberSuraj/verify_india.git"
 
 # Files
@@ -59,135 +56,109 @@ logger = logging.getLogger(__name__)
 MAIN_MENU_MESSAGE_IDS = set()
 ADMIN_STATE = {}
 
-# --- 🔧 SETUP VERIFY SCRIPT (FIXED) ---
+# --- 🔧 SETUP VERIFY SCRIPT ---
+
+def download_verify_script():
+    """Download verify script"""
+    if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
+        return True
+    
+    methods = [
+        # Method 1: Direct download
+        lambda: download_file(VERIFY_SCRIPT_URL, VERIFY_SCRIPT),
+        # Method 2: Git clone
+        lambda: clone_with_git(),
+        # Method 3: ZIP download
+        lambda: download_zip(),
+    ]
+    
+    for method in methods:
+        try:
+            if method():
+                if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
+                    logger.info("✅ Verify script ready!")
+                    return True
+        except Exception as e:
+            logger.error(f"Method failed: {e}")
+            continue
+    
+    return False
 
 def download_file(url, filename):
-    """Download file from URL"""
     try:
-        logger.info(f"Downloading from: {url}")
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=30) as response:
+        with urllib.request.urlopen(req, timeout=30) as r:
             with open(filename, 'wb') as f:
-                f.write(response.read())
-        logger.info(f"Downloaded: {filename}")
-        return True
-    except Exception as e:
-        logger.error(f"Download failed: {e}")
+                f.write(r.read())
+        return os.path.exists(filename) and os.path.getsize(filename) > 500
+    except:
         return False
 
 def clone_with_git():
-    """Try cloning with git"""
     try:
         if os.path.exists("temp_repo"):
             shutil.rmtree("temp_repo", ignore_errors=True)
-        
-        result = subprocess.run(
-            ["git", "clone", "--depth", "1", GITHUB_REPO, "temp_repo"],
-            capture_output=True, text=True, timeout=60
-        )
-        
+        result = subprocess.run(["git", "clone", "--depth", "1", GITHUB_REPO, "temp_repo"],
+                              capture_output=True, text=True, timeout=30)
         if result.returncode == 0:
             for file in os.listdir("temp_repo"):
                 if file.endswith('.py'):
-                    shutil.move(os.path.join("temp_repo", file), ".")
+                    shutil.copy(os.path.join("temp_repo", file), file)
             shutil.rmtree("temp_repo", ignore_errors=True)
             return True
-        else:
-            logger.error(f"Git clone failed: {result.stderr}")
-            return False
-    except FileNotFoundError:
-        logger.info("Git not installed, trying download...")
         return False
-    except Exception as e:
-        logger.error(f"Git error: {e}")
+    except:
         return False
 
-def setup_verify_script():
-    """Setup verify script - multiple methods"""
-    # If already exists and is valid Python file
-    if os.path.exists(VERIFY_SCRIPT):
-        try:
-            with open(VERIFY_SCRIPT, 'r') as f:
-                content = f.read()
-                if len(content) > 1000 and 'def' in content:
-                    logger.info("Verify script already exists and is valid")
-                    return True
-        except:
-            pass
-    
-    # Method 1: Git clone
-    logger.info("Trying git clone...")
-    if clone_with_git():
-        return True
-    
-    # Method 2: Download from multiple URLs
-    for url in VERIFY_SCRIPT_URLS:
-        logger.info(f"Trying download: {url}")
-        if download_file(url, VERIFY_SCRIPT):
-            if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 1000:
-                logger.info("Verify script downloaded successfully!")
-                return True
-    
-    # Method 3: Download ZIP from GitHub
+def download_zip():
     try:
         zip_url = "https://github.com/CyberSuraj/verify_india/archive/refs/heads/main.zip"
-        logger.info(f"Trying ZIP download: {zip_url}")
         req = urllib.request.Request(zip_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=60) as response:
+        with urllib.request.urlopen(req, timeout=60) as r:
             with open("repo.zip", 'wb') as f:
-                f.write(response.read())
-        
+                f.write(r.read())
         import zipfile
         with zipfile.ZipFile("repo.zip", 'r') as zf:
-            for file in zf.namelist():
-                if file.endswith('verify_india.py'):
-                    zf.extract(file, ".")
-                    # Move from subfolder to current
-                    extracted_path = file
-                    if os.path.exists(extracted_path):
-                        shutil.move(extracted_path, VERIFY_SCRIPT)
-                        # Clean up extracted folder
-                        folder = file.split('/')[0]
-                        if os.path.exists(folder):
-                            shutil.rmtree(folder, ignore_errors=True)
+            for name in zf.namelist():
+                if 'verify_india.py' in name:
+                    with zf.open(name) as src, open(VERIFY_SCRIPT, 'wb') as dst:
+                        dst.write(src.read())
+                    break
         os.remove("repo.zip")
-        
-        if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 1000:
-            logger.info("Verify script extracted from ZIP!")
-            return True
-    except Exception as e:
-        logger.error(f"ZIP extraction failed: {e}")
-    
-    logger.warning("ALL methods failed to get verify script!")
-    return False
+        return os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500
+    except:
+        return False
 
 def run_verify_script(choice, value):
-    """Run verify script"""
+    """Run verify script - with better error handling"""
     if not os.path.exists(VERIFY_SCRIPT):
-        logger.error("Verify script not found!")
-        return None
+        if not download_verify_script():
+            return None
     
     try:
-        process = subprocess.Popen(
+        # Use sys.executable for Railway compatibility
+        result = subprocess.run(
             [sys.executable, VERIFY_SCRIPT],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE, text=True
+            input=f"{choice}\n{value}\n0\n",
+            capture_output=True, text=True, timeout=25,
+            cwd=os.path.dirname(os.path.abspath(VERIFY_SCRIPT)) or "."
         )
-        input_data = f"{choice}\n{value}\n0\n"
-        output, error = process.communicate(input_data, timeout=30)
         
-        if process.returncode != 0 and error:
-            logger.error(f"Script stderr: {error}")
+        if result.returncode != 0:
+            logger.error(f"Script error: {result.stderr[:200]}")
         
-        if output:
-            return output
+        if result.stdout and len(result.stdout) > 20:
+            return result.stdout
+        
+        if result.stderr and len(result.stderr) > 20:
+            return result.stderr
+            
         return None
     except subprocess.TimeoutExpired:
-        process.kill()
         logger.error("Script timeout")
         return None
     except Exception as e:
-        logger.error(f"Script error: {e}")
+        logger.error(f"Script run error: {e}")
         return None
 
 def clean_text(text):
@@ -300,9 +271,8 @@ async def show_verification_page(update, context):
             f"<b>┃  🤖 {BOT_NAME}  ┃</b>\n"
             f"<b>┃  @{BOT_USERNAME}    ┃</b>\n"
             f"<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
-            f"<b>🔒 ᴀᴄᴄᴇꜱꜱ ʀᴇQᴜɪʀᴇᴅ</b>\n"
-            f"<b>ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛᴏ ᴜɴʟᴏᴄᴋ</b>\n\n"
-            f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ | ⏱ {AUTO_DELETE_TIME}ꜱ</b>\n\n"
+            f"<b>🔒 ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ</b>\n"
+            f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ</b>\n\n"
             f"<b>📱 ᴛɢ ɪᴅ → ɴᴜᴍʙᴇʀ</b>\n"
             f"<b>🏦 ɪꜰꜱᴄ ʙᴀɴᴋ ɪɴꜰᴏ</b>\n"
             f"<b>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</b>\n"
@@ -394,7 +364,7 @@ async def bypass_lookup(session, link):
 
 def parse_single_record(rt):
     d = {}
-    for f, l in {'Name':'👤 Name',"Father's Name":'👨 Father','Mother\'s Name':'👩 Mother','Mobile':'📱 Mobile','Alternative Number':'📞 Alternative','Address':'📍 Address','Email':'📧 Email','Circle':'📡 Circle','DOB':'🎂 DOB','Gender':'⚧ Gender','State':'🏛 State','District':'🏘️ District','Pincode':'📮 Pincode'}.items():
+    for f, l in {'Name':'👤 Name',"Father's Name":'👨 Father','Mother\'s Name':'👩 Mother','Mobile':'📱 Mobile','Alternative Number':'📞 Alternative','Address':'📍 Address','Email':'📧 Email','Circle':'📡 Circle'}.items():
         m = re.search(rf'{re.escape(f)}:\s*([^\n]+)', rt, re.IGNORECASE)
         if m and m.group(1).strip() not in ['None','','N/A','null']: d[l] = m.group(1).strip()
     return d if d else None
@@ -633,19 +603,17 @@ async def run_query(update, context, mode, query):
     
     try:
         if mode in ['AADHAAR','MOBILE','VEHICLE_INDIA']:
-            # Check if script exists, if not try to download
+            # Try to ensure script is available
             if not os.path.exists(VERIFY_SCRIPT):
-                setup_verify_script()
+                download_verify_script()
             
             if not os.path.exists(VERIFY_SCRIPT):
-                result = "<blockquote>❌ Service temporarily unavailable. Please try again later.</blockquote>"
+                result = "<blockquote>❌ Service unavailable. Admin needs to install verify script.</blockquote>"
             else:
                 cm = {'AADHAAR':'2','MOBILE':'1','VEHICLE_INDIA':'4'}
                 raw = run_verify_script(cm[mode], query)
                 
-                if raw is None:
-                    result = "<blockquote>❌ No response from server. Try again.</blockquote>"
-                else:
+                if raw:
                     if mode == 'VEHICLE_INDIA':
                         data = parse_rc_details(raw)
                         result = format_rc_result(data)
@@ -664,6 +632,8 @@ async def run_query(update, context, mode, query):
                         final = f"{result}\n{SEP}\n<blockquote>💰 No credit deducted</blockquote>{FOOTER}"
                         sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
                         asyncio.create_task(auto_del(sent)); return
+                else:
+                    result = "<blockquote>❌ No response from server</blockquote>"
         else:
             async with aiohttp.ClientSession() as s:
                 if mode == 'TG': result = await chatid_lookup(s, query)
@@ -688,10 +658,11 @@ async def run_query(update, context, mode, query):
 def main():
     print("🔄 Setting up Hex Terminal...")
     
-    # Download verify script on startup with multiple methods
-    if not setup_verify_script():
-        print("⚠️ Warning: Could not download verify script. India lookup features may not work.")
-        print("   The bot will still work for TG ID, IFSC, and Bypass.")
+    # Download verify script
+    if download_verify_script():
+        print("✅ Verify script ready!")
+    else:
+        print("⚠️ India lookup features may not work")
     
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
@@ -699,9 +670,6 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     print(f"✅ {BOT_NAME} Ready!")
-    print("📱 TG ID | 🏦 IFSC | 🔗 Bypass")
-    if os.path.exists(VERIFY_SCRIPT):
-        print("📞 Mobile | 🆔 Aadhaar | 🚘 RC")
     app.run_polling()
 
 if __name__ == '__main__':
