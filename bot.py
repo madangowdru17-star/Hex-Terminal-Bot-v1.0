@@ -63,6 +63,8 @@ ADMIN_STATE = {}
 
 # --- 🔧 SETUP ---
 
+# --- 🔧 SETUP ---
+
 def setup_verify_script():
     if os.path.exists(VERIFY_SCRIPT): return True
     try:
@@ -618,14 +620,14 @@ async def run_query(update, context, mode, query):
         except: pass
 
 def main():
-    print("🔄 Setting up Hex Terminal...")
+    print("🔄 Setup...")
     setup_verify_script()
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(verify_cb, pattern="^verify$"))
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
-    print(f"✅ {BOT_NAME} Ready on Railway!")
+    print(f"✅ {BOT_NAME} Ready!")
     app.run_polling()
 
 if __name__ == '__main__':
