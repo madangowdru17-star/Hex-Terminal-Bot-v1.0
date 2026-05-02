@@ -9,9 +9,6 @@ import subprocess
 import re
 import os
 import sys
-import urllib.request
-import shutil
-import zipfile
 from datetime import datetime, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from telegram.constants import ParseMode, ChatAction
@@ -33,10 +30,8 @@ LOOKUP_API = "https://tgchatid.vercel.app/api/lookup?number="
 IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
 
-# Verify Script
+# Local verify script (included in repo)
 VERIFY_SCRIPT = "verify_india.py"
-VERIFY_SCRIPT_URL = "https://raw.githubusercontent.com/CyberSuraj/verify_india/main/verify_india.py"
-GITHUB_REPO = "https://github.com/CyberSuraj/verify_india.git"
 
 # Files
 USERS_FILE = "users.json"
@@ -57,93 +52,23 @@ logger = logging.getLogger(__name__)
 MAIN_MENU_MESSAGE_IDS = set()
 ADMIN_STATE = {}
 
-# --- 🔧 SETUP VERIFY SCRIPT ---
-
-def download_verify_script():
-    """Download verify script with multiple fallback methods"""
-    if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
-        return True
-    
-    logger.info("Downloading verify script...")
-    
-    # Method 1: Direct URL download
-    try:
-        req = urllib.request.Request(VERIFY_SCRIPT_URL, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=30) as r:
-            content = r.read()
-            if len(content) > 500:
-                with open(VERIFY_SCRIPT, 'wb') as f:
-                    f.write(content)
-                logger.info("✅ Downloaded via direct URL")
-                return True
-    except Exception as e:
-        logger.warning(f"Direct download failed: {e}")
-    
-    # Method 2: Git clone
-    try:
-        if os.path.exists("temp_repo"):
-            shutil.rmtree("temp_repo", ignore_errors=True)
-        result = subprocess.run(["git", "clone", "--depth", "1", GITHUB_REPO, "temp_repo"],
-                              capture_output=True, text=True, timeout=30)
-        if result.returncode == 0:
-            for file in os.listdir("temp_repo"):
-                if file.endswith('.py'):
-                    shutil.copy(os.path.join("temp_repo", file), file)
-            shutil.rmtree("temp_repo", ignore_errors=True)
-            if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
-                logger.info("✅ Cloned via git")
-                return True
-    except:
-        pass
-    
-    # Method 3: ZIP download
-    try:
-        zip_url = "https://github.com/CyberSuraj/verify_india/archive/refs/heads/main.zip"
-        req = urllib.request.Request(zip_url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=60) as r:
-            with open("repo.zip", 'wb') as f:
-                f.write(r.read())
-        with zipfile.ZipFile("repo.zip", 'r') as zf:
-            for name in zf.namelist():
-                if 'verify_india.py' in name:
-                    with zf.open(name) as src, open(VERIFY_SCRIPT, 'wb') as dst:
-                        dst.write(src.read())
-                    break
-        os.remove("repo.zip")
-        if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 500:
-            logger.info("✅ Extracted from ZIP")
-            return True
-    except Exception as e:
-        logger.warning(f"ZIP download failed: {e}")
-    
-    logger.error("❌ All download methods failed!")
-    return False
+# --- 🔧 VERIFY SCRIPT ---
 
 def run_verify_script(choice, value):
-    """Run verify script and return output"""
+    """Run local verify script"""
     if not os.path.exists(VERIFY_SCRIPT):
-        if not download_verify_script():
-            return None
+        logger.error("verify_india.py not found!")
+        return None
     
     try:
         result = subprocess.run(
             [sys.executable, VERIFY_SCRIPT],
             input=f"{choice}\n{value}\n0\n",
-            capture_output=True, text=True, timeout=25
+            capture_output=True, text=True, timeout=30
         )
-        
         output = result.stdout.strip() if result.stdout else ""
-        error = result.stderr.strip() if result.stderr else ""
-        
-        # Return whatever has more content
-        if len(output) > len(error) and len(output) > 20:
+        if len(output) > 20:
             return output
-        elif len(error) > 20:
-            return error
-        
-        return None
-    except subprocess.TimeoutExpired:
-        logger.error("Script timeout")
         return None
     except Exception as e:
         logger.error(f"Script error: {e}")
@@ -585,10 +510,6 @@ async def run_query(update, context, mode, query):
     
     try:
         if mode in ['AADHAAR','MOBILE','VEHICLE_INDIA']:
-            # Ensure script exists
-            if not os.path.exists(VERIFY_SCRIPT):
-                download_verify_script()
-            
             if not os.path.exists(VERIFY_SCRIPT):
                 result = "<blockquote>❌ Script missing</blockquote>"
             else:
@@ -613,7 +534,7 @@ async def run_query(update, context, mode, query):
                         await st.edit_text(final, parse_mode=ParseMode.HTML)
                         asyncio.create_task(auto_del(st)); return
                 else:
-                    result = "<blockquote>❌ No response from server</blockquote>"
+                    result = "<blockquote>❌ No response</blockquote>"
         else:
             async with aiohttp.ClientSession() as s:
                 if mode == 'TG': result = await chatid_lookup(s, query)
@@ -637,10 +558,12 @@ async def run_query(update, context, mode, query):
         except: pass
 
 def main():
-    print("🔄 Setting up...")
+    print(f"🔄 Starting {BOT_NAME}...")
     
-    # Download verify script
-    download_verify_script()
+    if os.path.exists(VERIFY_SCRIPT):
+        print("✅ Verify script found!")
+    else:
+        print("⚠️ verify_india.py not found - India lookup disabled")
     
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
@@ -648,11 +571,7 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     
-    print(f"✅ {BOT_NAME} Ready!")
-    print(f"📱 TG ID | 🏦 IFSC | 🔗 Bypass")
-    if os.path.exists(VERIFY_SCRIPT):
-        print(f"📞 Mobile | 🆔 Aadhaar | 🚘 RC")
-    
+    print(f"✅ {BOT_NAME} Ready! 24/7 on Railway!")
     app.run_polling()
 
 if __name__ == '__main__':
