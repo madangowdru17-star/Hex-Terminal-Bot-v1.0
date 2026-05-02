@@ -32,11 +32,8 @@ LOOKUP_API = "https://tgchatid.vercel.app/api/lookup?number="
 IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
 
-# India Verify Script
-GITHUB_REPO = "https://github.com/CyberSuraj/verify_india.git"
 VERIFY_SCRIPT = "verify_india.py"
 
-# Files
 USERS_FILE = "users.json"
 REDEEM_FILE = "redeem_codes.json"
 SETTINGS_FILE = "settings.json"
@@ -53,109 +50,6 @@ logger = logging.getLogger(__name__)
 
 MAIN_MENU_MESSAGE_IDS = set()
 ADMIN_STATE = {}
-
-# --- 🔧 SETUP - FIXED ---
-
-def setup_verify_script():
-    """Setup verify script with better error handling"""
-    script_path = os.path.join(os.getcwd(), VERIFY_SCRIPT)
-    
-    if os.path.exists(script_path):
-        logger.info(f"✅ Verify script found at: {script_path}")
-        return True
-    
-    logger.info("📥 Downloading verify script...")
-    try:
-        # Try git clone
-        result = subprocess.run(
-            ["git", "clone", GITHUB_REPO, "temp_repo"],
-            capture_output=True, text=True, timeout=30
-        )
-        if result.returncode == 0:
-            import shutil
-            for file in os.listdir("temp_repo"):
-                src = os.path.join("temp_repo", file)
-                dst = os.path.join(os.getcwd(), file)
-                if os.path.exists(dst):
-                    os.remove(dst)
-                shutil.move(src, dst)
-            shutil.rmtree("temp_repo", ignore_errors=True)
-            logger.info("✅ Script downloaded successfully!")
-            return True
-        else:
-            logger.error(f"Git clone failed: {result.stderr}")
-    except Exception as e:
-        logger.error(f"Clone error: {e}")
-    
-    return os.path.exists(script_path)
-
-def run_verify_script(choice, value):
-    """Run verify script with fallback"""
-    script_path = os.path.join(os.getcwd(), VERIFY_SCRIPT)
-    
-    if not os.path.exists(script_path):
-        logger.error(f"❌ Script not found at: {script_path}")
-        return None
-    
-    try:
-        # Try with python3 first
-        python_cmd = "python3" if sys.platform != "win32" else "python"
-        
-        process = subprocess.Popen(
-            [python_cmd, script_path],
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            cwd=os.getcwd()
-        )
-        
-        input_data = f"{choice}\n{value}\n0\n"
-        stdout, stderr = process.communicate(input_data, timeout=45)
-        
-        if stderr and not stdout:
-            logger.error(f"Script stderr: {stderr[:200]}")
-            # Try with python as fallback
-            process = subprocess.Popen(
-                ["python", script_path],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                cwd=os.getcwd()
-            )
-            stdout, stderr = process.communicate(input_data, timeout=45)
-        
-        if stdout:
-            logger.info(f"Script output received: {len(stdout)} chars")
-            return stdout
-        
-        if stderr:
-            logger.error(f"Script error: {stderr[:200]}")
-            return None
-            
-        return None
-        
-    except subprocess.TimeoutExpired:
-        logger.error("Script timeout")
-        return None
-    except Exception as e:
-        logger.error(f"Script error: {e}")
-        return None
-
-def clean_text(text):
-    if not text: return ""
-    return re.sub(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])', '', text)
-
-def get_settings():
-    try:
-        with open(SETTINGS_FILE, 'r') as f: return json.load(f)
-    except:
-        d = {"bypass_maintenance":False,"bypass_msg":"Bypass maintenance.","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True}
-        save_settings(d); return d
-
-def save_settings(data):
-    with open(SETTINGS_FILE, 'w') as f: json.dump(data, f, indent=2)
 
 # --- 💾 DATA ---
 
@@ -178,8 +72,7 @@ def get_user(user_id):
         save_json(USERS_FILE, users)
     elif users[uid].get("last_reset") != today:
         users[uid]["credits"] = users[uid].get("credits",0) + DAILY_FREE_CREDITS
-        users[uid]["daily_queries"] = 0
-        users[uid]["last_reset"] = today
+        users[uid]["daily_queries"] = 0; users[uid]["last_reset"] = today
         save_json(USERS_FILE, users)
     return users[uid]
 
@@ -217,6 +110,16 @@ def redeem_code(uid, code):
     save_json(REDEEM_FILE, codes); bal = add_credits(uid, cr)
     return True, f"✅ +{cr} credits!\n💰 Balance: {bal}"
 
+def get_settings():
+    try:
+        with open(SETTINGS_FILE, 'r') as f: return json.load(f)
+    except:
+        d = {"bypass_maintenance":False,"bypass_msg":"Bypass maintenance.","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True}
+        save_settings(d); return d
+
+def save_settings(data):
+    with open(SETTINGS_FILE, 'w') as f: json.dump(data, f, indent=2)
+
 # --- 🔍 VERIFY ---
 
 async def check_channels(uid, context):
@@ -253,21 +156,19 @@ async def show_verification_page(update, context):
             f"<b>┃  🤖 {BOT_NAME}  ┃</b>\n"
             f"<b>┃  @{BOT_USERNAME}    ┃</b>\n"
             f"<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
-            f"<b>🔒 Join both channels to unlock</b>\n\n"
+            f"<b>🔒 Join both channels</b>\n"
             f"<b>🎁 +{DAILY_FREE_CREDITS} daily | 👥 +{INVITE_CREDITS} invite</b>\n\n"
-            f"<b>🛠️ Tools: TG ID | IFSC | Bypass | Mobile | Aadhaar | RC</b>\n\n"
             f"<b>👑 @Hexh4ckerOFC</b>"
         )
         if photos and photos.photos: await update.message.reply_photo(photo=photos.photos[0][-1].file_id, caption=caption, parse_mode=ParseMode.HTML)
         else: await update.message.reply_text(caption, parse_mode=ParseMode.HTML)
     except: pass
-    
     buttons = [
         [InlineKeyboardButton("📢 Join Channel 1", url=LINK_1)],
         [InlineKeyboardButton("📢 Join Channel 2", url=LINK_2)],
         [InlineKeyboardButton("✅ I've Joined - Verify", callback_data="verify")]
     ]
-    await update.message.reply_text("<blockquote>🔒 Join both channels then click verify</blockquote>", reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML)
+    await update.message.reply_text("<blockquote>🔒 Join both channels then verify</blockquote>", reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML)
 
 async def main_menu(update, context):
     is_admin = update.effective_user.id == ADMIN_ID
@@ -320,7 +221,7 @@ async def ifsc_lookup(session, code):
 
 async def bypass_lookup(session, link):
     s = get_settings()
-    if s.get("bypass_maintenance",False): return f"<blockquote>🛠️ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</blockquote>"
+    if s.get("bypass_maintenance",False): return "<blockquote>🛠️ Maintenance</blockquote>"
     data = await api_fetch(session, f"{SHORTLINK_API}{link}", timeout=20)
     if not data: return "<blockquote>❌ Service unavailable</blockquote>"
     if isinstance(data, dict):
@@ -328,100 +229,160 @@ async def bypass_lookup(session, link):
         return f"<blockquote expandable>✨ 🔗 ʙʏᴘᴀꜱꜱᴇᴅ</blockquote>\n<blockquote>🔗 <code>{str(r)}</code></blockquote>"
     return f"<blockquote>🔗 <code>{str(data)}</code></blockquote>"
 
-# --- 📊 PARSING - FIXED ---
+# --- 📊 INDIA DATA - FIXED PARSING ---
 
-def parse_india_data(raw_text, search_type):
-    """Parse verify_india output properly"""
-    if not raw_text:
+def run_india_script(choice, value):
+    """Run verify_india.py with proper error handling"""
+    script_path = os.path.join(os.getcwd(), VERIFY_SCRIPT)
+    
+    if not os.path.exists(script_path):
+        logger.error(f"Script not found: {script_path}")
+        # List files in directory for debugging
+        logger.info(f"Files in directory: {os.listdir(os.getcwd())}")
         return None
     
-    raw_text = clean_text(raw_text)
-    
-    result_parts = []
-    found_any = False
-    
-    if search_type == "mobile":
-        # Look for mobile data patterns
-        name_match = re.search(r'Name:\s*([^\n]+)', raw_text)
-        father_match = re.search(r"Father's?\s*Name:\s*([^\n]+)", raw_text)
-        mobile_match = re.search(r'Mobile:\s*([^\n]+)', raw_text)
-        alt_match = re.search(r'Alternative\s*Number:\s*([^\n]+)', raw_text)
-        address_match = re.search(r'Address:\s*([^\n]+)', raw_text)
-        circle_match = re.search(r'Circle:\s*([^\n]+)', raw_text)
-        state_match = re.search(r'State:\s*([^\n]+)', raw_text)
+    try:
+        # Install requirements if needed
+        try:
+            subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], 
+                         capture_output=True, timeout=30)
+        except: pass
         
-        result_parts.append("<blockquote expandable>✨ 📞 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n")
+        process = subprocess.Popen(
+            [sys.executable, script_path],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=os.getcwd(),
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"}
+        )
         
-        if name_match: result_parts.append(f"<blockquote>👤 Name: <code>{name_match.group(1).strip()}</code></blockquote>\n"); found_any = True
-        if father_match: result_parts.append(f"<blockquote>👨 Father: <code>{father_match.group(1).strip()}</code></blockquote>\n")
-        if mobile_match: result_parts.append(f"<blockquote>📱 Mobile: <code>{mobile_match.group(1).strip()}</code></blockquote>\n")
-        if alt_match: result_parts.append(f"<blockquote>📞 Alternative: <code>{alt_match.group(1).strip()}</code></blockquote>\n")
-        if circle_match: result_parts.append(f"<blockquote>📡 Circle: <code>{circle_match.group(1).strip()}</code></blockquote>\n")
-        if state_match: result_parts.append(f"<blockquote>🏛 State: <code>{state_match.group(1).strip()}</code></blockquote>\n")
-        if address_match: result_parts.append(f"<blockquote>📍 Address: <code>{address_match.group(1).strip()}</code></blockquote>\n")
-    
-    elif search_type == "aadhaar":
-        result_parts.append("<blockquote expandable>✨ 🆔 ᴀᴀᴅʜᴀᴀʀ ɪɴꜰᴏ</blockquote>\n")
+        input_data = f"{choice}\n{value}\n0\n"
+        stdout, stderr = process.communicate(input_data, timeout=45)
         
-        # Find all records
-        records = re.findall(r'Record\s*\d+[:\s-]*([\s\S]*?)(?=Record\s*\d+|$)', raw_text)
+        if stderr:
+            logger.warning(f"Script stderr: {stderr[:300]}")
         
-        if not records:
-            # Single record
-            name_match = re.search(r'Name:\s*([^\n]+)', raw_text)
-            father_match = re.search(r"Father's?\s*Name:\s*([^\n]+)", raw_text)
-            mobile_match = re.search(r'Mobile:\s*([^\n]+)', raw_text)
-            address_match = re.search(r'Address:\s*([^\n]+)', raw_text)
-            
-            if name_match: result_parts.append(f"<blockquote>👤 Name: <code>{name_match.group(1).strip()}</code></blockquote>\n"); found_any = True
-            if father_match: result_parts.append(f"<blockquote>👨 Father: <code>{father_match.group(1).strip()}</code></blockquote>\n")
-            if mobile_match: result_parts.append(f"<blockquote>📱 Mobile: <code>{mobile_match.group(1).strip()}</code></blockquote>\n")
-            if address_match: result_parts.append(f"<blockquote>📍 Address: <code>{address_match.group(1).strip()[:200]}</code></blockquote>\n")
-        else:
-            result_parts.append(f"<blockquote>📊 Records: {len(records)}</blockquote>\n")
-            for i, rec in enumerate(records, 1):
-                if len(records) > 1:
-                    result_parts.append(f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n")
-                name_match = re.search(r'Name:\s*([^\n]+)', rec)
-                father_match = re.search(r"Father's?\s*Name:\s*([^\n]+)", rec)
-                mobile_match = re.search(r'Mobile:\s*([^\n]+)', rec)
-                address_match = re.search(r'Address:\s*([^\n]+)', rec)
-                
-                if name_match: result_parts.append(f"<blockquote>👤 Name: <code>{name_match.group(1).strip()}</code></blockquote>\n"); found_any = True
-                if father_match: result_parts.append(f"<blockquote>👨 Father: <code>{father_match.group(1).strip()}</code></blockquote>\n")
-                if mobile_match: result_parts.append(f"<blockquote>📱 Mobile: <code>{mobile_match.group(1).strip()}</code></blockquote>\n")
-                if address_match: result_parts.append(f"<blockquote>📍 Address: <code>{address_match.group(1).strip()[:200]}</code></blockquote>\n")
-    
-    elif search_type == "vehicle":
-        result_parts.append("<blockquote expandable>✨ 🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n")
+        if stdout and len(stdout) > 20:
+            logger.info(f"Script output: {len(stdout)} chars")
+            return stdout
         
-        fields = [
-            ('RC Number', '🔖 RC'),
-            ('Owner Name', '👤 Owner'),
-            ("Father's Name", '👨 Father'),
-            ('Registration Date', '📅 Reg'),
-            ('Registered RTO', '🏢 RTO'),
-            ('Vehicle Class', '🚗 Class'),
-            ('Maker Model', '🏭 Maker'),
-            ('Fuel Type', '⛽ Fuel'),
-            ('Insurance Company', '🛡️ Insurance'),
-            ('Insurance Expiry', '📅 Ins Exp'),
-            ('Fitness Upto', '✅ Fitness'),
-            ('Tax Upto', '💰 Tax'),
-            ('Phone', '📞 Phone'),
-            ('Address', '📍 Address'),
-        ]
-        
-        for field, label in fields:
-            match = re.search(rf'{re.escape(field)}:\s*([^\n]+)', raw_text, re.IGNORECASE)
-            if match and match.group(1).strip() not in ['None', '', 'N/A', 'null']:
-                result_parts.append(f"<blockquote>{label}: <code>{match.group(1).strip()}</code></blockquote>\n")
-                found_any = True
-    
-    if not found_any:
         return None
+    except subprocess.TimeoutExpired:
+        logger.error("Script timeout")
+        process.kill()
+        return None
+    except Exception as e:
+        logger.error(f"Script error: {e}")
+        return None
+
+def clean_text(text):
+    if not text: return ""
+    return re.sub(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])', '', text)
+
+def parse_india_output(raw, search_type):
+    """Parse output from verify_india.py"""
+    if not raw: return None
     
-    return ''.join(result_parts)
+    raw = clean_text(raw)
+    lines = raw.split('\n')
+    found_data = {}
+    
+    # Common fields
+    name_match = re.search(r'Name:\s*([^\n]+)', raw)
+    father_match = re.search(r"Father'?s?\s*Name:\s*([^\n]+)", raw)
+    mobile_match = re.search(r'Mobile:\s*([^\n]+)', raw)
+    alt_match = re.search(r'Alternative\s*Number:\s*([^\n]+)', raw)
+    address_match = re.search(r'Address:\s*([^\n]+)', raw)
+    circle_match = re.search(r'Circle:\s*([^\n]+)', raw)
+    state_match = re.search(r'State:\s*([^\n]+)', raw)
+    email_match = re.search(r'Email:\s*([^\n]+)', raw)
+    
+    if name_match: found_data['name'] = name_match.group(1).strip()
+    if father_match: found_data['father'] = father_match.group(1).strip()
+    if mobile_match: found_data['mobile'] = mobile_match.group(1).strip()
+    if alt_match: found_data['alt'] = alt_match.group(1).strip()
+    if address_match: found_data['address'] = address_match.group(1).strip()
+    if circle_match: found_data['circle'] = circle_match.group(1).strip()
+    if state_match: found_data['state'] = state_match.group(1).strip()
+    if email_match: found_data['email'] = email_match.group(1).strip()
+    
+    # RC specific
+    rc_match = re.search(r'RC\s*Number:\s*([^\n]+)', raw)
+    owner_match = re.search(r'Owner\s*Name:\s*([^\n]+)', raw)
+    rto_match = re.search(r'Registered\s*RTO:\s*([^\n]+)', raw)
+    reg_match = re.search(r'Registration\s*Date:\s*([^\n]+)', raw)
+    vehicle_match = re.search(r'Vehicle\s*Class:\s*([^\n]+)', raw)
+    maker_match = re.search(r'Maker\s*Model:\s*([^\n]+)', raw)
+    fuel_match = re.search(r'Fuel\s*Type:\s*([^\n]+)', raw)
+    insurance_match = re.search(r'Insurance\s*Company:\s*([^\n]+)', raw)
+    ins_exp_match = re.search(r'Insurance\s*Expiry:\s*([^\n]+)', raw)
+    fitness_match = re.search(r'Fitness\s*Upto:\s*([^\n]+)', raw)
+    tax_match = re.search(r'Tax\s*Upto:\s*([^\n]+)', raw)
+    phone_match = re.search(r'Phone:\s*([^\n]+)', raw)
+    
+    if rc_match: found_data['rc'] = rc_match.group(1).strip()
+    if owner_match: found_data['owner'] = owner_match.group(1).strip()
+    if rto_match: found_data['rto'] = rto_match.group(1).strip()
+    if reg_match: found_data['reg_date'] = reg_match.group(1).strip()
+    if vehicle_match: found_data['class'] = vehicle_match.group(1).strip()
+    if maker_match: found_data['maker'] = maker_match.group(1).strip()
+    if fuel_match: found_data['fuel'] = fuel_match.group(1).strip()
+    if insurance_match: found_data['insurance'] = insurance_match.group(1).strip()
+    if ins_exp_match: found_data['ins_exp'] = ins_exp_match.group(1).strip()
+    if fitness_match: found_data['fitness'] = fitness_match.group(1).strip()
+    if tax_match: found_data['tax'] = tax_match.group(1).strip()
+    if phone_match: found_data['phone'] = phone_match.group(1).strip()
+    
+    return found_data if found_data else None
+
+def format_india_result(data, search_type):
+    """Format parsed data into Telegram message"""
+    if not data: return "<blockquote>❌ No records found</blockquote>"
+    
+    if search_type == 'aadhaar':
+        result = "<blockquote expandable>✨ 🆔 ᴀᴀᴅʜᴀᴀʀ ɪɴꜰᴏ</blockquote>\n"
+        if 'name' in data: result += f"<blockquote>👤 Name: <code>{data['name']}</code></blockquote>\n"
+        if 'father' in data: result += f"<blockquote>👨 Father: <code>{data['father']}</code></blockquote>\n"
+        if 'mobile' in data: result += f"<blockquote>📱 Mobile: <code>{data['mobile']}</code></blockquote>\n"
+        if 'alt' in data: result += f"<blockquote>📞 Alternative: <code>{data['alt']}</code></blockquote>\n"
+        if 'address' in data: result += f"<blockquote>📍 Address: <code>{data['address'][:250]}</code></blockquote>\n"
+        if 'circle' in data: result += f"<blockquote>📡 Circle: <code>{data['circle']}</code></blockquote>\n"
+        if 'state' in data: result += f"<blockquote>🏛 State: <code>{data['state']}</code></blockquote>\n"
+        if 'email' in data: result += f"<blockquote>📧 Email: <code>{data['email']}</code></blockquote>\n"
+        return result
+    
+    elif search_type == 'mobile':
+        result = "<blockquote expandable>✨ 📞 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n"
+        if 'name' in data: result += f"<blockquote>👤 Name: <code>{data['name']}</code></blockquote>\n"
+        if 'father' in data: result += f"<blockquote>👨 Father: <code>{data['father']}</code></blockquote>\n"
+        if 'mobile' in data: result += f"<blockquote>📱 Mobile: <code>{data['mobile']}</code></blockquote>\n"
+        if 'alt' in data: result += f"<blockquote>📞 Alternative: <code>{data['alt']}</code></blockquote>\n"
+        if 'address' in data: result += f"<blockquote>📍 Address: <code>{data['address'][:250]}</code></blockquote>\n"
+        if 'circle' in data: result += f"<blockquote>📡 Circle: <code>{data['circle']}</code></blockquote>\n"
+        if 'state' in data: result += f"<blockquote>🏛 State: <code>{data['state']}</code></blockquote>\n"
+        return result
+    
+    elif search_type == 'vehicle':
+        result = "<blockquote expandable>✨ 🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n"
+        if 'rc' in data: result += f"<blockquote>🔖 RC: <code>{data['rc']}</code></blockquote>\n"
+        if 'owner' in data: result += f"<blockquote>👤 Owner: <code>{data['owner']}</code></blockquote>\n"
+        if 'father' in data: result += f"<blockquote>👨 Father: <code>{data['father']}</code></blockquote>\n"
+        if 'reg_date' in data: result += f"<blockquote>📅 Reg Date: <code>{data['reg_date']}</code></blockquote>\n"
+        if 'rto' in data: result += f"<blockquote>🏢 RTO: <code>{data['rto']}</code></blockquote>\n"
+        if 'class' in data: result += f"<blockquote>🚗 Class: <code>{data['class']}</code></blockquote>\n"
+        if 'maker' in data: result += f"<blockquote>🏭 Maker: <code>{data['maker']}</code></blockquote>\n"
+        if 'fuel' in data: result += f"<blockquote>⛽ Fuel: <code>{data['fuel']}</code></blockquote>\n"
+        if 'insurance' in data: result += f"<blockquote>🛡️ Insurance: <code>{data['insurance']}</code></blockquote>\n"
+        if 'ins_exp' in data: result += f"<blockquote>📅 Ins Expiry: <code>{data['ins_exp']}</code></blockquote>\n"
+        if 'fitness' in data: result += f"<blockquote>✅ Fitness: <code>{data['fitness']}</code></blockquote>\n"
+        if 'tax' in data: result += f"<blockquote>💰 Tax: <code>{data['tax']}</code></blockquote>\n"
+        if 'phone' in data: result += f"<blockquote>📞 Phone: <code>{data['phone']}</code></blockquote>\n"
+        if 'address' in data: result += f"<blockquote>📍 Address: <code>{data['address'][:200]}</code></blockquote>\n"
+        return result
+    
+    return "<blockquote>❌ No data</blockquote>"
 
 # --- 👑 ADMIN ---
 
@@ -524,7 +485,7 @@ async def msg_handler(update, context):
             if not s.get("tgid_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'TG'
             btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
-            m = await update.message.reply_text("<blockquote>📱 Enter Chat ID:</blockquote>\n<i>Example: 7123181749</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>📱 Enter Chat ID:</blockquote>\n<i>7123181749</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         elif txt in ["🏦 ɪꜰꜱᴄ ɪɴꜰᴏ"]:
             if not s.get("ifsc_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
@@ -544,10 +505,10 @@ async def msg_handler(update, context):
         elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "👥 ɪɴᴠɪᴛᴇ"]:
             user = get_user(uid); bot_username = context.bot.username or BOT_USERNAME
             link = f"https://t.me/{bot_username}?start={user['invite_code']}"
-            m = await update.message.reply_text(f"<blockquote>👥 Invite</blockquote>\n<blockquote>🎁 +{INVITE_CREDITS} cr</blockquote>\n<blockquote><code>{link}</code></blockquote>\n<blockquote>👥 {user.get('invites',0)} | 💰 {user.get('credits',0)}</blockquote>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>👥 Invite (+{INVITE_CREDITS} cr)</blockquote>\n<blockquote><code>{link}</code></blockquote>\n<blockquote>👥 {user.get('invites',0)} | 💰 {user.get('credits',0)}</blockquote>", parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m, 120))
         elif txt in ["💎 ʙᴜʏ ᴄʀᴇᴅɪᴛꜱ"]:
-            await update.message.reply_text("<blockquote>💎 Buy @Hexh4ckerOFC</blockquote>\n<blockquote>🔑 HEX-XXXXXXXXXX</blockquote>", parse_mode=ParseMode.HTML)
+            await update.message.reply_text("<blockquote>💎 @Hexh4ckerOFC</blockquote>\n<blockquote>🔑 HEX-XXXXXXXXXX</blockquote>", parse_mode=ParseMode.HTML)
         else:
             mode = context.user_data.get('mode')
             if mode:
@@ -568,16 +529,17 @@ async def run_query(update, context, mode, query):
     try:
         if mode in ['AADHAAR', 'MOBILE', 'VEHICLE']:
             choice_map = {'AADHAAR': '2', 'MOBILE': '1', 'VEHICLE': '4'}
-            search_type_map = {'AADHAAR': 'aadhaar', 'MOBILE': 'mobile', 'VEHICLE': 'vehicle'}
+            search_map = {'AADHAAR': 'aadhaar', 'MOBILE': 'mobile', 'VEHICLE': 'vehicle'}
             
-            raw = run_verify_script(choice_map[mode], query)
+            logger.info(f"Running {search_map[mode]} lookup for: {query}")
+            raw = run_india_script(choice_map[mode], query)
             
             if raw:
-                result = parse_india_data(raw, search_type_map[mode])
-                if not result:
-                    result = "<blockquote>❌ No records found for this query</blockquote>"
+                parsed = parse_india_output(raw, search_map[mode])
+                result = format_india_result(parsed, search_map[mode])
+                logger.info(f"Result: {result[:100] if result else 'None'}")
             else:
-                result = "<blockquote>❌ Service temporarily unavailable</blockquote>\n<blockquote>Please try again later</blockquote>"
+                result = "<blockquote>❌ Script execution failed</blockquote>\n<blockquote>Check Railway logs for details</blockquote>"
         else:
             async with aiohttp.ClientSession() as s:
                 if mode == 'TG': result = await chatid_lookup(s, query)
@@ -595,19 +557,21 @@ async def run_query(update, context, mode, query):
         sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
         asyncio.create_task(auto_del(sent))
     except Exception as e:
-        lt.cancel(); logger.error(f"Query: {e}")
-        try: await st.edit_text(f"<blockquote>⚠️ Error. Try again.</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
+        lt.cancel(); logger.error(f"Query error: {e}")
+        try: await st.edit_text(f"<blockquote>⚠️ Error: {str(e)[:80]}</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
         except: pass
 
 def main():
-    print("🔄 Setting up Hex Terminal...")
+    print("🔄 Hex Terminal starting...")
+    print(f"📁 Files: {os.listdir(os.getcwd())}")
     
-    # Setup verify script
-    if setup_verify_script():
-        print("✅ Verify script ready!")
-    else:
-        print("⚠️ Verify script not found - India lookup features may not work")
-        print("Make sure verify_india.py is in the same folder")
+    # Install requirements
+    try:
+        subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4", "lxml"], 
+                     capture_output=True, timeout=30)
+        print("✅ Dependencies installed")
+    except Exception as e:
+        print(f"⚠️ Pip install: {e}")
     
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
