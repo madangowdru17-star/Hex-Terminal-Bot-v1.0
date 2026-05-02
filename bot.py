@@ -9,6 +9,8 @@ import subprocess
 import re
 import os
 import sys
+import urllib.request
+import shutil
 from datetime import datetime, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from telegram.constants import ParseMode, ChatAction
@@ -17,11 +19,8 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 # --- ⚙️ CONFIGURATION ---
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8687617595:AAEOeTwFDWquCAH3t497srDtrSRXM9Kaq4g")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "7898928200"))
-
-# Channel IDs
 CHANNEL_1_ID = int(os.getenv("CHANNEL_1_ID", "-1003240507339"))
 CHANNEL_2_ID = int(os.getenv("CHANNEL_2_ID", "-1003806004135"))
-
 LINK_1 = os.getenv("LINK_1", "https://t.me/+dP7xLb3AoE1jNmRl")
 LINK_2 = os.getenv("LINK_2", "https://t.me/+9vuPcr9LJ8piODdl")
 
@@ -33,9 +32,13 @@ LOOKUP_API = "https://tgchatid.vercel.app/api/lookup?number="
 IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
 
-# India Verify Script - Using raw Python instead of subprocess
-VERIFY_SCRIPT_URL = "https://raw.githubusercontent.com/CyberSuraj/verify_india/main/verify_india.py"
+# Verify Script - Multiple download sources
 VERIFY_SCRIPT = "verify_india.py"
+VERIFY_SCRIPT_URLS = [
+    "https://raw.githubusercontent.com/CyberSuraj/verify_india/main/verify_india.py",
+    "https://raw.githubusercontent.com/CyberSuraj/verify_india/master/verify_india.py",
+]
+GITHUB_REPO = "https://github.com/CyberSuraj/verify_india.git"
 
 # Files
 USERS_FILE = "users.json"
@@ -47,7 +50,6 @@ DAILY_FREE_CREDITS = 5
 INVITE_CREDITS = 3
 AUTO_DELETE_TIME = 60
 
-# Bot Info
 BOT_NAME = "Hex Terminal"
 BOT_USERNAME = "Hex_Terminal_bot"
 
@@ -57,67 +59,135 @@ logger = logging.getLogger(__name__)
 MAIN_MENU_MESSAGE_IDS = set()
 ADMIN_STATE = {}
 
-# --- 🔧 SETUP VERIFY SCRIPT ---
+# --- 🔧 SETUP VERIFY SCRIPT (FIXED) ---
 
-def download_verify_script():
-    """Download verify script using Python instead of git"""
-    if os.path.exists(VERIFY_SCRIPT):
-        return True
+def download_file(url, filename):
+    """Download file from URL"""
     try:
-        import urllib.request
-        logger.info("Downloading verify script...")
-        urllib.request.urlretrieve(VERIFY_SCRIPT_URL, VERIFY_SCRIPT)
-        logger.info("Verify script downloaded!")
+        logger.info(f"Downloading from: {url}")
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=30) as response:
+            with open(filename, 'wb') as f:
+                f.write(response.read())
+        logger.info(f"Downloaded: {filename}")
         return True
     except Exception as e:
         logger.error(f"Download failed: {e}")
         return False
 
-def setup_verify_script():
-    """Setup verify script - download if not exists"""
-    if os.path.exists(VERIFY_SCRIPT):
-        return True
-    
-    # Try git first
+def clone_with_git():
+    """Try cloning with git"""
     try:
-        result = subprocess.run(["git", "clone", "https://github.com/CyberSuraj/verify_india.git", "temp_repo"], 
-                              capture_output=True, text=True, timeout=30)
+        if os.path.exists("temp_repo"):
+            shutil.rmtree("temp_repo", ignore_errors=True)
+        
+        result = subprocess.run(
+            ["git", "clone", "--depth", "1", GITHUB_REPO, "temp_repo"],
+            capture_output=True, text=True, timeout=60
+        )
+        
         if result.returncode == 0:
-            import shutil
             for file in os.listdir("temp_repo"):
-                shutil.move(os.path.join("temp_repo", file), ".")
+                if file.endswith('.py'):
+                    shutil.move(os.path.join("temp_repo", file), ".")
             shutil.rmtree("temp_repo", ignore_errors=True)
             return True
-    except:
-        pass
+        else:
+            logger.error(f"Git clone failed: {result.stderr}")
+            return False
+    except FileNotFoundError:
+        logger.info("Git not installed, trying download...")
+        return False
+    except Exception as e:
+        logger.error(f"Git error: {e}")
+        return False
+
+def setup_verify_script():
+    """Setup verify script - multiple methods"""
+    # If already exists and is valid Python file
+    if os.path.exists(VERIFY_SCRIPT):
+        try:
+            with open(VERIFY_SCRIPT, 'r') as f:
+                content = f.read()
+                if len(content) > 1000 and 'def' in content:
+                    logger.info("Verify script already exists and is valid")
+                    return True
+        except:
+            pass
     
-    # Fallback to download
-    return download_verify_script()
+    # Method 1: Git clone
+    logger.info("Trying git clone...")
+    if clone_with_git():
+        return True
+    
+    # Method 2: Download from multiple URLs
+    for url in VERIFY_SCRIPT_URLS:
+        logger.info(f"Trying download: {url}")
+        if download_file(url, VERIFY_SCRIPT):
+            if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 1000:
+                logger.info("Verify script downloaded successfully!")
+                return True
+    
+    # Method 3: Download ZIP from GitHub
+    try:
+        zip_url = "https://github.com/CyberSuraj/verify_india/archive/refs/heads/main.zip"
+        logger.info(f"Trying ZIP download: {zip_url}")
+        req = urllib.request.Request(zip_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=60) as response:
+            with open("repo.zip", 'wb') as f:
+                f.write(response.read())
+        
+        import zipfile
+        with zipfile.ZipFile("repo.zip", 'r') as zf:
+            for file in zf.namelist():
+                if file.endswith('verify_india.py'):
+                    zf.extract(file, ".")
+                    # Move from subfolder to current
+                    extracted_path = file
+                    if os.path.exists(extracted_path):
+                        shutil.move(extracted_path, VERIFY_SCRIPT)
+                        # Clean up extracted folder
+                        folder = file.split('/')[0]
+                        if os.path.exists(folder):
+                            shutil.rmtree(folder, ignore_errors=True)
+        os.remove("repo.zip")
+        
+        if os.path.exists(VERIFY_SCRIPT) and os.path.getsize(VERIFY_SCRIPT) > 1000:
+            logger.info("Verify script extracted from ZIP!")
+            return True
+    except Exception as e:
+        logger.error(f"ZIP extraction failed: {e}")
+    
+    logger.warning("ALL methods failed to get verify script!")
+    return False
 
 def run_verify_script(choice, value):
-    """Run verify script with proper error handling"""
+    """Run verify script"""
     if not os.path.exists(VERIFY_SCRIPT):
-        if not setup_verify_script():
-            return None
+        logger.error("Verify script not found!")
+        return None
     
     try:
         process = subprocess.Popen(
             [sys.executable, VERIFY_SCRIPT],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE, text=True
         )
         input_data = f"{choice}\n{value}\n0\n"
         output, error = process.communicate(input_data, timeout=30)
         
-        if error and not output:
-            logger.error(f"Script error: {error}")
-            return None
+        if process.returncode != 0 and error:
+            logger.error(f"Script stderr: {error}")
         
-        return output if output else error
+        if output:
+            return output
+        return None
     except subprocess.TimeoutExpired:
         process.kill()
+        logger.error("Script timeout")
         return None
     except Exception as e:
-        logger.error(f"Script run error: {e}")
+        logger.error(f"Script error: {e}")
         return None
 
 def clean_text(text):
@@ -232,11 +302,7 @@ async def show_verification_page(update, context):
             f"<b>╰━━━━━━━━━━━━━━━━━━╯</b>\n\n"
             f"<b>🔒 ᴀᴄᴄᴇꜱꜱ ʀᴇQᴜɪʀᴇᴅ</b>\n"
             f"<b>ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛᴏ ᴜɴʟᴏᴄᴋ</b>\n\n"
-            f"<b>🎁 ʙᴇɴᴇꜰɪᴛꜱ:</b>\n"
-            f"<b>• +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ ꜰʀᴇᴇ ᴄʀᴇᴅɪᴛꜱ</b>\n"
-            f"<b>• +{INVITE_CREDITS} ᴄʀᴇᴅɪᴛꜱ ᴘᴇʀ ɪɴᴠɪᴛᴇ</b>\n"
-            f"<b>• {AUTO_DELETE_TIME}ꜱ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ</b>\n\n"
-            f"<b>🛠️ ᴛᴏᴏʟꜱ:</b>\n"
+            f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ | ⏱ {AUTO_DELETE_TIME}ꜱ</b>\n\n"
             f"<b>📱 ᴛɢ ɪᴅ → ɴᴜᴍʙᴇʀ</b>\n"
             f"<b>🏦 ɪꜰꜱᴄ ʙᴀɴᴋ ɪɴꜰᴏ</b>\n"
             f"<b>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</b>\n"
@@ -304,14 +370,14 @@ async def chatid_lookup(session, query):
     if not data: return "<blockquote>❌ Service unavailable</blockquote>"
     if isinstance(data, dict) and data.get("success"):
         d = data.get("data", {})
-        return f"<blockquote expandable>✨ 📱 ᴛɢ ɪᴅ ᴛᴏ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>🆔 Chat ID: <code>{d.get('chat_id','N/A')}</code></blockquote>\n<blockquote>📞 Number: <code>{d.get('number','N/A')}</code></blockquote>\n<blockquote>🌍 Country: <code>{d.get('country','N/A')}</code></blockquote>"
+        return f"<blockquote expandable>✨ 📱 ᴛɢ ɪᴅ ᴛᴏ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>🆔: <code>{d.get('chat_id','N/A')}</code></blockquote>\n<blockquote>📞: <code>{d.get('number','N/A')}</code></blockquote>\n<blockquote>🌍: <code>{d.get('country','N/A')}</code></blockquote>"
     return "<blockquote>❌ Not found</blockquote>"
 
 async def ifsc_lookup(session, code):
     data = await api_fetch(session, f"{IFSC_API}{code.upper()}")
     if not data: return "<blockquote>❌ Service unavailable</blockquote>"
     if isinstance(data, dict):
-        return f"<blockquote expandable>✨ 🏦 ɪꜰꜱᴄ ɪɴꜰᴏ</blockquote>\n<blockquote>🏛 Bank: <code>{data.get('BANK','N/A')}</code></blockquote>\n<blockquote>📍 Branch: <code>{data.get('BRANCH','N/A')}</code></blockquote>\n<blockquote>🔑 IFSC: <code>{data.get('IFSC',code.upper())}</code></blockquote>\n<blockquote>📫 Address: <code>{data.get('ADDRESS','N/A')}</code></blockquote>"
+        return f"<blockquote expandable>✨ 🏦 ɪꜰꜱᴄ</blockquote>\n<blockquote>🏛: <code>{data.get('BANK','N/A')}</code></blockquote>\n<blockquote>📍: <code>{data.get('BRANCH','N/A')}</code></blockquote>\n<blockquote>🔑: <code>{data.get('IFSC',code.upper())}</code></blockquote>\n<blockquote>📫: <code>{data.get('ADDRESS','N/A')}</code></blockquote>"
     return "<blockquote>❌ Invalid</blockquote>"
 
 async def bypass_lookup(session, link):
@@ -357,8 +423,8 @@ def parse_all_records(raw):
 
 def format_aadhaar_result(raw):
     recs = parse_all_records(raw)
-    if not recs: return None  # Return None instead of error message
-    r = f"<blockquote expandable>✨ 🆔 ᴀᴀᴅʜᴀᴀʀ ᴛᴏ ꜰᴀᴍɪʟʏ</blockquote>\n<blockquote>📊 Records: {len(recs)}</blockquote>\n"
+    if not recs: return None
+    r = f"<blockquote expandable>✨ 🆔 ᴀᴀᴅʜᴀᴀʀ</blockquote>\n<blockquote>📊 Records: {len(recs)}</blockquote>\n"
     for i, rec in enumerate(recs, 1):
         if len(recs) > 1: r += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
         for k in ['👤 Name','👨 Father','👩 Mother','📱 Mobile','📞 Alternative','📍 Address','📧 Email','📡 Circle']:
@@ -392,7 +458,7 @@ def format_rc_result(data):
         if k in data: r += f"<blockquote>{k}: <code>{data[k]}</code></blockquote>\n"
     return r
 
-# --- 👑 ADMIN (simplified) ---
+# --- 👑 ADMIN ---
 
 async def admin_panel(update, context):
     if update.effective_user.id != ADMIN_ID: return
@@ -567,30 +633,37 @@ async def run_query(update, context, mode, query):
     
     try:
         if mode in ['AADHAAR','MOBILE','VEHICLE_INDIA']:
-            cm = {'AADHAAR':'2','MOBILE':'1','VEHICLE_INDIA':'4'}
-            raw = run_verify_script(cm[mode], query)
+            # Check if script exists, if not try to download
+            if not os.path.exists(VERIFY_SCRIPT):
+                setup_verify_script()
             
-            if raw is None:
-                result = "<blockquote>❌ Script not available. Contact admin.</blockquote>"
+            if not os.path.exists(VERIFY_SCRIPT):
+                result = "<blockquote>❌ Service temporarily unavailable. Please try again later.</blockquote>"
             else:
-                if mode == 'VEHICLE_INDIA':
-                    data = parse_rc_details(raw)
-                    result = format_rc_result(data)
-                elif mode == 'MOBILE':
-                    result = format_mobile_result(raw)
-                elif mode == 'AADHAAR':
-                    result = format_aadhaar_result(raw)
-                else:
-                    result = None
+                cm = {'AADHAAR':'2','MOBILE':'1','VEHICLE_INDIA':'4'}
+                raw = run_verify_script(cm[mode], query)
                 
-                if not result:
-                    result = "<blockquote>❌ No records found</blockquote>"
-                    lt.cancel()
-                    try: await lt
-                    except asyncio.CancelledError: pass
-                    final = f"{result}\n{SEP}\n<blockquote>💰 No credit deducted</blockquote>{FOOTER}"
-                    sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
-                    asyncio.create_task(auto_del(sent)); return
+                if raw is None:
+                    result = "<blockquote>❌ No response from server. Try again.</blockquote>"
+                else:
+                    if mode == 'VEHICLE_INDIA':
+                        data = parse_rc_details(raw)
+                        result = format_rc_result(data)
+                    elif mode == 'MOBILE':
+                        result = format_mobile_result(raw)
+                    elif mode == 'AADHAAR':
+                        result = format_aadhaar_result(raw)
+                    else:
+                        result = None
+                    
+                    if not result:
+                        result = "<blockquote>❌ No records found</blockquote>"
+                        lt.cancel()
+                        try: await lt
+                        except asyncio.CancelledError: pass
+                        final = f"{result}\n{SEP}\n<blockquote>💰 No credit deducted</blockquote>{FOOTER}"
+                        sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
+                        asyncio.create_task(auto_del(sent)); return
         else:
             async with aiohttp.ClientSession() as s:
                 if mode == 'TG': result = await chatid_lookup(s, query)
@@ -613,10 +686,12 @@ async def run_query(update, context, mode, query):
         except: pass
 
 def main():
-    print("🔄 Setting up...")
+    print("🔄 Setting up Hex Terminal...")
     
-    # Download verify script on startup
-    setup_verify_script()
+    # Download verify script on startup with multiple methods
+    if not setup_verify_script():
+        print("⚠️ Warning: Could not download verify script. India lookup features may not work.")
+        print("   The bot will still work for TG ID, IFSC, and Bypass.")
     
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
@@ -624,6 +699,9 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     print(f"✅ {BOT_NAME} Ready!")
+    print("📱 TG ID | 🏦 IFSC | 🔗 Bypass")
+    if os.path.exists(VERIFY_SCRIPT):
+        print("📞 Mobile | 🆔 Aadhaar | 🚘 RC")
     app.run_polling()
 
 if __name__ == '__main__':
