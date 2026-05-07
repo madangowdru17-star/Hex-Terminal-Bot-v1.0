@@ -308,64 +308,95 @@ async def bypass_lookup(session, link):
     return f"<blockquote>🔗 <code>{str(data)}</code></blockquote>"
 
 async def gst_lookup(session, gst_number):
-    """GST Number Lookup"""
-    data = await api_fetch(session, f"{GST_API}{gst_number.upper()}", timeout=15)
-    if not data: return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
-    
-    if isinstance(data, dict):
-        # Check for error
-        if data.get("error"):
-            return f"<blockquote>❌ {data.get('error', 'Invalid GST number')}</blockquote>"
-        
-        result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ</blockquote>\n"
-        
-        # Business details
-        if data.get('tradeName') or data.get('legalName'):
-            result += f"<blockquote>🏢 ᴛʀᴀᴅᴇ ɴᴀᴍᴇ: <code>{data.get('tradeName', data.get('legalName', 'N/A'))}</code></blockquote>\n"
-        if data.get('legalName') and data.get('tradeName') and data['legalName'] != data['tradeName']:
-            result += f"<blockquote>📋 ʟᴇɢᴀʟ ɴᴀᴍᴇ: <code>{data['legalName']}</code></blockquote>\n"
-        
-        # GST specific
-        if data.get('gstNumber') or data.get('gstin'):
-            result += f"<blockquote>🔑 ɢꜱᴛ ɴᴜᴍʙᴇʀ: <code>{data.get('gstNumber', data.get('gstin', gst_number.upper()))}</code></blockquote>\n"
-        
-        # Status
-        if data.get('status'):
-            status_emoji = "🟢" if 'active' in str(data.get('status','')).lower() else "🔴"
-            result += f"<blockquote>{status_emoji} ꜱᴛᴀᴛᴜꜱ: <code>{data['status']}</code></blockquote>\n"
-        
-        # Registration date
-        if data.get('registrationDate'):
-            result += f"<blockquote>📅 ʀᴇɢ ᴅᴀᴛᴇ: <code>{data['registrationDate']}</code></blockquote>\n"
-        
-        # Taxpayer type
-        if data.get('taxpayerType') or data.get('type'):
-            result += f"<blockquote>👤 ᴛᴀxᴘᴀʏᴇʀ ᴛʏᴘᴇ: <code>{data.get('taxpayerType', data.get('type', 'N/A'))}</code></blockquote>\n"
-        
-        # State
-        if data.get('state') or data.get('stateName'):
-            result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ: <code>{data.get('state', data.get('stateName', 'N/A'))}</code></blockquote>\n"
-        
-        # Address
-        if data.get('address') or data.get('principalPlaceOfBusiness'):
-            addr = data.get('address', data.get('principalPlaceOfBusiness', ''))
-            if isinstance(addr, dict):
-                addr_parts = []
-                if addr.get('address'): addr_parts.append(addr['address'])
-                if addr.get('city'): addr_parts.append(addr['city'])
-                if addr.get('state'): addr_parts.append(addr['state'])
-                if addr.get('pincode'): addr_parts.append(addr['pincode'])
-                addr = ', '.join(addr_parts)
-            if addr:
-                result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{str(addr)[:200]}</code></blockquote>\n"
-        
-        # Nature of business
-        if data.get('natureOfBusinessActivity') or data.get('businessType'):
-            result += f"<blockquote>🏭 ʙᴜꜱɪɴᴇꜱꜱ: <code>{data.get('natureOfBusinessActivity', data.get('businessType', 'N/A'))}</code></blockquote>\n"
-        
-        return result
-    
-    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>"
+    """GST Number Lookup - FIXED"""
+    try:
+        async with session.get(f"{GST_API}{gst_number.upper()}", timeout=aiohttp.ClientTimeout(total=15)) as r:
+            text = await r.text()
+            
+            # Check if response is HTML (error)
+            if not text or text.startswith('<!') or text.startswith('<html'):
+                # Try alternative parsing from HTML
+                if 'Trade Name' in text or 'Legal Name' in text:
+                    result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ</blockquote>\n"
+                    
+                    # Parse HTML fields
+                    trade = re.search(r'Trade Name[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    legal = re.search(r'Legal Name[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    gstin = re.search(r'GST(?:IN| Number)?[:\s]*([A-Z0-9]+)', text, re.IGNORECASE)
+                    status = re.search(r'Status[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    reg_date = re.search(r'Registration Date[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    taxpayer = re.search(r'Taxpayer Type[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    state = re.search(r'State[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    address = re.search(r'Address[:\s]*([^<\n]+)', text, re.IGNORECASE)
+                    
+                    if trade: result += f"<blockquote>🏢 ᴛʀᴀᴅᴇ ɴᴀᴍᴇ: <code>{trade.group(1).strip()}</code></blockquote>\n"
+                    if legal and legal.group(1).strip() != (trade.group(1).strip() if trade else ''): 
+                        result += f"<blockquote>📋 ʟᴇɢᴀʟ ɴᴀᴍᴇ: <code>{legal.group(1).strip()}</code></blockquote>\n"
+                    if gstin: result += f"<blockquote>🔑 ɢꜱᴛ ɴᴜᴍʙᴇʀ: <code>{gstin.group(1).strip()}</code></blockquote>\n"
+                    if status: 
+                        status_emoji = "🟢" if 'active' in status.group(1).lower() else "🔴"
+                        result += f"<blockquote>{status_emoji} ꜱᴛᴀᴛᴜꜱ: <code>{status.group(1).strip()}</code></blockquote>\n"
+                    if reg_date: result += f"<blockquote>📅 ʀᴇɢ ᴅᴀᴛᴇ: <code>{reg_date.group(1).strip()}</code></blockquote>\n"
+                    if taxpayer: result += f"<blockquote>👤 ᴛᴀxᴘᴀʏᴇʀ: <code>{taxpayer.group(1).strip()}</code></blockquote>\n"
+                    if state: result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ: <code>{state.group(1).strip()}</code></blockquote>\n"
+                    if address: result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{address.group(1).strip()[:200]}</code></blockquote>\n"
+                    
+                    if trade or gstin: return result
+                
+                # Check for plain text response
+                if 'error' in text.lower() or 'invalid' in text.lower() or 'not found' in text.lower():
+                    return f"<blockquote>❌ ɪɴᴠᴀʟɪᴅ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>"
+                
+                return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ - ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ</blockquote>"
+            
+            # Try JSON parsing
+            try:
+                data = json.loads(text)
+            except json.JSONDecodeError:
+                return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ - ɪɴᴠᴀʟɪᴅ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
+            
+            if isinstance(data, dict):
+                if data.get("error"):
+                    return f"<blockquote>❌ {data.get('error', 'Invalid GST number')}</blockquote>"
+                
+                result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ</blockquote>\n"
+                
+                if data.get('tradeName') or data.get('legalName'):
+                    result += f"<blockquote>🏢 ᴛʀᴀᴅᴇ ɴᴀᴍᴇ: <code>{data.get('tradeName', data.get('legalName', 'N/A'))}</code></blockquote>\n"
+                if data.get('legalName') and data.get('tradeName') and data['legalName'] != data['tradeName']:
+                    result += f"<blockquote>📋 ʟᴇɢᴀʟ ɴᴀᴍᴇ: <code>{data['legalName']}</code></blockquote>\n"
+                if data.get('gstNumber') or data.get('gstin'):
+                    result += f"<blockquote>🔑 ɢꜱᴛ ɴᴜᴍʙᴇʀ: <code>{data.get('gstNumber', data.get('gstin', gst_number.upper()))}</code></blockquote>\n"
+                if data.get('status'):
+                    status_emoji = "🟢" if 'active' in str(data.get('status','')).lower() else "🔴"
+                    result += f"<blockquote>{status_emoji} ꜱᴛᴀᴛᴜꜱ: <code>{data['status']}</code></blockquote>\n"
+                if data.get('registrationDate'):
+                    result += f"<blockquote>📅 ʀᴇɢ ᴅᴀᴛᴇ: <code>{data['registrationDate']}</code></blockquote>\n"
+                if data.get('taxpayerType') or data.get('type'):
+                    result += f"<blockquote>👤 ᴛᴀxᴘᴀʏᴇʀ: <code>{data.get('taxpayerType', data.get('type', 'N/A'))}</code></blockquote>\n"
+                if data.get('state') or data.get('stateName'):
+                    result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ: <code>{data.get('state', data.get('stateName', 'N/A'))}</code></blockquote>\n"
+                if data.get('address') or data.get('principalPlaceOfBusiness'):
+                    addr = data.get('address', data.get('principalPlaceOfBusiness', ''))
+                    if isinstance(addr, dict):
+                        addr_parts = []
+                        if addr.get('address'): addr_parts.append(addr['address'])
+                        if addr.get('city'): addr_parts.append(addr['city'])
+                        if addr.get('state'): addr_parts.append(addr['state'])
+                        if addr.get('pincode'): addr_parts.append(addr['pincode'])
+                        addr = ', '.join(addr_parts)
+                    if addr:
+                        result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{str(addr)[:200]}</code></blockquote>\n"
+                
+                return result
+            
+            return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>"
+            
+    except asyncio.TimeoutError:
+        return "<blockquote>❌ ʀᴇQᴜᴇꜱᴛ ᴛɪᴍᴇᴏᴜᴛ - ᴛʀʏ ᴀɢᴀɪɴ</blockquote>"
+    except Exception as e:
+        logger.error(f"GST lookup error: {e}")
+        return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ - ᴛʀʏ ʟᴀᴛᴇʀ</blockquote>"
 
 # --- 📊 INDIA DATA PARSING ---
 
