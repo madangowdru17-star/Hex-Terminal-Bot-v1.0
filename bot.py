@@ -168,7 +168,6 @@ async def show_verification_page(update, context):
             f"<b>ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛᴏ ᴜɴʟᴏᴄᴋ</b>\n\n"
             f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ</b>\n"
             f"<b>⏱ {AUTO_DELETE_TIME}ꜱ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ</b>\n\n"
-            f"<b>🛠️ ᴛᴏᴏʟꜱ: ᴛɢ ɪᴅ | ɪꜰꜱᴄ | ʙʏᴘᴀꜱꜱ | ᴍᴏʙɪʟᴇ | ᴀᴀᴅʜᴀᴀʀ | ʀᴄ | ɢꜱᴛ | ᴘᴀᴋ ɴᴜᴍ</b>\n\n"
             f"<b>👑 @Hexh4ckerOFC</b>"
         )
         if photos and photos.photos: 
@@ -243,10 +242,8 @@ async def api_fetch(session, url, timeout=15):
             text = await r.text()
             if not text: return None
             try: return json.loads(text)
-            except: return {"raw": text}
-    except Exception as e:
-        logger.error(f"API fetch error for {url[:50]}: {e}")
-        return None
+            except: return None
+    except: return None
 
 async def chatid_lookup(session, query):
     data = await api_fetch(session, f"{LOOKUP_API}{query}")
@@ -258,8 +255,6 @@ async def chatid_lookup(session, query):
         if d.get('number'): result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{d['number']}</code></blockquote>\n"
         if d.get('country'): result += f"<blockquote>🌍 ᴄᴏᴜɴᴛʀʏ: <code>{d['country']}</code></blockquote>\n"
         if d.get('country_code'): result += f"<blockquote>📋 ᴄᴏᴅᴇ: <code>{d['country_code']}</code></blockquote>\n"
-        result += f"\n<blockquote>📡 ᴀᴘɪ: <code>@Hexh4ckerOFC</code></blockquote>\n"
-        result += f"<blockquote>✅ ꜱᴛᴀᴛᴜꜱ: <code>{d.get('message', 'Details fetched')}</code></blockquote>"
         return result
     return "<blockquote>❌ ɴᴏᴛ ꜰᴏᴜɴᴅ</blockquote>"
 
@@ -288,7 +283,6 @@ async def gst_lookup(session, gst_number):
     data = await api_fetch(session, f"{GST_API}{gst_number.upper()}", timeout=20)
     if not data: return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     if isinstance(data, dict):
-        if data.get("raw"): return f"<blockquote>📋 ɢꜱᴛ ʀᴇꜱᴘᴏɴꜱᴇ:</blockquote>\n<blockquote><code>{str(data['raw'])[:300]}</code></blockquote>"
         if data.get("error"): return f"<blockquote>❌ {data.get('error', 'Invalid GST')}</blockquote>"
         d = data.get('data', data)
         if not isinstance(d, dict): d = data
@@ -323,79 +317,71 @@ async def gst_lookup(session, gst_number):
     return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
 
 async def pakistan_lookup(session, number):
-    """FIXED: Pakistan Number Info Lookup"""
+    """FIXED: Pakistan Number Info - Only show real person data"""
     try:
         url = f"{PAK_API}{number}"
-        logger.info(f"PAK API URL: {url}")
         
         async with session.get(url, timeout=aiohttp.ClientTimeout(total=20)) as r:
             text = await r.text()
-            logger.info(f"PAK API Response ({len(text)} chars): {text[:300]}")
             
             if not text:
-                return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ - ᴇᴍᴘᴛʏ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
+                return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
             
-            # Try to parse JSON
             try:
                 data = json.loads(text)
-            except json.JSONDecodeError:
-                # Maybe HTML response
-                if '<html' in text.lower() or '<!doctype' in text.lower():
-                    return "<blockquote>❌ ᴀᴘɪ ɪꜱ ᴄᴜʀʀᴇɴᴛʟʏ ᴅᴏᴡɴ</blockquote>\n<blockquote>ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ</blockquote>"
-                return f"<blockquote>📋 ʀᴀᴡ ʀᴇꜱᴘᴏɴꜱᴇ:</blockquote>\n<blockquote><code>{text[:300]}</code></blockquote>"
+            except:
+                return "<blockquote>❌ ᴀᴘɪ ᴇʀʀᴏʀ - ᴛʀʏ ᴀɢᴀɪɴ</blockquote>"
             
             if not isinstance(data, dict):
-                return f"<blockquote>📋 ʀᴇꜱᴘᴏɴꜱᴇ:</blockquote>\n<blockquote><code>{str(data)[:300]}</code></blockquote>"
+                return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
             
-            if data.get("success"):
+            # ONLY process if success is true AND data exists
+            if data.get("success") and data.get("data"):
                 records = data.get("data", [])
                 
-                if not records:
-                    return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ ꜰᴏʀ ᴛʜɪꜱ ɴᴜᴍʙᴇʀ</blockquote>"
+                # FILTER: Only keep records that have actual person data (name, number, cnic, or address)
+                valid_records = []
+                for rec in records:
+                    if isinstance(rec, dict):
+                        # Check if this record has actual person info
+                        has_person_data = False
+                        for key in ['name', 'Name', 'number', 'Number', 'cnic', 'CNIC', 'address', 'Address']:
+                            if rec.get(key) and str(rec.get(key)).strip():
+                                has_person_data = True
+                                break
+                        if has_person_data:
+                            valid_records.append(rec)
+                
+                if not valid_records:
+                    return "<blockquote>❌ ɴᴏ ᴘᴇʀꜱᴏɴ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ ꜰᴏʀ ᴛʜɪꜱ ɴᴜᴍʙᴇʀ</blockquote>"
                 
                 result = f"<blockquote expandable>✨ 🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n"
-                result += f"<blockquote>📊 ᴛᴏᴛᴀʟ ʀᴇᴄᴏʀᴅꜱ: {len(records)}</blockquote>\n"
                 
-                for i, record in enumerate(records, 1):
-                    if len(records) > 1:
+                if len(valid_records) > 1:
+                    result += f"<blockquote>📊 ᴛᴏᴛᴀʟ ʀᴇᴄᴏʀᴅꜱ: {len(valid_records)}</blockquote>\n"
+                
+                for i, record in enumerate(valid_records, 1):
+                    if len(valid_records) > 1:
                         result += f"\n<blockquote>━━━ ʀᴇᴄᴏʀᴅ {i} ━━━</blockquote>\n"
                     
-                    if isinstance(record, dict):
-                        if record.get('number'):
-                            result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{record['number']}</code></blockquote>\n"
-                        if record.get('name'):
-                            result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{record['name']}</code></blockquote>\n"
-                        if record.get('cnic'):
-                            result += f"<blockquote>🪪 ᴄɴɪᴄ: <code>{record['cnic']}</code></blockquote>\n"
-                        if record.get('address'):
-                            result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{record['address']}</code></blockquote>\n"
-                    else:
-                        result += f"<blockquote>📋 <code>{str(record)}</code></blockquote>\n"
-                
-                if data.get('Credit'):
-                    result += f"\n<blockquote>📡 ᴄʀᴇᴅɪᴛ: <code>{data['Credit']}</code></blockquote>\n"
+                    if record.get('number'):
+                        result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{record['number']}</code></blockquote>\n"
+                    if record.get('name'):
+                        result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{record['name']}</code></blockquote>\n"
+                    if record.get('cnic'):
+                        result += f"<blockquote>🪪 ᴄɴɪᴄ: <code>{record['cnic']}</code></blockquote>\n"
+                    if record.get('address'):
+                        result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{record['address']}</code></blockquote>\n"
                 
                 return result
             
-            # If success is false or missing
-            if data.get("error"):
-                return f"<blockquote>❌ {data.get('error', 'Unknown error')}</blockquote>"
-            
-            # Show whatever data we got
-            result = "<blockquote expandable>✨ 🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n"
-            for k, v in list(data.items())[:10]:
-                result += f"<blockquote>🔹 {k}: <code>{str(v)[:200]}</code></blockquote>\n"
-            return result
+            return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ ꜰᴏʀ ᴛʜɪꜱ ɴᴜᴍʙᴇʀ</blockquote>"
             
     except asyncio.TimeoutError:
-        logger.error("PAK API timeout")
         return "<blockquote>⏱ ᴀᴘɪ ᴛɪᴍᴇᴏᴜᴛ - ᴛʀʏ ᴀɢᴀɪɴ</blockquote>"
-    except aiohttp.ClientError as e:
-        logger.error(f"PAK API connection error: {e}")
-        return "<blockquote>❌ ᴄᴏɴɴᴇᴄᴛɪᴏɴ ᴇʀʀᴏʀ</blockquote>\n<blockquote>ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ</blockquote>"
     except Exception as e:
-        logger.error(f"PAK lookup error: {e}")
-        return f"<blockquote>⚠️ ᴇʀʀᴏʀ: {str(e)[:100]}</blockquote>"
+        logger.error(f"PAK error: {e}")
+        return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴇʀʀᴏʀ</blockquote>"
 
 # --- 📊 INDIA DATA PARSING ---
 
@@ -484,7 +470,7 @@ async def admin_panel(update, context):
         [InlineKeyboardButton("🎫 ɢᴇɴᴇʀᴀᴛᴇ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", callback_data="ad_gen")],
         [InlineKeyboardButton("📋 ᴠɪᴇᴡ ᴄᴏᴅᴇꜱ | 👥 ᴠɪᴇᴡ ᴜꜱᴇʀꜱ", callback_data="ad_codes")],
         [InlineKeyboardButton("🎁 ᴀᴅᴅ ᴄʀᴇᴅɪᴛꜱ ᴛᴏ ᴜꜱᴇʀ", callback_data="ad_credit")],
-        [InlineKeyboardButton("📢 ʙʀᴏᴀᴅᴄᴀꜱᴛ ᴛᴏ ᴀʟʟ ᴜꜱᴇʀꜱ", callback_data="ad_bcast")],
+        [InlineKeyboardButton("📢 ʙʀᴏᴀᴅᴄᴀꜱᴛ ᴛᴏ ᴀʟʟ", callback_data="ad_bcast")],
         [InlineKeyboardButton(f"{maint_status} ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ ᴍᴏᴅᴇ", callback_data="ad_maint")],
         [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ ɪᴅ", callback_data="ad_tgid"), InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰꜱᴄ", callback_data="ad_ifsc")],
         [InlineKeyboardButton(f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏᴘᴀꜱꜱ", callback_data="ad_bypass_toggle"), InlineKeyboardButton(f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏʙɪʟᴇ", callback_data="ad_mobile")],
@@ -493,7 +479,7 @@ async def admin_panel(update, context):
         [InlineKeyboardButton("🛠️ ʙʏᴘᴀꜱꜱ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ", callback_data="ad_bypass_maint")],
         [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ ᴘᴀɴᴇʟ", callback_data="ad_close")]
     ]
-    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | 🎫 ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}</blockquote>\n<blockquote>{maint_status} ᴍᴀɪɴᴛ: {'ON' if s.get('maintenance_mode') else 'OFF'}</blockquote>"
+    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | 🎫 ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}</blockquote>"
     if update.callback_query: await update.callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
     else: await update.message.reply_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
@@ -506,12 +492,11 @@ async def admin_callback(update, context):
         codes = load_json(REDEEM_FILE); txt = f"<blockquote>🎫 {len(codes)} ᴄᴏᴅᴇꜱ</blockquote>\n"
         for c, v in list(codes.items())[-15:]: txt += f"<blockquote>{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr</blockquote>\n"
         await q.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-    elif d == "ad_gen": ADMIN_STATE[q.from_user.id] = "gen"; await q.message.edit_text("<blockquote>🎫 ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:</blockquote>\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+    elif d == "ad_gen": ADMIN_STATE[q.from_user.id] = "gen"; await q.message.edit_text("<blockquote>🎫 ᴄʀᴇᴅɪᴛꜱ:</blockquote>\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_credit": ADMIN_STATE[q.from_user.id] = "credit"; await q.message.edit_text("<blockquote>🎁 ɪᴅ ᴀᴍᴏᴜɴᴛ:</blockquote>\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_bcast": ADMIN_STATE[q.from_user.id] = "bcast"; await q.message.edit_text("<blockquote>📢 ᴍᴇꜱꜱᴀɢᴇ:</blockquote>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_maint":
         s["maintenance_mode"] = not s.get("maintenance_mode", False)
-        if s["maintenance_mode"]: s["maintenance_msg"] = "🛠️ ʙᴏᴛ ɪꜱ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ."
         save_settings(s)
         await q.answer(f"Maintenance: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True)
         await admin_panel(update, context)
