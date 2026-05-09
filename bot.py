@@ -18,7 +18,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8687617595:AAGCa0yJTRM52NLItvLkzt7O1mZEkCaNkn4')
 ADMIN_ID = int(os.environ.get('ADMIN_ID', '7898928200'))
 
-CHANNEL_1_ID = int(os.environ.get('CHANNEL_1_ID', '-1001234567890'))
+CHANNEL_1_ID = int(os.environ.get('CHANNEL_1_ID', '-1003240507339'))
 CHANNEL_2_ID = int(os.environ.get('CHANNEL_2_ID', '-1003806004135'))
 
 LINK_1 = os.environ.get('LINK_1', 'https://t.me/+dP7xLb3AoE1jNmRl')
