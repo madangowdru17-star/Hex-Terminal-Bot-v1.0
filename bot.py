@@ -138,12 +138,15 @@ async def net_ok():
     except: return False
 
 async def auto_del(msg, delay=AUTO_DELETE_TIME):
+    """Delete ALL messages EXCEPT /start main menu"""
     await asyncio.sleep(delay)
     try:
-        if msg.message_id not in MAIN_MENU_MESSAGE_IDS: await msg.delete()
+        if msg.message_id not in MAIN_MENU_MESSAGE_IDS:
+            await msg.delete()
     except: pass
 
 async def delete_user_msg(msg, delay=AUTO_DELETE_TIME):
+    """Delete user's message"""
     await asyncio.sleep(delay)
     try: await msg.delete()
     except: pass
@@ -226,12 +229,13 @@ async def main_menu(update, context):
         f"<b>🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ  │  🚘 ʀᴄ ᴠᴇʜɪᴄʟᴇ</b>\n"
         f"<b>📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ  │  🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ</b>\n\n"
         f"<b>🔄 ᴅᴀɪʟʏ +{DAILY_FREE_CREDITS} ᴄʀ  │  👥 ɪɴᴠɪᴛᴇ +{INVITE_CREDITS} ᴄʀ</b>\n"
-        f"<b>⏱ ᴀʟʟ ᴍꜱɢ ᴅᴇʟᴇᴛᴇ ɪɴ {AUTO_DELETE_TIME}ꜱ</b>\n\n"
+        f"<b>⏱ ᴀʟʟ ᴍꜱɢ ᴅᴇʟᴇᴛᴇ ɪɴ {AUTO_DELETE_TIME}ꜱ (ᴇxᴄᴇᴘᴛ /ꜱᴛᴀʀᴛ)</b>\n\n"
         f"<b>👑 ᴏᴡɴᴇʀ: @Hexh4ckerOFC</b>"
     )
     
     msg = await update.message.reply_text(txt, reply_markup=markup, parse_mode=ParseMode.HTML)
     MAIN_MENU_MESSAGE_IDS.add(msg.message_id)
+    # MAIN MENU NEVER DELETES
 
 # --- 🔗 API ---
 
@@ -317,71 +321,36 @@ async def gst_lookup(session, gst_number):
     return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
 
 async def pakistan_lookup(session, number):
-    """FIXED: Pakistan Number Info - Only show real person data"""
+    """Pakistan Number Info - Only show real person data"""
     try:
         url = f"{PAK_API}{number}"
-        
         async with session.get(url, timeout=aiohttp.ClientTimeout(total=20)) as r:
             text = await r.text()
-            
-            if not text:
-                return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
-            
-            try:
-                data = json.loads(text)
-            except:
-                return "<blockquote>❌ ᴀᴘɪ ᴇʀʀᴏʀ - ᴛʀʏ ᴀɢᴀɪɴ</blockquote>"
-            
-            if not isinstance(data, dict):
-                return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
-            
-            # ONLY process if success is true AND data exists
+            if not text: return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+            try: data = json.loads(text)
+            except: return "<blockquote>❌ ᴀᴘɪ ᴇʀʀᴏʀ</blockquote>"
+            if not isinstance(data, dict): return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
             if data.get("success") and data.get("data"):
                 records = data.get("data", [])
-                
-                # FILTER: Only keep records that have actual person data (name, number, cnic, or address)
                 valid_records = []
                 for rec in records:
                     if isinstance(rec, dict):
-                        # Check if this record has actual person info
-                        has_person_data = False
+                        has_data = False
                         for key in ['name', 'Name', 'number', 'Number', 'cnic', 'CNIC', 'address', 'Address']:
-                            if rec.get(key) and str(rec.get(key)).strip():
-                                has_person_data = True
-                                break
-                        if has_person_data:
-                            valid_records.append(rec)
-                
-                if not valid_records:
-                    return "<blockquote>❌ ɴᴏ ᴘᴇʀꜱᴏɴ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ ꜰᴏʀ ᴛʜɪꜱ ɴᴜᴍʙᴇʀ</blockquote>"
-                
+                            if rec.get(key) and str(rec.get(key)).strip(): has_data = True; break
+                        if has_data: valid_records.append(rec)
+                if not valid_records: return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
                 result = f"<blockquote expandable>✨ 🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n"
-                
-                if len(valid_records) > 1:
-                    result += f"<blockquote>📊 ᴛᴏᴛᴀʟ ʀᴇᴄᴏʀᴅꜱ: {len(valid_records)}</blockquote>\n"
-                
+                if len(valid_records) > 1: result += f"<blockquote>📊 ʀᴇᴄᴏʀᴅꜱ: {len(valid_records)}</blockquote>\n"
                 for i, record in enumerate(valid_records, 1):
-                    if len(valid_records) > 1:
-                        result += f"\n<blockquote>━━━ ʀᴇᴄᴏʀᴅ {i} ━━━</blockquote>\n"
-                    
-                    if record.get('number'):
-                        result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{record['number']}</code></blockquote>\n"
-                    if record.get('name'):
-                        result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{record['name']}</code></blockquote>\n"
-                    if record.get('cnic'):
-                        result += f"<blockquote>🪪 ᴄɴɪᴄ: <code>{record['cnic']}</code></blockquote>\n"
-                    if record.get('address'):
-                        result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{record['address']}</code></blockquote>\n"
-                
+                    if len(valid_records) > 1: result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
+                    if record.get('number'): result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{record['number']}</code></blockquote>\n"
+                    if record.get('name'): result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{record['name']}</code></blockquote>\n"
+                    if record.get('cnic'): result += f"<blockquote>🪪 ᴄɴɪᴄ: <code>{record['cnic']}</code></blockquote>\n"
+                    if record.get('address'): result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{record['address']}</code></blockquote>\n"
                 return result
-            
-            return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ ꜰᴏʀ ᴛʜɪꜱ ɴᴜᴍʙᴇʀ</blockquote>"
-            
-    except asyncio.TimeoutError:
-        return "<blockquote>⏱ ᴀᴘɪ ᴛɪᴍᴇᴏᴜᴛ - ᴛʀʏ ᴀɢᴀɪɴ</blockquote>"
-    except Exception as e:
-        logger.error(f"PAK error: {e}")
-        return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴇʀʀᴏʀ</blockquote>"
+            return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
+    except: return "<blockquote>❌ ᴇʀʀᴏʀ</blockquote>"
 
 # --- 📊 INDIA DATA PARSING ---
 
@@ -540,6 +509,7 @@ async def verify_cb(update, context):
 async def msg_handler(update, context):
     try:
         uid = update.effective_user.id; txt = update.message.text.strip()
+        # DELETE USER MESSAGE AFTER 60s
         asyncio.create_task(delete_user_msg(update.message, AUTO_DELETE_TIME))
         
         s = get_settings()
@@ -578,60 +548,122 @@ async def msg_handler(update, context):
             if not s.get("tgid_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'TG'
             btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
-            m = await update.message.reply_text("<blockquote>📱 ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>1️⃣ @ChatIdInfoBot 2️⃣ Select user 3️⃣ Get ID 4️⃣ Enter here</blockquote>\n<i>7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>📱 ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ ʟᴏᴏᴋᴜᴘ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴏᴘᴇɴ @ChatIdInfoBot</blockquote>\n"
+                "<blockquote>2️⃣ ꜱᴇʟᴇᴄᴛ ᴛᴀʀɢᴇᴛ ᴜꜱᴇʀ</blockquote>\n"
+                "<blockquote>3️⃣ ᴄᴏᴘʏ ᴛʜᴇɪʀ ᴄʜᴀᴛ ɪᴅ</blockquote>\n"
+                "<blockquote>4️⃣ ᴘᴀꜱᴛᴇ ɪᴛ ʜᴇʀᴇ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ + ᴄᴏᴜɴᴛʀʏ + ᴄᴏᴅᴇ</blockquote>\n"
+                "<i>Example: 7123181749, 6884112825, 7898928200</i>",
+                reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt in ["🏦 ɪꜰꜱᴄ ɪɴꜰᴏ➜🔎"]:
             if not s.get("ifsc_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'IFSC'
-            m = await update.message.reply_text("<blockquote>🏦 ɪꜰꜱᴄ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>🏦 ɪꜰꜱᴄ ʙᴀɴᴋ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ꜰɪɴᴅ ɪꜰꜱᴄ ᴄᴏᴅᴇ ꜰʀᴏᴍ ᴄʜᴇQᴜᴇ ʙᴏᴏᴋ</blockquote>\n"
+                "<blockquote>2️⃣ ᴇɴᴛᴇʀ ᴛʜᴇ 11-ᴄʜᴀʀ ᴄᴏᴅᴇ ʜᴇʀᴇ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ʙᴀɴᴋ ɴᴀᴍᴇ + ʙʀᴀɴᴄʜ + ᴀᴅᴅʀᴇꜱꜱ</blockquote>\n"
+                "<i>Example: SBIN0001234, HDFC0001234, ICIC0001234</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt in ["🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ"]:
             if not s.get("bypass_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'SHORTLINK'
-            m = await update.message.reply_text("<blockquote>🔗 Bypass</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱᴇʀ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴄᴏᴘʏ ᴀɴʏ ꜱʜᴏʀᴛ ʟɪɴᴋ</blockquote>\n"
+                "<blockquote>2️⃣ ᴘᴀꜱᴛᴇ ɪᴛ ʜᴇʀᴇ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ᴏʀɪɢɪɴᴀʟ ᴜʀʟ</blockquote>\n"
+                "<blockquote>⚠️ ᴡᴏʀᴋꜱ: ɪɴᴅɪᴀɴꜱʜᴏʀᴛɴᴇʀ, ꜱʜᴏʀᴛᴜʀʟ, ʙɪᴛʟʏ</blockquote>\n"
+                "<i>Example: https://indianshortner.in/xxxx</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt == "🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜👤":
             if not s.get("mobile_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'MOBILE'
-            m = await update.message.reply_text("<blockquote>🇮🇳 Mobile</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴇɴᴛᴇʀ 10-ᴅɪɢɪᴛ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ɴᴀᴍᴇ + ᴀᴅᴅʀᴇꜱꜱ + ɴᴇᴛᴡᴏʀᴋ + ꜰᴀᴍɪʟʏ</blockquote>\n"
+                "<i>Example: 9876543210, 8123456789</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt == "🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜👤":
             if not s.get("aadhaar_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'AADHAAR'
-            m = await update.message.reply_text("<blockquote>🪪 Aadhaar</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>🪪 ᴀᴀᴅʜᴀʀ ᴛᴏ ꜰᴀᴍɪʟʏ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴇɴᴛᴇʀ 12-ᴅɪɢɪᴛ ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ɴᴀᴍᴇ + ꜰᴀᴛʜᴇʀ + ᴀᴅᴅʀᴇꜱꜱ + ᴍᴏʙɪʟᴇ</blockquote>\n"
+                "<blockquote>📊 ꜱʜᴏᴡꜱ ᴀʟʟ ʟɪɴᴋᴇᴅ ꜰᴀᴍɪʟʏ ʀᴇᴄᴏʀᴅꜱ</blockquote>\n"
+                "<i>Example: 123456789012</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt == "🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
             if not s.get("rc_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'VEHICLE'
-            m = await update.message.reply_text("<blockquote>🚘 RC</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>🚘 ʀᴄ ᴠᴇʜɪᴄʟᴇ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴇɴᴛᴇʀ ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ᴏᴡɴᴇʀ + ɪɴꜱᴜʀᴀɴᴄᴇ + ᴛᴀx + ꜰᴜʟʟ</blockquote>\n"
+                "<i>Example: KA01AB3256, DL1CX1234, MH01AB1234</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt == "📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
             if not s.get("gst_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'GST'
-            m = await update.message.reply_text("<blockquote>📋 GST</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>📋 ɢꜱᴛ ɴᴜᴍʙᴇʀ ʟᴏᴏᴋᴜᴘ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴇɴᴛᴇʀ 15-ᴅɪɢɪᴛ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ʙᴜꜱɪɴᴇꜱꜱ ɴᴀᴍᴇ + ᴀᴅᴅʀᴇꜱꜱ + ꜱᴛᴀᴛᴜꜱ</blockquote>\n"
+                "<i>Example: 19BOKPS7056D1ZI, 27AABCG1234A1Z5</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt == "🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
             if not s.get("pak_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
             context.user_data['mode'] = 'PAK'
-            m = await update.message.reply_text("<blockquote>🇵🇰 Pakistan Number</blockquote>\n<i>923078750447, 03078750447</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                "<blockquote>🇵🇰 ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ</blockquote>\n"
+                "<blockquote expandable>📋 ʜᴏᴡ ᴛᴏ ᴜꜱᴇ:</blockquote>\n"
+                "<blockquote>1️⃣ ᴇɴᴛᴇʀ ᴘᴀᴋɪꜱᴛᴀɴ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ</blockquote>\n"
+                "<blockquote>💡 ɢᴇᴛꜱ: ɴᴀᴍᴇ + ᴄɴɪᴄ + ᴀᴅᴅʀᴇꜱꜱ + ꜰᴜʟʟ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n"
+                "<i>Example: 923078750447, 03078750447</i>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m))
         
         elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "👥 ɪɴᴠɪᴛᴇ"]:
             user = get_user(uid); bot_username = context.bot.username or BOT_USERNAME
             link = f"https://t.me/{bot_username}?start={user['invite_code']}"
-            m = await update.message.reply_text(f"<blockquote>👥 Invite (+{INVITE_CREDITS}cr)</blockquote>\n<blockquote><code>{link}</code></blockquote>\n<blockquote>👥 {user.get('invites',0)} | 💰 {user.get('credits',0)}</blockquote>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(
+                f"<blockquote>👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ</blockquote>\n"
+                f"<blockquote>🎁 +{INVITE_CREDITS} ᴄʀᴇᴅɪᴛꜱ ᴘᴇʀ ɪɴᴠɪᴛᴇ</blockquote>\n"
+                f"<blockquote>💡 ʙᴏᴛʜ ɢᴇᴛ +{INVITE_CREDITS} ᴄʀᴇᴅɪᴛꜱ</blockquote>\n"
+                f"<blockquote>🔗 ʏᴏᴜʀ ʟɪɴᴋ:</blockquote>\n"
+                f"<blockquote><code>{link}</code></blockquote>\n"
+                f"<blockquote>👥 {user.get('invites',0)} | 💰 {user.get('credits',0)}</blockquote>",
+                parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m, 120))
         
         elif txt in ["🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ"]:
             context.user_data['redeem_mode'] = True
-            m = await update.message.reply_text("<blockquote>🎫 Enter redeem code:</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🎫 ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(auto_del(m, 30))
         
         else:
@@ -732,6 +764,7 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     print(f"✅ {BOT_NAME} Ready!")
+    print("⏱ ALL messages delete in 60s EXCEPT /start")
     app.run_polling()
 
 if __name__ == '__main__':
