@@ -31,7 +31,7 @@ SEP = "━━━━━━━━━━━━━━━━━━━"
 LOOKUP_API = "https://tgchatid.vercel.app/api/lookup?number="
 IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
-GST_API = "https://osint-info.great-site.net/api/gst_lookup.php?gstNumber="
+GST_API = "https://gst-0y-vishal.vercel.app/api/gst.js?gstNumber="
 PAK_API = "https://api-server-virid-two.vercel.app/number="
 
 VERIFY_SCRIPT = "verify_india.py"
@@ -138,15 +138,12 @@ async def net_ok():
     except: return False
 
 async def auto_del(msg, delay=AUTO_DELETE_TIME):
-    """Delete ALL messages EXCEPT /start main menu"""
     await asyncio.sleep(delay)
     try:
-        if msg.message_id not in MAIN_MENU_MESSAGE_IDS:
-            await msg.delete()
+        if msg.message_id not in MAIN_MENU_MESSAGE_IDS: await msg.delete()
     except: pass
 
 async def delete_user_msg(msg, delay=AUTO_DELETE_TIME):
-    """Delete user's message"""
     await asyncio.sleep(delay)
     try: await msg.delete()
     except: pass
@@ -235,7 +232,6 @@ async def main_menu(update, context):
     
     msg = await update.message.reply_text(txt, reply_markup=markup, parse_mode=ParseMode.HTML)
     MAIN_MENU_MESSAGE_IDS.add(msg.message_id)
-    # MAIN MENU NEVER DELETES
 
 # --- 🔗 API ---
 
@@ -284,41 +280,61 @@ async def bypass_lookup(session, link):
     return f"<blockquote>🔗 <code>{str(data)}</code></blockquote>"
 
 async def gst_lookup(session, gst_number):
+    """NEW GST API - gst-0y-vishal.vercel.app"""
     data = await api_fetch(session, f"{GST_API}{gst_number.upper()}", timeout=20)
     if not data: return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+    
     if isinstance(data, dict):
-        if data.get("error"): return f"<blockquote>❌ {data.get('error', 'Invalid GST')}</blockquote>"
-        d = data.get('data', data)
-        if not isinstance(d, dict): d = data
-        result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ</blockquote>\n"
-        found_any = False
-        for field in ['tradeName', 'legalName', 'businessName', 'name', 'lgnm']:
-            if d.get(field): result += f"<blockquote>🏢 ɴᴀᴍᴇ: <code>{d[field]}</code></blockquote>\n"; found_any = True; break
-        for field in ['gstNumber', 'gstin', 'gst_no', 'GSTIN']:
-            if d.get(field): result += f"<blockquote>🔑 ɢꜱᴛ ɴᴏ: <code>{d[field]}</code></blockquote>\n"; found_any = True; break
-        for field in ['status', 'Status', 'sts']:
-            if d.get(field): status = str(d[field]); status_emoji = "🟢" if 'active' in status.lower() else "🔴"; result += f"<blockquote>{status_emoji} ꜱᴛᴀᴛᴜꜱ: <code>{status}</code></blockquote>\n"; found_any = True; break
-        for field in ['registrationDate', 'regDate', 'rgdt']:
-            if d.get(field): result += f"<blockquote>📅 ʀᴇɢ ᴅᴀᴛᴇ: <code>{d[field]}</code></blockquote>\n"; found_any = True; break
-        for field in ['taxpayerType', 'type', 'dty']:
-            if d.get(field): result += f"<blockquote>👤 ᴛʏᴘᴇ: <code>{d[field]}</code></blockquote>\n"; found_any = True; break
-        for field in ['state', 'stateName', 'pradr']:
-            if d.get(field):
-                val = d[field]
-                if isinstance(val, dict): val = val.get('stateName', str(val))
-                result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ: <code>{val}</code></blockquote>\n"; found_any = True; break
-        for field in ['address', 'principalPlaceOfBusiness', 'pradr']:
-            if d.get(field):
-                addr = d[field]
-                if isinstance(addr, dict):
-                    parts = []
-                    for k in ['address', 'addr', 'city', 'state', 'pincode']:
-                        if addr.get(k): parts.append(str(addr[k]))
-                    addr = ', '.join(parts) if parts else str(addr)
-                if addr and str(addr).strip(): result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{str(addr)[:250]}</code></blockquote>\n"; found_any = True; break
-        if not found_any: return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
-        return result
-    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
+        # Check status
+        if data.get("status") == "success" and data.get("data"):
+            d = data["data"]
+            result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n"
+            
+            if d.get('TradeName'):
+                result += f"<blockquote>🏢 ᴛʀᴀᴅᴇ ɴᴀᴍᴇ: <code>{d['TradeName']}</code></blockquote>\n"
+            if d.get('LegalName') and d.get('LegalName') != d.get('TradeName'):
+                result += f"<blockquote>📋 ʟᴇɢᴀʟ ɴᴀᴍᴇ: <code>{d['LegalName']}</code></blockquote>\n"
+            if d.get('Gstin'):
+                result += f"<blockquote>🔑 ɢꜱᴛ ɴᴜᴍʙᴇʀ: <code>{d['Gstin']}</code></blockquote>\n"
+            
+            # Status
+            if d.get('Status'):
+                status_map = {'ACT': '🟢 ᴀᴄᴛɪᴠᴇ', 'SUS': '🔴 ꜱᴜꜱᴘᴇɴᴅᴇᴅ', 'CAN': '⚫ ᴄᴀɴᴄᴇʟʟᴇᴅ', 'REG': '🟢 ʀᴇɢɪꜱᴛᴇʀᴇᴅ'}
+                status = status_map.get(d['Status'], f"<code>{d['Status']}</code>")
+                result += f"<blockquote>📊 ꜱᴛᴀᴛᴜꜱ: {status}</blockquote>\n"
+            
+            if d.get('TxpType'):
+                result += f"<blockquote>👤 ᴛᴀxᴘᴀʏᴇʀ ᴛʏᴘᴇ: <code>{d['TxpType']}</code></blockquote>\n"
+            if d.get('DtReg'):
+                result += f"<blockquote>📅 ʀᴇɢɪꜱᴛᴇʀᴇᴅ ᴏɴ: <code>{d['DtReg']}</code></blockquote>\n"
+            if d.get('DtDReg') and d.get('DtDReg') != 'null':
+                result += f"<blockquote>📅 ᴅᴇ-ʀᴇɢɪꜱᴛᴇʀᴇᴅ: <code>{d['DtDReg']}</code></blockquote>\n"
+            
+            # Address
+            addr_parts = []
+            if d.get('AddrBno'): addr_parts.append(d['AddrBno'])
+            if d.get('AddrFlno'): addr_parts.append(d['AddrFlno'])
+            if d.get('AddrSt'): addr_parts.append(d['AddrSt'])
+            if d.get('AddrLoc'): addr_parts.append(d['AddrLoc'])
+            if d.get('AddrPncd'): addr_parts.append(f"PIN: {d['AddrPncd']}")
+            if addr_parts:
+                result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{', '.join(addr_parts)}</code></blockquote>\n"
+            
+            if d.get('StateCode'):
+                result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ ᴄᴏᴅᴇ: <code>{d['StateCode']}</code></blockquote>\n"
+            
+            return result
+        
+        # Fallback for other response formats
+        if data.get("data") and isinstance(data["data"], dict):
+            d = data["data"]
+            result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ɪɴꜰᴏ</blockquote>\n"
+            for k, v in d.items():
+                if v and k not in ['join', 'fetched_at', 'api_version', 'credit']:
+                    result += f"<blockquote>🔹 {k}: <code>{str(v)[:200]}</code></blockquote>\n"
+            return result
+    
+    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>"
 
 async def pakistan_lookup(session, number):
     """Pakistan Number Info - Only show real person data"""
@@ -509,7 +525,6 @@ async def verify_cb(update, context):
 async def msg_handler(update, context):
     try:
         uid = update.effective_user.id; txt = update.message.text.strip()
-        # DELETE USER MESSAGE AFTER 60s
         asyncio.create_task(delete_user_msg(update.message, AUTO_DELETE_TIME))
         
         s = get_settings()
@@ -764,7 +779,7 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     print(f"✅ {BOT_NAME} Ready!")
-    print("⏱ ALL messages delete in 60s EXCEPT /start")
+    print("📋 NEW GST API: gst-0y-vishal.vercel.app")
     app.run_polling()
 
 if __name__ == '__main__':
