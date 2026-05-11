@@ -3,3 +3,4 @@ aiohttp==3.9.1
 requests
 beautifulsoup4
 lxml
+git+https://github.com/Bhai4You/otpbomber.git
