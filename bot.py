@@ -33,7 +33,7 @@ IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
 GST_API = "https://gst-0y-vishal.vercel.app/api/gst.js?gstNumber="
 PAK_API = "https://api-server-virid-two.vercel.app/number="
-NUMINFO_API = "https://all-number-info-rajan-eta.vercel.app/api?number="
+IND_NUM_API = "https://all-number-info-rajan-eta.vercel.app/api?number="
 
 VERIFY_SCRIPT = "verify_india.py"
 
@@ -116,7 +116,26 @@ def get_settings():
     try:
         with open(SETTINGS_FILE, 'r') as f: return json.load(f)
     except:
-        d = {"bypass_maintenance":False,"bypass_msg":"Bypass maintenance.","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True,"gst_enabled":True,"pak_enabled":True,"numinfo_enabled":True,"maintenance_mode":False,"maintenance_msg":"🛠️ This feature is under maintenance."}
+        d = {
+            "bypass_maintenance":False,"bypass_msg":"Bypass maintenance.",
+            "tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,
+            "mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True,
+            "gst_enabled":True,"pak_enabled":True,"indnum_enabled":True,
+            "maintenance_mode":False,"maintenance_msg":"🛠️ Under maintenance.",
+            # PER-FEATURE MAINTENANCE
+            "maint_tgid":False,"maint_ifsc":False,"maint_bypass":False,
+            "maint_mobile":False,"maint_aadhaar":False,"maint_rc":False,
+            "maint_gst":False,"maint_pak":False,"maint_indnum":False,
+            "maint_msg_tgid":"🛠️ TG ID lookup is under maintenance.",
+            "maint_msg_ifsc":"🛠️ IFSC lookup is under maintenance.",
+            "maint_msg_bypass":"🛠️ Link bypass is under maintenance.",
+            "maint_msg_mobile":"🛠️ Mobile lookup is under maintenance.",
+            "maint_msg_aadhaar":"🛠️ Aadhaar lookup is under maintenance.",
+            "maint_msg_rc":"🛠️ RC lookup is under maintenance.",
+            "maint_msg_gst":"🛠️ GST lookup is under maintenance.",
+            "maint_msg_pak":"🛠️ Pakistan lookup is under maintenance.",
+            "maint_msg_indnum":"🛠️ Indian Number Info is under maintenance."
+        }
         save_settings(d); return d
 
 def save_settings(data):
@@ -138,7 +157,6 @@ async def net_ok():
     except: return False
 
 async def schedule_delete(msg, delay=AUTO_DELETE_TIME):
-    """Delete message after delay"""
     await asyncio.sleep(delay)
     try: await msg.delete()
     except: pass
@@ -149,6 +167,15 @@ async def loading_animation(msg, name):
     for i, bar in enumerate(bars):
         try: await msg.edit_text(f"<blockquote>⚡ {name}</blockquote>\n<code>{bar} {percentages[i]}</code>", parse_mode=ParseMode.HTML); await asyncio.sleep(0.2)
         except: break
+
+def check_feature_maintenance(feature_key):
+    """Check if a specific feature is under maintenance"""
+    s = get_settings()
+    maint_key = f"maint_{feature_key}"
+    msg_key = f"maint_msg_{feature_key}"
+    if s.get(maint_key, False):
+        return True, s.get(msg_key, "🛠️ This feature is under maintenance.")
+    return False, ""
 
 async def show_verification_page(update, context):
     try:
@@ -198,9 +225,10 @@ async def main_menu(update, context):
     if s.get("rc_enabled",True): row3.append(KeyboardButton("🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ"))
     if s.get("gst_enabled",True): row3.append(KeyboardButton("📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ"))
     if row3: kb.append(row3)
-    # NEW: Number Info button
-    if s.get("numinfo_enabled",True): kb.append([KeyboardButton("📞 ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟸")])
-    if s.get("pak_enabled",True): kb.append([KeyboardButton("🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ")])
+    row4 = []
+    if s.get("pak_enabled",True): row4.append(KeyboardButton("🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ"))
+    if s.get("indnum_enabled",True): row4.append(KeyboardButton("📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸"))
+    if row4: kb.append(row4)
     kb.append([KeyboardButton("👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"), KeyboardButton("🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ")])
     if is_admin: kb.append([KeyboardButton("👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ")])
     
@@ -221,8 +249,8 @@ async def main_menu(update, context):
         f"<b>📱 ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ  │  🏦 ɪꜰꜱᴄ ʙᴀɴᴋ</b>\n"
         f"<b>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ  │  🇮🇳 ᴍᴏʙɪʟᴇ ᴏꜱɪɴᴛ</b>\n"
         f"<b>🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ  │  🚘 ʀᴄ ᴠᴇʜɪᴄʟᴇ</b>\n"
-        f"<b>📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ  │  📞 ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</b>\n"
-        f"<b>🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ</b>\n\n"
+        f"<b>📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ  │  🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ</b>\n"
+        f"<b>📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸 (ɴᴇᴡ!)</b>\n\n"
         f"<b>🔄 ᴅᴀɪʟʏ +{DAILY_FREE_CREDITS} ᴄʀ  │  👥 ɪɴᴠɪᴛᴇ +{INVITE_CREDITS} ᴄʀ</b>\n"
         f"<b>⏱ ᴀʟʟ ᴍꜱɢ ᴅᴇʟᴇᴛᴇ ɪɴ {AUTO_DELETE_TIME}ꜱ</b>\n\n"
         f"<b>👑 ᴏᴡɴᴇʀ: @Hexh4ckerOFC</b>"
@@ -292,7 +320,6 @@ async def gst_lookup(session, gst_number):
                 result += f"<blockquote>📊 ꜱᴛᴀᴛᴜꜱ: {status_map.get(d['Status'], d['Status'])}</blockquote>\n"
             if d.get('TxpType'): result += f"<blockquote>👤 ᴛᴀxᴘᴀʏᴇʀ ᴛʏᴘᴇ: <code>{d['TxpType']}</code></blockquote>\n"
             if d.get('DtReg'): result += f"<blockquote>📅 ʀᴇɢɪꜱᴛᴇʀᴇᴅ ᴏɴ: <code>{d['DtReg']}</code></blockquote>\n"
-            if d.get('DtDReg') and d.get('DtDReg') != 'null': result += f"<blockquote>📅 ᴅᴇ-ʀᴇɢɪꜱᴛᴇʀᴇᴅ: <code>{d['DtDReg']}</code></blockquote>\n"
             addr_parts = []
             if d.get('AddrBno'): addr_parts.append(d['AddrBno'])
             if d.get('AddrFlno'): addr_parts.append(d['AddrFlno'])
@@ -300,14 +327,8 @@ async def gst_lookup(session, gst_number):
             if d.get('AddrLoc'): addr_parts.append(d['AddrLoc'])
             if d.get('AddrPncd'): addr_parts.append(f"PIN: {d['AddrPncd']}")
             if addr_parts: result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{', '.join(addr_parts)}</code></blockquote>\n"
-            if d.get('StateCode'): result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ ᴄᴏᴅᴇ: <code>{d['StateCode']}</code></blockquote>\n"
             return result
-        if data.get("data") and isinstance(data["data"], dict):
-            d = data["data"]; result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ɪɴꜰᴏ</blockquote>\n"
-            for k, v in d.items():
-                if v and k not in ['join', 'fetched_at', 'api_version', 'credit']: result += f"<blockquote>🔹 {k}: <code>{str(v)[:200]}</code></blockquote>\n"
-            return result
-    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>"
+    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ɢꜱᴛ</blockquote>"
 
 async def pakistan_lookup(session, number):
     try:
@@ -329,7 +350,6 @@ async def pakistan_lookup(session, number):
                         if has_data: valid_records.append(rec)
                 if not valid_records: return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
                 result = f"<blockquote expandable>✨ 🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</blockquote>\n"
-                if len(valid_records) > 1: result += f"<blockquote>📊 ʀᴇᴄᴏʀᴅꜱ: {len(valid_records)}</blockquote>\n"
                 for i, record in enumerate(valid_records, 1):
                     if len(valid_records) > 1: result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
                     if record.get('number'): result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{record['number']}</code></blockquote>\n"
@@ -340,49 +360,67 @@ async def pakistan_lookup(session, number):
             return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
     except: return "<blockquote>❌ ᴇʀʀᴏʀ</blockquote>"
 
-async def numberinfo_lookup(session, number):
-    """NEW: Number Info 2 API"""
+async def indnum_lookup(session, number):
+    """NEW: Indian Number Info 2 - Premium API"""
     try:
-        url = f"{NUMINFO_API}{number}"
-        async with session.get(url, timeout=aiohttp.ClientTimeout(total=20)) as r:
+        url = f"{IND_NUM_API}{number}"
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=25)) as r:
             text = await r.text()
             if not text: return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
             try: data = json.loads(text)
             except: return "<blockquote>❌ ᴀᴘɪ ᴇʀʀᴏʀ</blockquote>"
             
-            if not isinstance(data, dict): return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
+            if not isinstance(data, dict): return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
             
-            result = "<blockquote expandable>✨ 📞 ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟸</blockquote>\n"
-            found_any = False
+            results = data.get("results", {})
             
-            # Try to parse different response formats
-            if data.get("data"):
-                d = data["data"]
-                if isinstance(d, dict):
-                    for key in ['name', 'Name', 'number', 'Number', 'mobile', 'Mobile', 'operator', 'Operator', 'circle', 'Circle', 'state', 'State', 'address', 'Address', 'email', 'Email', 'aadhaar', 'Aadhaar', 'dob', 'DOB', 'gender', 'Gender', 'father', 'Father']:
-                        if d.get(key):
-                            emoji_map = {'name':'👤','Name':'👤','number':'📞','Number':'📞','mobile':'📱','Mobile':'📱','operator':'📡','Operator':'📡','circle':'🌐','Circle':'🌐','state':'🏛','State':'🏛','address':'📍','Address':'📍','email':'📧','Email':'📧','aadhaar':'🪪','Aadhaar':'🪪','dob':'🎂','DOB':'🎂','gender':'⚧','Gender':'⚧','father':'👨','Father':'👨'}
-                            emoji = emoji_map.get(key, '🔹')
-                            result += f"<blockquote>{emoji} {key}: <code>{str(d[key])[:200]}</code></blockquote>\n"
-                            found_any = True
+            # Source data
+            s2 = results.get("source_2", {}).get("data", {})
+            s3 = results.get("source_3", {}).get("data", {})
+            s4 = results.get("source_4", {}).get("data", {})
+            s8 = results.get("source_8", {}).get("data", {})
             
-            # If no data key, show all keys
-            if not found_any:
-                for k, v in data.items():
-                    if k not in ['success', 'message', 'status', 'credit', 'Credit', 'developer', 'Developer']:
-                        if v and str(v).strip():
-                            result += f"<blockquote>🔹 {k}: <code>{str(v)[:200]}</code></blockquote>\n"
-                            found_any = True
+            tc_results = s8.get("data", {}).get("results", {}) if isinstance(s8, dict) else {}
             
-            if not found_any:
-                return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ</blockquote>"
+            result = f"<blockquote expandable>✨ 📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸</blockquote>\n"
+            result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
+            
+            # Basic info
+            if isinstance(s4, dict):
+                if s4.get("carrier"): result += f"<blockquote>📡 ᴄᴀʀʀɪᴇʀ: <code>{s4['carrier']}</code></blockquote>\n"
+                if s4.get("country"): result += f"<blockquote>🌍 ᴄᴏᴜɴᴛʀʏ: <code>{s4['country']}</code></blockquote>\n"
+            
+            # Truecaller
+            if isinstance(tc_results, dict):
+                if tc_results.get("name"): result += f"<blockquote>👤 ᴛʀᴜᴇᴄᴀʟʟᴇʀ: <code>{tc_results['name']}</code></blockquote>\n"
+                if tc_results.get("international_format"): result += f"<blockquote>🌐 ɪɴᴛʟ: <code>{tc_results['international_format']}</code></blockquote>\n"
+            
+            # Source 3 details
+            if isinstance(s3, dict):
+                if s3.get("SIM card"): result += f"<blockquote>💳 ꜱɪᴍ: <code>{s3['SIM card']}</code></blockquote>\n"
+                if s3.get("Connection"): result += f"<blockquote>📶 ᴄᴏɴɴᴇᴄᴛɪᴏɴ: <code>{s3['Connection']}</code></blockquote>\n"
+                if s3.get("Mobile State"): result += f"<blockquote>📍 ꜱᴛᴀᴛᴇ: <code>{s3['Mobile State']}</code></blockquote>\n"
+                if s3.get("Hometown"): result += f"<blockquote>🏠 ʜᴏᴍᴇᴛᴏᴡɴ: <code>{s3['Hometown']}</code></blockquote>\n"
+                if s3.get("Language"): result += f"<blockquote>🗣 ʟᴀɴɢᴜᴀɢᴇ: <code>{s3['Language']}</code></blockquote>\n"
+                if s3.get("Owner Name"): result += f"<blockquote>👤 ᴏᴡɴᴇʀ: <code>{s3['Owner Name']}</code></blockquote>\n"
+                if s3.get("Owner Address"): result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{s3['Owner Address']}</code></blockquote>\n"
+            
+            # Records from source 2
+            records = s2.get("data", []) if isinstance(s2, dict) else []
+            if records:
+                result += f"\n<blockquote>📊 ʀᴇᴄᴏʀᴅꜱ: {len(records[:3])}</blockquote>\n"
+                for i, rec in enumerate(records[:3], 1):
+                    result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
+                    if rec.get('NAME'): result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{rec['NAME']}</code></blockquote>\n"
+                    if rec.get('fname'): result += f"<blockquote>👨 ꜰᴀᴛʜᴇʀ: <code>{rec['fname']}</code></blockquote>\n"
+                    if rec.get('MOBILE'): result += f"<blockquote>📱 ᴍᴏʙɪʟᴇ: <code>{rec['MOBILE']}</code></blockquote>\n"
+                    if rec.get('alt'): result += f"<blockquote>📞 ᴀʟᴛ: <code>{rec['alt']}</code></blockquote>\n"
+                    if rec.get('ADDRESS'): result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{rec['ADDRESS'][:150]}</code></blockquote>\n"
             
             return result
-    except asyncio.TimeoutError:
-        return "<blockquote>⏱ ᴀᴘɪ ᴛɪᴍᴇᴏᴜᴛ</blockquote>"
     except Exception as e:
-        logger.error(f"NumberInfo error: {e}")
-        return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴇʀʀᴏʀ</blockquote>"
+        logger.error(f"IndNum error: {e}")
+        return "<blockquote>❌ ᴇʀʀᴏʀ</blockquote>"
 
 # --- 📊 INDIA DATA PARSING ---
 
@@ -411,24 +449,17 @@ def parse_all_india_records(raw):
         record = {}
         fields = {
             'Name': '👤 ɴᴀᴍᴇ', "Father's Name": '👨 ꜰᴀᴛʜᴇʀ',
-            "Mother's Name": '👩 ᴍᴏᴛʜᴇʀ', 'Mobile': '📱 ᴍᴏʙɪʟᴇ',
-            'Alternative Number': '📞 ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ', 'Address': '📍 ᴀᴅᴅʀᴇꜱꜱ',
-            'Email': '📧 ᴇᴍᴀɪʟ', 'Circle': '📡 ᴄɪʀᴄʟᴇ',
-            'DOB': '🎂 ᴅᴏʙ', 'Gender': '⚧ ɢᴇɴᴅᴇʀ',
-            'State': '🏛 ꜱᴛᴀᴛᴇ', 'District': '🏘️ ᴅɪꜱᴛʀɪᴄᴛ',
-            'Pincode': '📮 ᴘɪɴᴄᴏᴅᴇ',
-            'RC Number': '🔖 ʀᴄ ɴᴜᴍʙᴇʀ', 'Owner Name': '👤 ᴏᴡɴᴇʀ',
-            'Registration Date': '📅 ʀᴇɢ ᴅᴀᴛᴇ', 'Registered RTO': '🏢 ʀᴛᴏ',
-            'Vehicle Class': '🚗 ᴄʟᴀꜱꜱ', 'Maker Model': '🏭 ᴍᴀᴋᴇʀ',
-            'Model Name': '🚙 ᴍᴏᴅᴇʟ', 'Fuel Type': '⛽ ꜰᴜᴇʟ',
+            'Mobile': '📱 ᴍᴏʙɪʟᴇ', 'Alternative Number': '📞 ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ',
+            'Address': '📍 ᴀᴅᴅʀᴇꜱꜱ', 'Circle': '📡 ᴄɪʀᴄʟᴇ',
+            'State': '🏛 ꜱᴛᴀᴛᴇ', 'RC Number': '🔖 ʀᴄ',
+            'Owner Name': '👤 ᴏᴡɴᴇʀ', 'Registration Date': '📅 ʀᴇɢ',
+            'Vehicle Class': '🚗 ᴄʟᴀꜱꜱ', 'Fuel Type': '⛽ ꜰᴜᴇʟ',
             'Insurance Company': '🛡️ ɪɴꜱᴜʀᴀɴᴄᴇ',
-            'Insurance Expiry': '📅 ɪɴꜱ ᴇxᴘɪʀʏ',
-            'Fitness Upto': '✅ ꜰɪᴛɴᴇꜱꜱ', 'Tax Upto': '💰 ᴛᴀx',
-            'Financier Name': '🏦 ꜰɪɴᴀɴᴄɪᴇʀ', 'Phone': '📞 ᴘʜᴏɴᴇ'
+            'Phone': '📞 ᴘʜᴏɴᴇ'
         }
         for field, label in fields.items():
             match = re.search(rf'{re.escape(field)}:\s*([^\n]+)', section, re.IGNORECASE)
-            if match and match.group(1).strip() not in ['None', '', 'N/A', 'null', 'Not Available']:
+            if match and match.group(1).strip() not in ['None', '', 'N/A', 'null']:
                 record[label] = match.group(1).strip()
         if record:
             seen = set(); unique = {}
@@ -442,23 +473,15 @@ def parse_all_india_records(raw):
     return final
 
 def format_records_result(records, search_type):
-    if not records: return "<blockquote>❌ ɴᴏ ʀᴇᴄᴏʀᴅꜱ ꜰᴏᴜɴᴅ</blockquote>"
-    title_map = {'aadhaar':'🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ','mobile':'🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ','vehicle':'🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ'}
+    if not records: return "<blockquote>❌ ɴᴏ ʀᴇᴄᴏʀᴅꜱ</blockquote>"
+    title_map = {'aadhaar':'🪪 ᴀᴀᴅʜᴀʀ','mobile':'🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ','vehicle':'🚘 ʀᴄ'}
     title = title_map.get(search_type, '📊 ʀᴇꜱᴜʟᴛ')
     result = f"<blockquote expandable>✨ {title}</blockquote>\n"
-    result += f"<blockquote>📊 ᴛᴏᴛᴀʟ ʀᴇᴄᴏʀᴅꜱ: {len(records)}</blockquote>\n"
+    result += f"<blockquote>📊 ʀᴇᴄᴏʀᴅꜱ: {len(records)}</blockquote>\n"
     for i, record in enumerate(records, 1):
-        if len(records) > 1: result += f"\n<blockquote>━━━ ʀᴇᴄᴏʀᴅ {i} ━━━</blockquote>\n"
-        if search_type == 'aadhaar':
-            priority = ['👤 ɴᴀᴍᴇ','👨 ꜰᴀᴛʜᴇʀ','👩 ᴍᴏᴛʜᴇʀ','📱 ᴍᴏʙɪʟᴇ','📞 ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ','📍 ᴀᴅᴅʀᴇꜱꜱ','📧 ᴇᴍᴀɪʟ','📡 ᴄɪʀᴄʟᴇ','🎂 ᴅᴏʙ','⚧ ɢᴇɴᴅᴇʀ','🏛 ꜱᴛᴀᴛᴇ','🏘️ ᴅɪꜱᴛʀɪᴄᴛ','📮 ᴘɪɴᴄᴏᴅᴇ']
-        elif search_type == 'mobile':
-            priority = ['👤 ɴᴀᴍᴇ','👨 ꜰᴀᴛʜᴇʀ','📱 ᴍᴏʙɪʟᴇ','📞 ᴀʟᴛᴇʀɴᴀᴛɪᴠᴇ','📍 ᴀᴅᴅʀᴇꜱꜱ','📡 ᴄɪʀᴄʟᴇ','📧 ᴇᴍᴀɪʟ','🏛 ꜱᴛᴀᴛᴇ']
-        else:
-            priority = ['🔖 ʀᴄ ɴᴜᴍʙᴇʀ','👤 ᴏᴡɴᴇʀ','👨 ꜰᴀᴛʜᴇʀ','🚗 ᴄʟᴀꜱꜱ','🚙 ᴍᴏᴅᴇʟ','🏭 ᴍᴀᴋᴇʀ','⛽ ꜰᴜᴇʟ','📅 ʀᴇɢ ᴅᴀᴛᴇ','🏢 ʀᴛᴏ','🛡️ ɪɴꜱᴜʀᴀɴᴄᴇ','📅 ɪɴꜱ ᴇxᴘɪʀʏ','✅ ꜰɪᴛɴᴇꜱꜱ','💰 ᴛᴀx','🏦 ꜰɪɴᴀɴᴄɪᴇʀ','📞 ᴘʜᴏɴᴇ','📍 ᴀᴅᴅʀᴇꜱꜱ']
-        for key in priority:
-            if key in record: result += f"<blockquote>{key}: <code>{record[key]}</code></blockquote>\n"
+        if len(records) > 1: result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
         for key, value in record.items():
-            if key not in priority: result += f"<blockquote>{key}: <code>{value}</code></blockquote>\n"
+            result += f"<blockquote>{key}: <code>{value}</code></blockquote>\n"
     return result
 
 # --- 👑 ADMIN ---
@@ -467,21 +490,38 @@ async def admin_panel(update, context):
     if update.effective_user.id != ADMIN_ID: return
     s = get_settings()
     maint_status = "🔴" if s.get("maintenance_mode") else "🟢"
+    
+    # Feature maintenance status
+    def ms(key): return "🔴" if s.get(f"maint_{key}") else "🟢"
+    
     kb = [
         [InlineKeyboardButton("🎫 ɢᴇɴᴇʀᴀᴛᴇ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", callback_data="ad_gen")],
         [InlineKeyboardButton("📋 ᴠɪᴇᴡ ᴄᴏᴅᴇꜱ | 👥 ᴠɪᴇᴡ ᴜꜱᴇʀꜱ", callback_data="ad_codes")],
         [InlineKeyboardButton("🎁 ᴀᴅᴅ ᴄʀᴇᴅɪᴛꜱ ᴛᴏ ᴜꜱᴇʀ", callback_data="ad_credit")],
         [InlineKeyboardButton("📢 ʙʀᴏᴀᴅᴄᴀꜱᴛ ᴛᴏ ᴀʟʟ", callback_data="ad_bcast")],
-        [InlineKeyboardButton(f"{maint_status} ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ ᴍᴏᴅᴇ", callback_data="ad_maint")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ ɪᴅ", callback_data="ad_tgid"), InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰꜱᴄ", callback_data="ad_ifsc")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏᴘᴀꜱꜱ", callback_data="ad_bypass_toggle"), InlineKeyboardButton(f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏʙɪʟᴇ", callback_data="ad_mobile")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀᴅʜᴀᴀʀ", callback_data="ad_aadhaar"), InlineKeyboardButton(f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", callback_data="ad_rc")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱᴛ", callback_data="ad_gst"), InlineKeyboardButton(f"{'🟢' if s.get('numinfo_enabled',True) else '🔴'} ɴᴜᴍɪɴꜰᴏ", callback_data="ad_numinfo")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀᴋ", callback_data="ad_pak")],
-        [InlineKeyboardButton("🛠️ ʙʏᴘᴀꜱꜱ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ", callback_data="ad_bypass_maint")],
+        [InlineKeyboardButton(f"{maint_status} ɢʟᴏʙᴀʟ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ", callback_data="ad_maint")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ ɪᴅ", callback_data="ad_tgid"), 
+         InlineKeyboardButton(f"{ms('tgid')} ᴍᴀɪɴᴛ ᴛɢ", callback_data="ad_maint_tgid")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰꜱᴄ", callback_data="ad_ifsc"),
+         InlineKeyboardButton(f"{ms('ifsc')} ᴍᴀɪɴᴛ ɪꜰꜱᴄ", callback_data="ad_maint_ifsc")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏᴘᴀꜱꜱ", callback_data="ad_bypass_toggle"),
+         InlineKeyboardButton(f"{ms('bypass')} ᴍᴀɪɴᴛ ʙʏᴘᴀꜱꜱ", callback_data="ad_maint_bypass")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏʙɪʟᴇ", callback_data="ad_mobile"),
+         InlineKeyboardButton(f"{ms('mobile')} ᴍᴀɪɴᴛ ᴍᴏʙɪʟᴇ", callback_data="ad_maint_mobile")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀᴅʜᴀᴀʀ", callback_data="ad_aadhaar"),
+         InlineKeyboardButton(f"{ms('aadhaar')} ᴍᴀɪɴᴛ ᴀᴀᴅʜᴀᴀʀ", callback_data="ad_maint_aadhaar")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", callback_data="ad_rc"),
+         InlineKeyboardButton(f"{ms('rc')} ᴍᴀɪɴᴛ ʀᴄ", callback_data="ad_maint_rc")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱᴛ", callback_data="ad_gst"),
+         InlineKeyboardButton(f"{ms('gst')} ᴍᴀɪɴᴛ ɢꜱᴛ", callback_data="ad_maint_gst")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀᴋ", callback_data="ad_pak"),
+         InlineKeyboardButton(f"{ms('pak')} ᴍᴀɪɴᴛ ᴘᴀᴋ", callback_data="ad_maint_pak")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴᴅɴᴜᴍ", callback_data="ad_indnum"),
+         InlineKeyboardButton(f"{ms('indnum')} ᴍᴀɪɴᴛ ɪɴᴅɴᴜᴍ", callback_data="ad_maint_indnum")],
+        [InlineKeyboardButton("🛠️ ʙʏᴘᴀꜱꜱ ᴍᴀɪɴᴛ", callback_data="ad_bypass_maint")],
         [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ ᴘᴀɴᴇʟ", callback_data="ad_close")]
     ]
-    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | 🎫 ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}</blockquote>"
+    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | 🎫 ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}</blockquote>\n<blockquote>🟢=ON | 🔴=OFF/MAINT</blockquote>"
     if update.callback_query: await update.callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
     else: await update.message.reply_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
@@ -489,6 +529,7 @@ async def admin_callback(update, context):
     q = update.callback_query
     if q.from_user.id != ADMIN_ID: await q.answer("❌"); return
     d = q.data; s = get_settings()
+    
     if d == "ad_close": await q.message.delete()
     elif d == "ad_codes":
         codes = load_json(REDEEM_FILE); txt = f"<blockquote>🎫 {len(codes)} ᴄᴏᴅᴇꜱ</blockquote>\n"
@@ -500,10 +541,18 @@ async def admin_callback(update, context):
     elif d == "ad_maint":
         s["maintenance_mode"] = not s.get("maintenance_mode", False)
         save_settings(s)
-        await q.answer(f"Maintenance: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True)
+        await q.answer(f"Global Maint: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True)
+        await admin_panel(update, context)
+    elif d.startswith("ad_maint_"):
+        # Per-feature maintenance toggle
+        feature = d.replace("ad_maint_", "")
+        key = f"maint_{feature}"
+        s[key] = not s.get(key, False)
+        save_settings(s)
+        await q.answer(f"{feature} maint: {'🔴 ON' if s[key] else '🟢 OFF'}", show_alert=True)
         await admin_panel(update, context)
     elif d.startswith("ad_"):
-        toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_numinfo":"numinfo_enabled","ad_pak":"pak_enabled"}
+        toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_pak":"pak_enabled","ad_indnum":"indnum_enabled"}
         if d in toggle_map: k = toggle_map[d]; s[k] = not s.get(k,True); save_settings(s); await q.answer(f"{k}: {'ON' if s[k] else 'OFF'}", show_alert=True)
         elif d == "ad_bypass_maint": s["bypass_maintenance"] = not s.get("bypass_maintenance",False); save_settings(s); await q.answer(f"Bypass Maint: {'ON' if s['bypass_maintenance'] else 'OFF'}", show_alert=True)
         await admin_panel(update, context)
@@ -546,9 +595,9 @@ async def msg_handler(update, context):
         
         s = get_settings()
         
-        # MAINTENANCE MODE CHECK - Only for non-admin users
+        # Global maintenance check
         if s.get("maintenance_mode", False) and uid != ADMIN_ID:
-            m = await update.message.reply_text(f"<blockquote>🛠️ {s.get('maintenance_msg', 'Bot is under maintenance. Please try later.')}</blockquote>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>🛠️ {s.get('maintenance_msg')}</blockquote>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m)); return
         
         if uid == ADMIN_ID and uid in ADMIN_STATE:
@@ -576,14 +625,14 @@ async def msg_handler(update, context):
             else: await show_verification_page(update, context)
             return
         
-        # FEATURE-SPECIFIC MAINTENANCE CHECK
-        feature_maintenance_msg = "🛠️ ᴛʜɪꜱ ꜰᴇᴀᴛᴜʀᴇ ɪꜱ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ʟᴀᴛᴇʀ."
-        
         if txt in ["👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "👑 ᴀᴅᴍɪɴ"]: await admin_panel(update, context)
         
+        # Feature handlers with per-feature maintenance check
         elif txt in ["ᴛɢ ɪᴅ ➜ 📞 ɴᴜᴍʙᴇʀ 🔍"]:
-            if not s.get("tgid_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("tgid_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("tgid")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'TG'
             btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
@@ -591,67 +640,83 @@ async def msg_handler(update, context):
             asyncio.create_task(schedule_delete(m))
         
         elif txt in ["🏦 ɪꜰꜱᴄ ɪɴꜰᴏ➜🔎"]:
-            if not s.get("ifsc_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("ifsc_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("ifsc")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'IFSC'
             m = await update.message.reply_text("<blockquote>🏦 ɪꜰꜱᴄ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
         elif txt in ["🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ"]:
-            if not s.get("bypass_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("bypass_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("bypass")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'SHORTLINK'
             m = await update.message.reply_text("<blockquote>🔗 Bypass</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
         elif txt == "🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜👤":
-            if not s.get("mobile_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("mobile_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("mobile")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'MOBILE'
             m = await update.message.reply_text("<blockquote>🇮🇳 Mobile</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
         elif txt == "🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜👤":
-            if not s.get("aadhaar_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("aadhaar_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("aadhaar")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'AADHAAR'
             m = await update.message.reply_text("<blockquote>🪪 Aadhaar</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
         elif txt == "🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
-            if not s.get("rc_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("rc_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("rc")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'VEHICLE'
             m = await update.message.reply_text("<blockquote>🚘 RC</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
         elif txt == "📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
-            if not s.get("gst_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("gst_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("gst")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'GST'
             m = await update.message.reply_text("<blockquote>📋 GST</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "📞 ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟸":
-            if not s.get("numinfo_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m)); return
-            context.user_data['mode'] = 'NUMINFO'
-            m = await update.message.reply_text("<blockquote>📞 Number Info 2</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-        
         elif txt == "🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
-            if not s.get("pak_enabled",True):
-                m = await update.message.reply_text(f"<blockquote>{feature_maintenance_msg}</blockquote>", parse_mode=ParseMode.HTML)
+            if not s.get("pak_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("pak")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'PAK'
             m = await update.message.reply_text("<blockquote>🇵🇰 Pakistan</blockquote>\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
+            asyncio.create_task(schedule_delete(m))
+        
+        elif txt == "📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸":
+            if not s.get("indnum_enabled",True): await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); return
+            maint, msg = check_feature_maintenance("indnum")
+            if maint:
+                m = await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML)
+                asyncio.create_task(schedule_delete(m)); return
+            context.user_data['mode'] = 'INDNUM'
+            m = await update.message.reply_text("<blockquote>📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸</blockquote>\n<blockquote>Send any 10-digit Indian number</blockquote>\n<i>Example: 6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
         elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "👥 ɪɴᴠɪᴛᴇ"]:
@@ -696,7 +761,7 @@ async def run_query(update, context, mode, query):
         asyncio.create_task(schedule_delete(m)); return
     
     await update.message.reply_chat_action(ChatAction.TYPING)
-    names = {'TG':'📱','IFSC':'🏦','SHORTLINK':'🔗','AADHAAR':'🪪','MOBILE':'🇮🇳','VEHICLE':'🚘','GST':'📋','PAK':'🇵🇰','NUMINFO':'📞'}
+    names = {'TG':'📱','IFSC':'🏦','SHORTLINK':'🔗','AADHAAR':'🪪','MOBILE':'🇮🇳','VEHICLE':'🚘','GST':'📋','PAK':'🇵🇰','INDNUM':'📲'}
     st = await update.message.reply_text("<blockquote>🟩 Searching...</blockquote>", parse_mode=ParseMode.HTML)
     lt = asyncio.create_task(loading_animation(st, names.get(mode, '')))
     
@@ -731,7 +796,7 @@ async def run_query(update, context, mode, query):
                 elif mode == 'SHORTLINK': result = await bypass_lookup(s, query)
                 elif mode == 'GST': result = await gst_lookup(s, query)
                 elif mode == 'PAK': result = await pakistan_lookup(s, query)
-                elif mode == 'NUMINFO': result = await numberinfo_lookup(s, query)
+                elif mode == 'INDNUM': result = await indnum_lookup(s, query)
                 else: result = "❌"
             
             if result and "❌" not in str(result) and "unavailable" not in str(result).lower():
@@ -764,8 +829,8 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     print(f"✅ {BOT_NAME} Ready!")
-    print("📞 Number Info 2 API added!")
-    print("🛠️ Feature maintenance mode active")
+    print("📲 New: Indian Number Info 2")
+    print("🛠️ Per-feature maintenance mode")
     app.run_polling()
 
 if __name__ == '__main__':
