@@ -28,8 +28,7 @@ FOOTER = "\n\n<b>⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ @Hexh4ckerOFC</b>"
 SEP = "━━━━━━━━━━━━━━━━━━━"
 
 # APIs
-LOOKUP_API = "https://tgchatid.vercel.app/api/lookup?number="
-LOOKUP_API_2 = "https://toxic-tg.vercel.app/?userid="
+LOOKUP_API = "https://toxic-tg.vercel.app/?userid="
 IFSC_API = "https://ifsc.razorpay.com/"
 SHORTLINK_API = "https://link-btpass.onrender.com/bypass?key=9c44ad66b95cef8aecd7a99cfb362ce0&link="
 GST_API = "https://gst-0y-vishal.vercel.app/api/gst.js?gstNumber="
@@ -162,27 +161,16 @@ async def schedule_delete(msg, delay=AUTO_DELETE_TIME):
     except: pass
 
 async def loading_animation(msg, name):
-    """REAL LOADING ANIMATION WITH NETWORK EFFECT"""
     bars = ["🟩⬛⬛⬛⬛⬛⬛⬛⬛⬛","🟩🟩⬛⬛⬛⬛⬛⬛⬛⬛","🟩🟩🟩⬛⬛⬛⬛⬛⬛⬛","🟩🟩🟩🟩⬛⬛⬛⬛⬛⬛","🟩🟩🟩🟩🟩⬛⬛⬛⬛⬛","🟩🟩🟩🟩🟩🟩⬛⬛⬛⬛","🟩🟩🟩🟩🟩🟩🟩⬛⬛⬛","🟩🟩🟩🟩🟩🟩🟩🟩⬛⬛","🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛","🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩"]
     percentages = ["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"]
-    network_stages = [
-        "ᴄᴏɴɴᴇᴄᴛɪɴɢ...", "ᴀᴘɪ ʟɪɴᴋɪɴɢ...", "ꜰᴇᴛᴄʜɪɴɢ ᴅᴀᴛᴀ...", 
-        "ᴘʀᴏᴄᴇꜱꜱɪɴɢ...", "ᴠᴇʀɪꜰʏɪɴɢ...", "ʟᴏᴀᴅɪɴɢ ʀᴇꜱᴜʟᴛꜱ...",
-        "ᴀʟᴍᴏꜱᴛ ᴅᴏɴᴇ...", "ꜰɪɴᴀʟɪᴢɪɴɢ...", "ᴄᴏᴍᴘʟᴇᴛɪɴɢ...", "✅ ᴄᴏᴍᴘʟᴇᴛᴇ!"
-    ]
+    network_stages = ["ᴄᴏɴɴᴇᴄᴛɪɴɢ...","ᴀᴘɪ ʟɪɴᴋɪɴɢ...","ꜰᴇᴛᴄʜɪɴɢ ᴅᴀᴛᴀ...","ᴘʀᴏᴄᴇꜱꜱɪɴɢ...","ᴠᴇʀɪꜰʏɪɴɢ...","ʟᴏᴀᴅɪɴɢ ʀᴇꜱᴜʟᴛꜱ...","ᴀʟᴍᴏꜱᴛ ᴅᴏɴᴇ...","ꜰɪɴᴀʟɪᴢɪɴɢ...","ᴄᴏᴍᴘʟᴇᴛɪɴɢ...","✅ ᴄᴏᴍᴘʟᴇᴛᴇ!"]
     for i, bar in enumerate(bars):
         try: 
-            await msg.edit_text(
-                f"<blockquote>⚡ {name}</blockquote>\n"
-                f"<code>{bar} {percentages[i]}</code>\n"
-                f"<blockquote>📡 {network_stages[i]}</blockquote>",
-                parse_mode=ParseMode.HTML
-            )
+            await msg.edit_text(f"<blockquote>⚡ {name}</blockquote>\n<code>{bar} {percentages[i]}</code>\n<blockquote>📡 {network_stages[i]}</blockquote>", parse_mode=ParseMode.HTML)
             await asyncio.sleep(0.2)
         except: break
 
 def check_feature_maintenance(feature_key):
-    """Check if a specific feature is under maintenance"""
     s = get_settings()
     maint_key = f"maint_{feature_key}"
     msg_key = f"maint_msg_{feature_key}"
@@ -275,7 +263,6 @@ async def main_menu(update, context):
 # --- 🔗 API ---
 
 async def safe_api_fetch(session, url, timeout=15):
-    """Safe API fetch with fallback"""
     try:
         headers = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json, text/plain, */*'}
         async with session.get(url, timeout=aiohttp.ClientTimeout(total=timeout), headers=headers) as r:
@@ -286,35 +273,36 @@ async def safe_api_fetch(session, url, timeout=15):
     except: return None
 
 async def chatid_lookup(session, query):
-    """TG ID Lookup - Primary API with fallback"""
-    # Try primary API first
+    """NEW TG ID API - toxic-tg.vercel.app"""
     data = await safe_api_fetch(session, f"{LOOKUP_API}{query}")
     
-    if data and isinstance(data, dict) and data.get("success"):
-        d = data.get("data", {})
-        if d.get('number'):
-            result = "<blockquote expandable>✨ 📱 ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ</blockquote>\n"
-            result += f"<blockquote>🆔 ᴄʜᴀᴛ ɪᴅ: <code>{d.get('chat_id', query)}</code></blockquote>\n"
-            result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{d['number']}</code></blockquote>\n"
-            if d.get('country'): result += f"<blockquote>🌍 ᴄᴏᴜɴᴛʀʏ: <code>{d['country']}</code></blockquote>\n"
-            if d.get('country_code'): result += f"<blockquote>📋 ᴄᴏᴅᴇ: <code>{d['country_code']}</code></blockquote>\n"
-            return result
+    if not data:
+        return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     
-    # Try backup API
-    data2 = await safe_api_fetch(session, f"{LOOKUP_API_2}{query}")
-    if data2 and isinstance(data2, dict):
-        if data2.get("success"):
-            d = data2.get("data", data2)
+    if isinstance(data, dict):
+        if data.get("success"):
+            # API returns data directly or in 'data' key
+            d = data.get("data", data)
             if isinstance(d, dict):
                 result = "<blockquote expandable>✨ 📱 ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ</blockquote>\n"
-                result += f"<blockquote>🆔 ᴄʜᴀᴛ ɪᴅ: <code>{d.get('userid', d.get('chat_id', query))}</code></blockquote>\n"
-                if d.get('number'): result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{d['number']}</code></blockquote>\n"
-                if d.get('name'): result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{d['name']}</code></blockquote>\n"
+                if d.get('chat_id') or d.get('userid'):
+                    result += f"<blockquote>🆔 ᴄʜᴀᴛ ɪᴅ: <code>{d.get('chat_id', d.get('userid', query))}</code></blockquote>\n"
+                if d.get('number'):
+                    result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{d['number']}</code></blockquote>\n"
+                if d.get('name'):
+                    result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{d['name']}</code></blockquote>\n"
+                if d.get('username'):
+                    result += f"<blockquote>📛 ᴜꜱᴇʀɴᴀᴍᴇ: <code>@{d['username']}</code></blockquote>\n"
+                if d.get('first_name'):
+                    result += f"<blockquote>👤 ꜰɪʀꜱᴛ ɴᴀᴍᴇ: <code>{d['first_name']}</code></blockquote>\n"
+                if d.get('last_name'):
+                    result += f"<blockquote>👤 ʟᴀꜱᴛ ɴᴀᴍᴇ: <code>{d['last_name']}</code></blockquote>\n"
                 return result
-        elif data2.get("message"):
-            return f"<blockquote>❌ {data2['message']}</blockquote>"
+        
+        # If success is false
+        if data.get("message"):
+            return f"<blockquote>❌ {data['message']}</blockquote>"
     
-    # Both failed - show guide
     return "<blockquote>❌ ɴᴏᴛ ꜰᴏᴜɴᴅ</blockquote>\n<blockquote>💡 ᴜꜱᴇ @ChatIdInfoBot ᴛᴏ ɢᴇᴛ ᴄʜᴀᴛ ɪᴅ</blockquote>"
 
 async def ifsc_lookup(session, code):
@@ -379,11 +367,10 @@ async def pakistan_lookup(session, number):
     except: return "<blockquote>❌ ᴇʀʀᴏʀ</blockquote>"
 
 async def indnum_lookup(session, number):
-    """Indian Number Info 2 - Fixed with retry"""
+    """Indian Number Info 2 - FULL DETAILS WITH ALL RECORDS"""
     data = await safe_api_fetch(session, f"{IND_NUM_API}{number}", timeout=25)
     
     if not data:
-        # Retry once
         await asyncio.sleep(1)
         data = await safe_api_fetch(session, f"{IND_NUM_API}{number}", timeout=25)
     
@@ -393,9 +380,14 @@ async def indnum_lookup(session, number):
     results = data.get("results", {})
     if not results: return "<blockquote>❌ ɴᴏ ʀᴇꜱᴜʟᴛꜱ ꜰᴏᴜɴᴅ</blockquote>"
     
+    # Extract all source data
+    s1 = results.get("source_1", {}).get("data", {})
     s2 = results.get("source_2", {}).get("data", {})
     s3 = results.get("source_3", {}).get("data", {})
     s4 = results.get("source_4", {}).get("data", {})
+    s5 = results.get("source_5", {}).get("data", {})
+    s6 = results.get("source_6", {}).get("data", {})
+    s7 = results.get("source_7", {}).get("data", {})
     s8 = results.get("source_8", {}).get("data", {})
     
     tc_results = s8.get("data", {}).get("results", {}) if isinstance(s8, dict) else {}
@@ -405,34 +397,68 @@ async def indnum_lookup(session, number):
     
     found_any = False
     
+    # Source 4 - Basic carrier info
     if isinstance(s4, dict):
         if s4.get("carrier"): result += f"<blockquote>📡 ᴄᴀʀʀɪᴇʀ: <code>{s4['carrier']}</code></blockquote>\n"; found_any = True
         if s4.get("country"): result += f"<blockquote>🌍 ᴄᴏᴜɴᴛʀʏ: <code>{s4['country']}</code></blockquote>\n"
+        if s4.get("number"): result += f"<blockquote>📞 ꜰᴏʀᴍᴀᴛ: <code>{s4['number']}</code></blockquote>\n"
     
+    # Truecaller info
     if isinstance(tc_results, dict):
         if tc_results.get("name"): result += f"<blockquote>👤 ᴛʀᴜᴇᴄᴀʟʟᴇʀ: <code>{tc_results['name']}</code></blockquote>\n"; found_any = True
         if tc_results.get("international_format"): result += f"<blockquote>🌐 ɪɴᴛʟ: <code>{tc_results['international_format']}</code></blockquote>\n"
+        if tc_results.get("email"): result += f"<blockquote>📧 ᴇᴍᴀɪʟ: <code>{tc_results['email']}</code></blockquote>\n"
+        if tc_results.get("location"): result += f"<blockquote>📍 ʟᴏᴄᴀᴛɪᴏɴ: <code>{tc_results['location']}</code></blockquote>\n"
+        if tc_results.get("image"): result += f"<blockquote>🖼 ᴀᴠᴀᴛᴀʀ: <code>{tc_results['image'][:50]}...</code></blockquote>\n"
     
+    # Source 3 - Detailed info
     if isinstance(s3, dict):
-        for key, emoji in [("SIM card","💳"),("Connection","📶"),("Mobile State","📍"),("Hometown","🏠"),("Language","🗣"),("Owner Name","👤"),("Owner Address","📍")]:
+        for key, emoji in [
+            ("SIM card","💳"),("Connection","📶"),("Mobile State","📍"),
+            ("Hometown","🏠"),("Language","🗣"),("Owner Name","👤"),
+            ("Owner Address","📍"),("Complaints","⚠️"),("Tracker Id","🪪"),
+            ("Tracking History","📌"),("Tower Locations","📡"),
+            ("Mobile Locations","📍"),("Owner Personality","🧠")
+        ]:
             if s3.get(key):
-                result += f"<blockquote>{emoji} {key}: <code>{s3[key]}</code></blockquote>\n"
+                val = str(s3[key])
+                if len(val) > 300: val = val[:297] + '...'
+                result += f"<blockquote>{emoji} {key}: <code>{val}</code></blockquote>\n"
                 found_any = True
     
+    # Source 2 - Database records
     records = s2.get("data", []) if isinstance(s2, dict) else []
     if records:
-        result += f"\n<blockquote>📊 ʀᴇᴄᴏʀᴅꜱ: {len(records[:4])}</blockquote>\n"
-        for i, rec in enumerate(records[:4], 1):
+        result += f"\n<blockquote>📊 ᴅᴀᴛᴀʙᴀꜱᴇ ʀᴇᴄᴏʀᴅꜱ: {len(records[:5])}</blockquote>\n"
+        for i, rec in enumerate(records[:5], 1):
             result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
             if rec.get('NAME'): result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{rec['NAME']}</code></blockquote>\n"
             if rec.get('fname'): result += f"<blockquote>👨 ꜰᴀᴛʜᴇʀ: <code>{rec['fname']}</code></blockquote>\n"
+            if rec.get('mname'): result += f"<blockquote>👩 ᴍᴏᴛʜᴇʀ: <code>{rec['mname']}</code></blockquote>\n"
             if rec.get('MOBILE'): result += f"<blockquote>📱 ᴍᴏʙɪʟᴇ: <code>{rec['MOBILE']}</code></blockquote>\n"
             if rec.get('alt'): result += f"<blockquote>📞 ᴀʟᴛ: <code>{rec['alt']}</code></blockquote>\n"
-            if rec.get('ADDRESS'): result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{rec['ADDRESS'][:150]}</code></blockquote>\n"
+            if rec.get('circle'): result += f"<blockquote>📡 ᴄɪʀᴄʟᴇ: <code>{rec['circle']}</code></blockquote>\n"
+            if rec.get('ADDRESS'): result += f"<blockquote>📍 ᴀᴅᴅʀᴇꜱꜱ: <code>{rec['ADDRESS'][:200]}</code></blockquote>\n"
+            if rec.get('id'): result += f"<blockquote>🆔 ɪᴅ: <code>{rec['id']}</code></blockquote>\n"
+            if rec.get('dob'): result += f"<blockquote>🎂 ᴅᴏʙ: <code>{rec['dob']}</code></blockquote>\n"
+            if rec.get('gender'): result += f"<blockquote>⚧ ɢᴇɴᴅᴇʀ: <code>{rec['gender']}</code></blockquote>\n"
         found_any = True
     
+    # Source 1 data
+    if isinstance(s1, dict) and s1.get("data"):
+        s1_records = s1.get("data", [])
+        if isinstance(s1_records, list) and s1_records:
+            result += f"\n<blockquote>📊 ᴀᴅᴅɪᴛɪᴏɴᴀʟ ʀᴇᴄᴏʀᴅꜱ: {len(s1_records[:3])}</blockquote>\n"
+            for i, rec in enumerate(s1_records[:3], 1):
+                if isinstance(rec, dict):
+                    result += f"\n<blockquote>━━ ʀᴇᴄ {i} ━━</blockquote>\n"
+                    for k, v in rec.items():
+                        if v and k.lower() not in ['id', '_id']:
+                            result += f"<blockquote>🔹 {k}: <code>{str(v)[:150]}</code></blockquote>\n"
+            found_any = True
+    
     if not found_any:
-        return "<blockquote>❌ ɴᴏ ᴅᴇᴛᴀɪʟᴇᴅ ɪɴꜰᴏ ꜰᴏᴜɴᴅ</blockquote>"
+        return "<blockquote>❌ ɴᴏ ᴅᴇᴛᴀɪʟᴇᴅ ɪɴꜰᴏ ꜰᴏᴜɴᴅ ꜰᴏʀ ᴛʜɪꜱ ɴᴜᴍʙᴇʀ</blockquote>"
     
     return result
 
@@ -532,7 +558,7 @@ async def admin_panel(update, context):
         [InlineKeyboardButton("🛠️ ʙʏᴘᴀꜱꜱ ᴍᴀɪɴᴛ", callback_data="ad_bypass_maint")],
         [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="ad_close")]
     ]
-    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 {len(load_json(USERS_FILE))} | 🎫 {len(load_json(REDEEM_FILE))}</blockquote>\n<blockquote>🟢=ON | 🔴=OFF/MAINT</blockquote>"
+    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 {len(load_json(USERS_FILE))} | 🎫 {len(load_json(REDEEM_FILE))}</blockquote>"
     if update.callback_query: await update.callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
     else: await update.message.reply_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
@@ -774,7 +800,6 @@ async def run_query(update, context, mode, query):
                 elif mode == 'INDNUM': result = await indnum_lookup(s, query)
                 else: result = "❌"
             
-            # ONLY deduct credit if we got valid data (no error, no "not found")
             if result and "❌" not in str(result) and "unavailable" not in str(result).lower() and "error" not in str(result).lower():
                 use_credit(update.effective_user.id)
                 credit_deducted = True
@@ -805,8 +830,7 @@ def main():
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     print(f"✅ {BOT_NAME} Final Version Ready!")
-    print("📱 Dual TG ID API | 📲 IndNum 2 Fixed")
-    print("🛡️ No credit on errors | 🔄 Real loading animation")
+    print("📱 NEW TG ID API | 📲 IndNum 2 FULL DETAILS")
     app.run_polling()
 
 if __name__ == '__main__':
