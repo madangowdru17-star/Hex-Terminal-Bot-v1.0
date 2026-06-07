@@ -73,9 +73,8 @@ def get_user(user_id):
         users[uid] = {"credits":DAILY_FREE_CREDITS,"total_queries":0,"daily_queries":0,"last_reset":today,"invite_code":f"HEX-{''.join(random.choices(string.ascii_uppercase+string.digits, k=8))}","invites":0,"verified":False}
         save_json(USERS_FILE, users)
     elif users[uid].get("last_reset") != today:
-        # Reset daily credits - remove old credits, add fresh 10
         old_credits = users[uid].get("credits", 0)
-        users[uid]["credits"] = DAILY_FREE_CREDITS  # Fresh 10 credits
+        users[uid]["credits"] = DAILY_FREE_CREDITS
         users[uid]["daily_queries"] = 0
         users[uid]["last_reset"] = today
         save_json(USERS_FILE, users)
@@ -119,8 +118,8 @@ def redeem_code(uid, code):
 def get_settings():
     try: return json.load(open(SETTINGS_FILE, 'r'))
     except:
-        d = {"bypass_maintenance":False,"bypass_msg":"Bypass maintenance.","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True,"gst_enabled":True,"pak_enabled":True,"indnum_enabled":True,"maintenance_mode":False,"maintenance_msg":"🛠️ Under maintenance."}
-        for k in ["tgid","ifsc","bypass","mobile","aadhaar","rc","gst","pak","indnum"]: d[f"maint_msg_{k}"] = f"🛠️ {k} is under maintenance."; d[f"maint_{k}"] = False
+        d = {"bypass_maintenance":False,"bypass_msg":"Bypass maintenance.","tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True,"gst_enabled":True,"pak_enabled":True,"indnum_enabled":True,"indnum3_enabled":True,"maintenance_mode":False,"maintenance_msg":"🛠️ Under maintenance."}
+        for k in ["tgid","ifsc","bypass","mobile","aadhaar","rc","gst","pak","indnum","indnum3"]: d[f"maint_msg_{k}"] = f"🛠️ {k} is under maintenance."; d[f"maint_{k}"] = False
         save_settings(d); return d
 
 def save_settings(data):
@@ -210,6 +209,7 @@ async def main_menu(update, context):
     if s.get("pak_enabled",True): row4.append(KeyboardButton("🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ"))
     if s.get("indnum_enabled",True): row4.append(KeyboardButton("📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸"))
     if row4: kb.append(row4)
+    if s.get("indnum3_enabled",True): kb.append([KeyboardButton("🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜👤")])
     kb.append([KeyboardButton("👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"), KeyboardButton("🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ")])
     if is_admin: kb.append([KeyboardButton("👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ")])
     
@@ -235,7 +235,8 @@ async def main_menu(update, context):
         f"<b>🚘 ᴠᴇʜɪᴄʟᴇ ʀᴄ ʀᴇɢɪꜱᴛʀᴀᴛɪᴏɴ ɪɴꜰᴏ</b>\n"
         f"<b>📋 ɢꜱᴛ ʙᴜꜱɪɴᴇꜱꜱ ɴᴜᴍʙᴇʀ ʟᴏᴏᴋᴜᴘ</b>\n"
         f"<b>🇵🇰 ᴘᴀᴋɪꜱᴛᴀɴ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ</b>\n"
-        f"<b>📲 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴀᴅᴠᴀɴᴄᴇᴅ ɪɴꜰᴏ</b>\n\n"
+        f"<b>📲 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴀᴅᴠᴀɴᴄᴇᴅ ɪɴꜰᴏ</b>\n"
+        f"<b>🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ ɪɴꜰᴏ (ɴᴇᴡ!)</b>\n\n"
         f"<b>💡 ᴅᴀɪʟʏ ʀᴇᴡᴀʀᴅꜱ:</b>\n"
         f"<b>🔄 +{DAILY_FREE_CREDITS} ꜰʀᴇᴇ ᴄʀᴇᴅɪᴛꜱ ᴇᴠᴇʀʏ 24 ʜᴏᴜʀꜱ</b>\n"
         f"<b>👥 +{INVITE_CREDITS} ᴄʀᴇᴅɪᴛꜱ ᴘᴇʀ ꜰʀɪᴇɴᴅ ɪɴᴠɪᴛᴇᴅ</b>\n"
@@ -260,7 +261,7 @@ async def safe_api_fetch(session, url, timeout=20):
                 if not text: continue
                 try: return json.loads(text)
                 except:
-                    if attempt == 2: return None
+                    if attempt == 2: return text  # Return raw text on last attempt
                     await asyncio.sleep(1)
         except:
             if attempt == 2: return None
@@ -280,7 +281,7 @@ async def chatid_lookup(session, query):
                 if d.get('name'): result += f"<blockquote>👤 ᴘʀᴏꜰɪʟᴇ ɴᴀᴍᴇ: <code>{d['name']}</code></blockquote>\n"
                 return result
         if data.get("message"): return f"<blockquote>❌ {data['message']}</blockquote>"
-    return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ</blockquote>\n<blockquote>💡 ᴛɪᴘ: ᴜꜱᴇ @ChatIdInfoBot ᴛᴏ ɢᴇᴛ ᴄʜᴀᴛ ɪᴅ</blockquote>"
+    return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ ꜰᴏᴜɴᴅ</blockquote>"
 
 async def ifsc_lookup(session, code):
     data = await safe_api_fetch(session, f"{IFSC_API}{code.upper()}")
@@ -338,7 +339,7 @@ async def pakistan_lookup(session, number):
     except: return "<blockquote>❌ ᴇʀʀᴏʀ</blockquote>"
 
 async def indnum_lookup(session, number):
-    """Indian Number Info 2 - FIXED with retry and proper parsing"""
+    """Indian Number Info 2"""
     for attempt in range(3):
         data = await safe_api_fetch(session, f"{IND_NUM_API}{number}", timeout=30)
         if data and isinstance(data, dict) and data.get("results"):
@@ -356,7 +357,6 @@ async def indnum_lookup(session, number):
     result += f"<blockquote>📞 Qᴜᴇʀɪᴇᴅ ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
     found_any = False
     
-    # Source 3 - Rich details
     s3 = results.get("source_3", {}).get("data", {})
     if isinstance(s3, dict):
         for key, emoji in [("SIM card","💳"),("Connection","📶"),("Mobile State","📍"),("Hometown","🏠"),("Language","🗣"),("Owner Name","👤"),("Owner Address","📍"),("Complaints","⚠️"),("Tracker Id","🪪"),("Tracking History","📌"),("Tower Locations","📡"),("Mobile Locations","📍"),("Owner Personality","🧠")]:
@@ -366,13 +366,11 @@ async def indnum_lookup(session, number):
                 result += f"<blockquote>{emoji} {key}: <code>{val}</code></blockquote>\n"
                 found_any = True
     
-    # Source 4 - Carrier
     s4 = results.get("source_4", {}).get("data", {})
     if isinstance(s4, dict):
         if s4.get("carrier"): result += f"<blockquote>📡 ɴᴇᴛᴡᴏʀᴋ ᴄᴀʀʀɪᴇʀ: <code>{s4['carrier']}</code></blockquote>\n"; found_any = True
         if s4.get("country"): result += f"<blockquote>🌍 ᴄᴏᴜɴᴛʀʏ: <code>{s4['country']}</code></blockquote>\n"
     
-    # Source 8 - Truecaller
     s8 = results.get("source_8", {}).get("data", {})
     if isinstance(s8, dict) and s8.get("success"):
         tc_data = s8.get("data", {})
@@ -382,7 +380,6 @@ async def indnum_lookup(session, number):
             if tc_results.get("international_format"): result += f"<blockquote>🌐 ɪɴᴛᴇʀɴᴀᴛɪᴏɴᴀʟ: <code>{tc_results['international_format']}</code></blockquote>\n"
             if tc_results.get("carrier"): result += f"<blockquote>📡 ᴛʀᴜᴇᴄᴀʟʟᴇʀ ᴄᴀʀʀɪᴇʀ: <code>{tc_results['carrier']}</code></blockquote>\n"
     
-    # Source 9 - Database records
     s9 = results.get("source_9", {}).get("data", {})
     if isinstance(s9, dict) and s9.get("success"):
         s9_result = s9.get("result", {})
@@ -413,6 +410,65 @@ async def indnum_lookup(session, number):
         return "<blockquote>❌ ɴᴏ ᴅᴇᴛᴀɪʟᴇᴅ ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ ꜰᴏᴜɴᴅ</blockquote>"
     
     return result
+
+async def indnum3_lookup(session, number):
+    """NEW: Indian Number Info 3 - exploitsindia.site"""
+    try:
+        url = f"{IND_NUM_API_3}{number}"
+        data = await safe_api_fetch(session, url, timeout=25)
+        
+        if not data:
+            return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+        
+        # Handle both JSON and HTML/text responses
+        if isinstance(data, str):
+            # Try to extract useful info from HTML/text
+            result = f"<blockquote expandable>✨ 🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n"
+            result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
+            
+            # Extract common patterns from response
+            name_match = re.search(r'(?:name|Name|NAME)[:\s]*([^\n<]+)', data)
+            phone_match = re.search(r'(?:phone|Phone|mobile|Mobile)[:\s]*([^\n<]+)', data)
+            location_match = re.search(r'(?:location|Location|city|City|state|State)[:\s]*([^\n<]+)', data)
+            carrier_match = re.search(r'(?:carrier|Carrier|operator|Operator|network|Network)[:\s]*([^\n<]+)', data)
+            
+            if name_match: result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{name_match.group(1).strip()}</code></blockquote>\n"
+            if phone_match: result += f"<blockquote>📱 ᴘʜᴏɴᴇ: <code>{phone_match.group(1).strip()}</code></blockquote>\n"
+            if location_match: result += f"<blockquote>📍 ʟᴏᴄᴀᴛɪᴏɴ: <code>{location_match.group(1).strip()}</code></blockquote>\n"
+            if carrier_match: result += f"<blockquote>📡 ᴄᴀʀʀɪᴇʀ: <code>{carrier_match.group(1).strip()}</code></blockquote>\n"
+            
+            if not any([name_match, phone_match, location_match, carrier_match]):
+                # Show cleaned text if no patterns found
+                clean = re.sub(r'<[^>]+>', '', data)
+                clean = re.sub(r'\s+', ' ', clean).strip()
+                if len(clean) > 500: clean = clean[:497] + '...'
+                result += f"<blockquote>📋 ʀᴇꜱᴘᴏɴꜱᴇ: <code>{clean}</code></blockquote>\n"
+            
+            return result
+        
+        if isinstance(data, dict):
+            result = f"<blockquote expandable>✨ 🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n"
+            result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
+            
+            # Try common field names
+            if data.get('name'): result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{data['name']}</code></blockquote>\n"
+            if data.get('carrier'): result += f"<blockquote>📡 ᴄᴀʀʀɪᴇʀ: <code>{data['carrier']}</code></blockquote>\n"
+            if data.get('location'): result += f"<blockquote>📍 ʟᴏᴄᴀᴛɪᴏɴ: <code>{data['location']}</code></blockquote>\n"
+            if data.get('state'): result += f"<blockquote>🏛 ꜱᴛᴀᴛᴇ: <code>{data['state']}</code></blockquote>\n"
+            
+            # Show all data if standard fields not found
+            if not any([data.get(k) for k in ['name','carrier','location','state']]):
+                for k, v in list(data.items())[:10]:
+                    if v and str(v).strip():
+                        result += f"<blockquote>🔹 {k}: <code>{str(v)[:200]}</code></blockquote>\n"
+            
+            return result
+        
+        return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
+        
+    except Exception as e:
+        logger.error(f"IndNum3 error: {e}")
+        return "<blockquote>❌ ᴇʀʀᴏʀ ᴘʀᴏᴄᴇꜱꜱɪɴɢ ʀᴇQᴜᴇꜱᴛ</blockquote>"
 
 # --- 📊 INDIA DATA PARSING ---
 
@@ -483,7 +539,8 @@ async def admin_panel(update, context):
         [InlineKeyboardButton(f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", callback_data="ad_rc"), InlineKeyboardButton(f"{ms('rc')} ᴍʀᴄ", callback_data="ad_maint_rc")],
         [InlineKeyboardButton(f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱ", callback_data="ad_gst"), InlineKeyboardButton(f"{ms('gst')} ᴍɢꜱ", callback_data="ad_maint_gst")],
         [InlineKeyboardButton(f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", callback_data="ad_pak"), InlineKeyboardButton(f"{ms('pak')} ᴍᴘᴀ", callback_data="ad_maint_pak")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ", callback_data="ad_indnum"), InlineKeyboardButton(f"{ms('indnum')} ᴍɪɴ", callback_data="ad_maint_indnum")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", callback_data="ad_indnum"), InlineKeyboardButton(f"{ms('indnum')} ᴍɪɴ2", callback_data="ad_maint_indnum")],
+        [InlineKeyboardButton(f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", callback_data="ad_indnum3"), InlineKeyboardButton(f"{ms('indnum3')} ᴍɪɴ3", callback_data="ad_maint_indnum3")],
         [InlineKeyboardButton("🛠️ ʙʏᴘᴀꜱꜱ ᴍᴀɪɴᴛ", callback_data="ad_bypass_maint"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="ad_close")]
     ]
     txt = f"<blockquote>👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ</blockquote>\n<blockquote>👥 ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | 🎫 ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}</blockquote>"
@@ -506,7 +563,7 @@ async def admin_callback(update, context):
     elif d.startswith("ad_maint_"):
         f = d.replace("ad_maint_", ""); s[f"maint_{f}"] = not s.get(f"maint_{f}", False); save_settings(s); await q.answer(f"{f}: {'🔴 ON' if s[f'maint_{f}'] else '🟢 OFF'}", show_alert=True); await admin_panel(update, context)
     elif d.startswith("ad_"):
-        toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_pak":"pak_enabled","ad_indnum":"indnum_enabled"}
+        toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_pak":"pak_enabled","ad_indnum":"indnum_enabled","ad_indnum3":"indnum3_enabled"}
         if d in toggle_map: k = toggle_map[d]; s[k] = not s.get(k,True); save_settings(s); await q.answer(f"{k}: {'ON' if s[k] else 'OFF'}", show_alert=True)
         elif d == "ad_bypass_maint": s["bypass_maintenance"] = not s.get("bypass_maintenance",False); save_settings(s); await q.answer(f"Bypass: {'ON' if s['bypass_maintenance'] else 'OFF'}", show_alert=True)
         await admin_panel(update, context)
@@ -580,63 +637,70 @@ async def msg_handler(update, context):
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'TG'
             btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
-            m = await update.message.reply_text("<blockquote>📱 ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>1️⃣ ᴏᴘᴇɴ @ChatIdInfoBot</blockquote>\n<blockquote>2️⃣ ꜱᴇʟᴇᴄᴛ ᴛᴀʀɢᴇᴛ ᴜꜱᴇʀ</blockquote>\n<blockquote>3️⃣ ɢᴇᴛ ᴛʜᴇɪʀ ᴄʜᴀᴛ ɪᴅ</blockquote>\n<blockquote>4️⃣ ᴇɴᴛᴇʀ ɪᴛ ʜᴇʀᴇ</blockquote>\n<i>Example: 7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>📱 ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>1️⃣ @ChatIdInfoBot 2️⃣ Select user 3️⃣ Get ID 4️⃣ Enter here</blockquote>\n<i>7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt in ["🏦 ɪꜰꜱᴄ ɪɴꜰᴏ➜🔎"]:
             if not s.get("ifsc_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("ifsc")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'IFSC'
-            m = await update.message.reply_text("<blockquote>🏦 ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ 11-ᴄʜᴀʀᴀᴄᴛᴇʀ ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<i>Example: SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🏦 ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt in ["🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ"]:
             if not s.get("bypass_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("bypass")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'SHORTLINK'
-            m = await update.message.reply_text("<blockquote>🔗 ꜱʜᴏʀᴛ ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</blockquote>\n<blockquote>ᴘᴀꜱᴛᴇ ᴀɴʏ ꜱʜᴏʀᴛᴇɴᴇᴅ ᴜʀʟ</blockquote>\n<i>Example: https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🔗 ꜱʜᴏʀᴛ ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt == "🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜👤":
             if not s.get("mobile_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("mobile")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'MOBILE'
-            m = await update.message.reply_text("<blockquote>🇮🇳 ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ 10-ᴅɪɢɪᴛ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>Example: 9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🇮🇳 ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt == "🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜👤":
             if not s.get("aadhaar_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("aadhaar")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'AADHAAR'
-            m = await update.message.reply_text("<blockquote>🪪 ᴀᴀᴅʜᴀʀ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ 12-ᴅɪɢɪᴛ ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ</blockquote>\n<i>Example: 123456789012</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🪪 ᴀᴀᴅʜᴀʀ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt == "🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
             if not s.get("rc_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("rc")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'VEHICLE'
-            m = await update.message.reply_text("<blockquote>🚘 ᴠᴇʜɪᴄʟᴇ ʀᴇɢɪꜱᴛʀᴀᴛɪᴏɴ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>Example: KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🚘 ᴠᴇʜɪᴄʟᴇ ʀᴇɢɪꜱᴛʀᴀᴛɪᴏɴ</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt == "📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
             if not s.get("gst_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("gst")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'GST'
-            m = await update.message.reply_text("<blockquote>📋 ɢꜱᴛ ʙᴜꜱɪɴᴇꜱꜱ ʟᴏᴏᴋᴜᴘ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ 15-ᴅɪɢɪᴛ ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>\n<i>Example: 19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>📋 ɢꜱᴛ ʙᴜꜱɪɴᴇꜱꜱ ʟᴏᴏᴋᴜᴘ</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt == "🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
             if not s.get("pak_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("pak")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'PAK'
-            m = await update.message.reply_text("<blockquote>🇵🇰 ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ ᴘᴀᴋɪꜱᴛᴀɴ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>Example: 923078750447</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🇵🇰 ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ</blockquote>\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt == "📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸":
             if not s.get("indnum_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("indnum")
             if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'INDNUM'
-            m = await update.message.reply_text("<blockquote>📲 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴀᴅᴠᴀɴᴄᴇᴅ</blockquote>\n<blockquote>ꜱᴇɴᴅ ᴀɴʏ 10-ᴅɪɢɪᴛ ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>💡 ɢᴇᴛꜱ: ᴄᴀʀʀɪᴇʀ, ᴛʀᴜᴇᴄᴀʟʟᴇʀ, ꜱɪᴍ, ʀᴇᴄᴏʀᴅꜱ</blockquote>\n<i>Example: 6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>📲 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴀᴅᴠᴀɴᴄᴇᴅ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+            asyncio.create_task(schedule_delete(m))
+        elif txt == "🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜👤":
+            if not s.get("indnum3_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            maint, msg = check_feature_maintenance("indnum3")
+            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            context.user_data['mode'] = 'INDNUM3'
+            m = await update.message.reply_text("<blockquote>🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ ɪɴꜰᴏ</blockquote>\n<blockquote>Send any 10-digit Indian number</blockquote>\n<blockquote>💡 Gets: Name, Location, Carrier, Tracking data</blockquote>\n<i>Example: 6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "👥 ɪɴᴠɪᴛᴇ"]:
             user = get_user(uid); bot_username = context.bot.username or BOT_USERNAME
@@ -645,12 +709,12 @@ async def msg_handler(update, context):
             asyncio.create_task(schedule_delete(m, 120))
         elif txt in ["🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ"]:
             context.user_data['redeem_mode'] = True
-            m = await update.message.reply_text("<blockquote>🎫 ʀᴇᴅᴇᴇᴍ ʏᴏᴜʀ ᴄᴏᴅᴇ</blockquote>\n<blockquote>ᴇɴᴛᴇʀ ᴛʜᴇ ᴄᴏᴅᴇ ʏᴏᴜ ʀᴇᴄᴇɪᴠᴇᴅ</blockquote>\n<i>Format: HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text("<blockquote>🎫 ʀᴇᴅᴇᴇᴍ ʏᴏᴜʀ ᴄᴏᴅᴇ</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m, 30))
         else:
             if context.user_data.get('redeem_mode'):
                 context.user_data['redeem_mode'] = False
-                msg = redeem_code(uid, txt)[1] if txt.upper().startswith("HEX-") and len(txt) > 10 else "❌ ɪɴᴠᴀʟɪᴅ ꜰᴏʀᴍᴀᴛ! ᴜꜱᴇ: HEX-XXXXXXXXXX"
+                msg = redeem_code(uid, txt)[1] if txt.upper().startswith("HEX-") and len(txt) > 10 else "❌ Invalid format!"
                 m = await update.message.reply_text(f"<blockquote>{msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             mode = context.user_data.get('mode')
@@ -661,18 +725,18 @@ async def msg_handler(update, context):
                     asyncio.create_task(schedule_delete(m)); context.user_data['mode'] = None; return
                 user = get_user(uid)
                 if user.get("credits", 0) <= 0:
-                    m = await update.message.reply_text("<blockquote>❌ ɴᴏ ᴄʀᴇᴅɪᴛꜱ!</blockquote>\n<blockquote>🔄 +10 ᴅᴀɪʟʏ | 👥 +3 ɪɴᴠɪᴛᴇ | 🎫 ʀᴇᴅᴇᴇᴍ</blockquote>", parse_mode=ParseMode.HTML)
+                    m = await update.message.reply_text("<blockquote>❌ No credits! +10 daily | +3 invite</blockquote>", parse_mode=ParseMode.HTML)
                     asyncio.create_task(schedule_delete(m)); context.user_data['mode'] = None; return
                 await run_query(update, context, mode, txt); context.user_data['mode'] = None
     except Exception as e: logger.error(f"Msg: {e}")
 
 async def run_query(update, context, mode, query):
     if not await net_ok():
-        m = await update.message.reply_text("<blockquote>🔴 ɴᴏ ɪɴᴛᴇʀɴᴇᴛ ᴄᴏɴɴᴇᴄᴛɪᴏɴ</blockquote>", parse_mode=ParseMode.HTML)
+        m = await update.message.reply_text("<blockquote>🔴 ɴᴏ ɪɴᴛᴇʀɴᴇᴛ</blockquote>", parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(m)); return
     await update.message.reply_chat_action(ChatAction.TYPING)
-    names = {'TG':'📱 ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ','IFSC':'🏦 ʙᴀɴᴋ ɪꜰꜱᴄ','SHORTLINK':'🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ','AADHAAR':'🪪 ᴀᴀᴅʜᴀʀ','MOBILE':'🇮🇳 ᴍᴏʙɪʟᴇ','VEHICLE':'🚘 ᴠᴇʜɪᴄʟᴇ','GST':'📋 ɢꜱᴛ','PAK':'🇵🇰 ᴘᴀᴋɪꜱᴛᴀɴ','INDNUM':'📲 ᴀᴅᴠᴀɴᴄᴇᴅ'}
-    st = await update.message.reply_text("<blockquote>🟩 ꜱᴇᴀʀᴄʜɪɴɢ ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ...</blockquote>", parse_mode=ParseMode.HTML)
+    names = {'TG':'📱','IFSC':'🏦','SHORTLINK':'🔗','AADHAAR':'🪪','MOBILE':'🇮🇳','VEHICLE':'🚘','GST':'📋','PAK':'🇵🇰','INDNUM':'📲','INDNUM3':'🇮🇳 ᴛʀᴀᴄᴋ'}
+    st = await update.message.reply_text("<blockquote>🟩 Searching...</blockquote>", parse_mode=ParseMode.HTML)
     lt = asyncio.create_task(loading_animation(st, names.get(mode, '')))
     credit_deducted = False
     try:
@@ -682,7 +746,7 @@ async def run_query(update, context, mode, query):
                 records = parse_all_india_records(raw)
                 result = format_records_result(records, {'AADHAAR':'aadhaar','MOBILE':'mobile','VEHICLE':'vehicle'}[mode])
                 if records and "❌" not in str(result): use_credit(update.effective_user.id); credit_deducted = True
-            else: result = "<blockquote>❌ ꜱᴄʀɪᴘᴛ ᴇxᴇᴄᴜᴛɪᴏɴ ꜰᴀɪʟᴇᴅ</blockquote>"
+            else: result = "<blockquote>❌ Script failed</blockquote>"
         else:
             async with aiohttp.ClientSession() as s:
                 if mode == 'TG': result = await chatid_lookup(s, query)
@@ -691,22 +755,23 @@ async def run_query(update, context, mode, query):
                 elif mode == 'GST': result = await gst_lookup(s, query)
                 elif mode == 'PAK': result = await pakistan_lookup(s, query)
                 elif mode == 'INDNUM': result = await indnum_lookup(s, query)
+                elif mode == 'INDNUM3': result = await indnum3_lookup(s, query)
                 else: result = "❌"
             if result and "❌" not in str(result) and "unavailable" not in str(result).lower(): use_credit(update.effective_user.id); credit_deducted = True
         lt.cancel()
         try: await lt
         except asyncio.CancelledError: pass
         user = get_user(update.effective_user.id)
-        final = f"{result}\n{SEP}\n<blockquote>💰 {'ᴄʀᴇᴅɪᴛꜱ ʟᴇꜰᴛ: '+str(user.get('credits',0)) if credit_deducted else 'ɴᴏ ᴄʀᴇᴅɪᴛ ᴅᴇᴅᴜᴄᴛᴇᴅ'} | ⏱ {AUTO_DELETE_TIME}ꜱ</blockquote>{DISCLAIMER}{FOOTER}"
+        final = f"{result}\n{SEP}\n<blockquote>💰 {'ᴄʀ: '+str(user.get('credits',0)) if credit_deducted else 'ɴᴏ ᴄʀ ᴅᴇᴅᴜᴄᴛᴇᴅ'} | ⏱ {AUTO_DELETE_TIME}ꜱ</blockquote>{DISCLAIMER}{FOOTER}"
         sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(sent))
     except Exception as e:
         lt.cancel(); logger.error(f"Query: {e}")
-        try: await st.edit_text(f"<blockquote>⚠️ ᴇʀʀᴏʀ ᴘʀᴏᴄᴇꜱꜱɪɴɢ ʀᴇQᴜᴇꜱᴛ</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
+        try: await st.edit_text(f"<blockquote>⚠️ ᴇʀʀᴏʀ</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
         except: pass
 
 def main():
-    print("🔄 ʜᴇx ᴛᴇʀᴍɪɴᴀʟ ꜱᴛᴀʀᴛɪɴɢ...")
+    print("🔄 Hex Terminal...")
     try: subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], capture_output=True, timeout=30)
     except: pass
     app = Application.builder().token(BOT_TOKEN).build()
@@ -714,8 +779,8 @@ def main():
     app.add_handler(CallbackQueryHandler(verify_cb, pattern="^verify$"))
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
-    print(f"✅ {BOT_NAME} ɪꜱ ʀᴇᴀᴅʏ!")
-    print("📋 ɢᴜɪᴅᴇʟɪɴᴇꜱ ᴀᴅᴅᴇᴅ | 🔄 ᴅᴀɪʟʏ ʀᴇꜱᴇᴛ ꜰɪxᴇᴅ")
+    print(f"✅ {BOT_NAME} Ready!")
+    print("🇮🇳 NEW: Indian Number Tracking Info 3")
     app.run_polling()
 
 if __name__ == '__main__':
