@@ -49,7 +49,41 @@ AUTO_DELETE_TIME = 60
 BOT_NAME = "𝗛𝗲𝘅 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝗹"
 BOT_USERNAME = "Hex_Terminal_bot"
 
-DISCLAIMER = "\n\n<b>⚠️ ᴅɪꜱᴄʟᴀɪᴍᴇʀ:</b>\n<i>ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ.</i>"
+# --- PREMIUM EMOJIS ---
+# Format: '<tg-emoji emoji-id="ID_HERE">FALLBACK</tg-emoji>'
+EMOJI_WARNING = '<tg-emoji emoji-id="6267039884016358504">⚠️</tg-emoji>'
+EMOJI_CROWN = '<tg-emoji emoji-id="6267039884016358504">👑</tg-emoji>'
+EMOJI_STAR = '<tg-emoji emoji-id="6267039884016358504">⭐</tg-emoji>'
+EMOJI_FIRE = '<tg-emoji emoji-id="6267039884016358504">🔥</tg-emoji>'
+EMOJI_CHECK = '<tg-emoji emoji-id="6267039884016358504">✅</tg-emoji>'
+EMOJI_CROSS = '<tg-emoji emoji-id="6267039884016358504">❌</tg-emoji>'
+EMOJI_LOCK = '<tg-emoji emoji-id="6267039884016358504">🔒</tg-emoji>'
+EMOJI_GIFT = '<tg-emoji emoji-id="6267039884016358504">🎁</tg-emoji>'
+EMOJI_DIAMOND = '<tg-emoji emoji-id="6267039884016358504">💎</tg-emoji>'
+EMOJI_ROCKET = '<tg-emoji emoji-id="6267039884016358504">🚀</tg-emoji>'
+EMOJI_SEARCH = '<tg-emoji emoji-id="6267039884016358504">🔍</tg-emoji>'
+EMOJI_PHONE = '<tg-emoji emoji-id="6267039884016358504">📞</tg-emoji>'
+EMOJI_BANK = '<tg-emoji emoji-id="6267039884016358504">🏦</tg-emoji>'
+EMOJI_LINK = '<tg-emoji emoji-id="6267039884016358504">🔗</tg-emoji>'
+EMOJI_CAR = '<tg-emoji emoji-id="6267039884016358504">🚘</tg-emoji>'
+EMOJI_CARD = '<tg-emoji emoji-id="6267039884016358504">🪪</tg-emoji>'
+EMOJI_USER = '<tg-emoji emoji-id="6267039884016358504">👤</tg-emoji>'
+EMOJI_INDIA = '<tg-emoji emoji-id="6267039884016358504">🇮🇳</tg-emoji>'
+EMOJI_PAK = '<tg-emoji emoji-id="6267039884016358504">🇵🇰</tg-emoji>'
+EMOJI_PHONE2 = '<tg-emoji emoji-id="6267039884016358504">📲</tg-emoji>'
+EMOJI_INVITE = '<tg-emoji emoji-id="6267039884016358504">👥</tg-emoji>'
+EMOJI_TICKET = '<tg-emoji emoji-id="6267039884016358504">🎫</tg-emoji>'
+EMOJI_CREDIT = '<tg-emoji emoji-id="6267039884016358504">💰</tg-emoji>'
+EMOJI_REFRESH = '<tg-emoji emoji-id="6267039884016358504">🔄</tg-emoji>'
+EMOJI_CLOCK = '<tg-emoji emoji-id="6267039884016358504">⏱</tg-emoji>'
+EMOJI_BOLT = '<tg-emoji emoji-id="6267039884016358504">⚡</tg-emoji>'
+EMOJI_GREEN = '<tg-emoji emoji-id="6267039884016358504">🟩</tg-emoji>'
+EMOJI_BLACK = '<tg-emoji emoji-id="6267039884016358504">⬛</tg-emoji>'
+EMOJI_SPARKLE = '<tg-emoji emoji-id="6267039884016358504">✨</tg-emoji>'
+EMOJI_TOOLS = '<tg-emoji emoji-id="6267039884016358504">🛠️</tg-emoji>'
+EMOJI_DISABLED = '<tg-emoji emoji-id="6267039884016358504">📴</tg-emoji>'
+
+DISCLAIMER = f"\n\n<b>{EMOJI_WARNING} ᴅɪꜱᴄʟᴀɪᴍᴇʀ:</b>\n<i>ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ.</i>"
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -110,17 +144,17 @@ def generate_redeem_code(credits):
 
 def redeem_code(uid, code):
     codes = load_json(REDEEM_FILE); code = code.upper().strip()
-    if code not in codes: return False, "❌ ɪɴᴠᴀʟɪᴅ ᴄᴏᴅᴇ"
-    if codes[code].get("used"): return False, "❌ ᴀʟʀᴇᴀᴅʏ ᴜꜱᴇᴅ"
+    if code not in codes: return False, f"{EMOJI_CROSS} ɪɴᴠᴀʟɪᴅ ᴄᴏᴅᴇ"
+    if codes[code].get("used"): return False, f"{EMOJI_CROSS} ᴀʟʀᴇᴀᴅʏ ᴜꜱᴇᴅ"
     cr = codes[code]["credits"]; codes[code]["used"] = True; codes[code]["used_by"] = str(uid)
     save_json(REDEEM_FILE, codes); bal = add_credits(uid, cr)
-    return True, f"✅ +{cr} ᴄʀᴇᴅɪᴛꜱ ᴀᴅᴅᴇᴅ!\n💰 ʙᴀʟᴀɴᴄᴇ: {bal}"
+    return True, f"{EMOJI_CHECK} +{cr} ᴄʀᴇᴅɪᴛꜱ ᴀᴅᴅᴇᴅ!\n{EMOJI_CREDIT} ʙᴀʟᴀɴᴄᴇ: {bal}"
 
 def get_settings():
     try: return load_json(SETTINGS_FILE)
     except:
         d = {"bypass_maintenance":False,"tgid_enabled":True,"ifsc_enabled":True,"bypass_enabled":True,"mobile_enabled":True,"aadhaar_enabled":True,"rc_enabled":True,"gst_enabled":True,"pak_enabled":True,"indnum_enabled":True,"indnum3_enabled":True,"maintenance_mode":False}
-        for k in ["tgid","ifsc","bypass","mobile","aadhaar","rc","gst","pak","indnum","indnum3"]: d[f"maint_msg_{k}"] = f"🛠️ {k} is under maintenance."; d[f"maint_{k}"] = False
+        for k in ["tgid","ifsc","bypass","mobile","aadhaar","rc","gst","pak","indnum","indnum3"]: d[f"maint_msg_{k}"] = f"{EMOJI_TOOLS} {k} is under maintenance."; d[f"maint_{k}"] = False
         save_json(SETTINGS_FILE, d); return d
 
 def save_settings(data): save_json(SETTINGS_FILE, data)
@@ -146,16 +180,16 @@ async def schedule_delete(msg, delay=AUTO_DELETE_TIME):
     except: pass
 
 async def loading_animation(msg, name):
-    bars = ["🟩⬛⬛⬛⬛⬛⬛⬛⬛⬛","🟩🟩⬛⬛⬛⬛⬛⬛⬛⬛","🟩🟩🟩⬛⬛⬛⬛⬛⬛⬛","🟩🟩🟩🟩⬛⬛⬛⬛⬛⬛","🟩🟩🟩🟩🟩⬛⬛⬛⬛⬛","🟩🟩🟩🟩🟩🟩⬛⬛⬛⬛","🟩🟩🟩🟩🟩🟩🟩⬛⬛⬛","🟩🟩🟩🟩🟩🟩🟩🟩⬛⬛","🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛","🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩"]
+    bars = [f"{EMOJI_GREEN}{EMOJI_BLACK*9}",f"{EMOJI_GREEN*2}{EMOJI_BLACK*8}",f"{EMOJI_GREEN*3}{EMOJI_BLACK*7}",f"{EMOJI_GREEN*4}{EMOJI_BLACK*6}",f"{EMOJI_GREEN*5}{EMOJI_BLACK*5}",f"{EMOJI_GREEN*6}{EMOJI_BLACK*4}",f"{EMOJI_GREEN*7}{EMOJI_BLACK*3}",f"{EMOJI_GREEN*8}{EMOJI_BLACK*2}",f"{EMOJI_GREEN*9}{EMOJI_BLACK}",f"{EMOJI_GREEN*10}"]
     percentages = ["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"]
     for i, bar in enumerate(bars):
-        try: await msg.edit_text(f"<blockquote>⚡ {name}</blockquote>\n<code>{bar} {percentages[i]}</code>", parse_mode=ParseMode.HTML); await asyncio.sleep(0.2)
+        try: await msg.edit_text(f"<blockquote>{EMOJI_BOLT} {name}</blockquote>\n<code>{bar} {percentages[i]}</code>", parse_mode=ParseMode.HTML); await asyncio.sleep(0.2)
         except: break
 
 def check_feature_maintenance(feature_key):
     s = get_settings()
     if s.get(f"maint_{feature_key}", False):
-        return True, s.get(f"maint_msg_{feature_key}", "🛠️ Under maintenance.")
+        return True, s.get(f"maint_msg_{feature_key}", f"{EMOJI_TOOLS} Under maintenance.")
     return False, ""
 
 async def show_verification_page(update, context):
@@ -163,61 +197,59 @@ async def show_verification_page(update, context):
         bot = await context.bot.get_me()
         photos = await context.bot.get_user_profile_photos(bot.id, limit=1)
         caption = (
-            f"<b>🤖 {BOT_NAME}</b>\n"
+            f"<b>{EMOJI_BOLT} {BOT_NAME}</b>\n"
             f"<b>@{BOT_USERNAME}</b>\n\n"
-            f"<b>🔒 ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ʀᴇQᴜɪʀᴇᴅ</b>\n"
+            f"<b>{EMOJI_LOCK} ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ʀᴇQᴜɪʀᴇᴅ</b>\n"
             f"<b>ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛᴏ ᴜɴʟᴏᴄᴋ</b>\n\n"
-            f"<b>📋 ɢᴜɪᴅᴇʟɪɴᴇꜱ:</b>\n"
+            f"<b>{EMOJI_WARNING} ɢᴜɪᴅᴇʟɪɴᴇꜱ:</b>\n"
             f"<b>• ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ</b>\n"
             f"<b>• ᴜꜱᴇ ᴏɴ ʏᴏᴜʀ ᴏᴡɴ ᴅᴀᴛᴀ</b>\n"
             f"<b>• ʀᴇꜱᴘᴇᴄᴛ ᴘʀɪᴠᴀᴄʏ ʟᴀᴡꜱ</b>\n\n"
-            f"<b>🎁 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | 👥 +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ</b>\n"
-            f"<b>👑 @Hexh4ckerOFC</b>"
+            f"<b>{EMOJI_GIFT} +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | {EMOJI_INVITE} +{INVITE_CREDITS} ɪɴᴠɪᴛᴇ</b>\n"
+            f"<b>{EMOJI_CROWN} @Hexh4ckerOFC</b>"
         )
         if photos and photos.photos: sent = await update.message.reply_photo(photo=photos.photos[0][-1].file_id, caption=caption, parse_mode=ParseMode.HTML)
         else: sent = await update.message.reply_text(caption, parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(sent, 120))
     except: pass
-    buttons = [[InlineKeyboardButton("📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟷", url=LINK_1)],[InlineKeyboardButton("📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟸", url=LINK_2)],[InlineKeyboardButton("✅ ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", callback_data="verify")]]
-    sent2 = await update.message.reply_text("<blockquote>🔒 ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ</blockquote>", reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML)
+    buttons = [[InlineKeyboardButton(f"{EMOJI_BOLT} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟷", url=LINK_1)],[InlineKeyboardButton(f"{EMOJI_BOLT} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟸", url=LINK_2)],[InlineKeyboardButton(f"{EMOJI_CHECK} ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", callback_data="verify")]]
+    sent2 = await update.message.reply_text(f"<blockquote>{EMOJI_LOCK} ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ</blockquote>", reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML)
     asyncio.create_task(schedule_delete(sent2, 120))
 
 async def main_menu(update, context):
-    """SIMPLE DIRECT MENU - No big header"""
     is_admin = update.effective_user.id == ADMIN_ID
     user = get_user(update.effective_user.id); s = get_settings()
     
     kb = []
     row = []
-    if s.get("tgid_enabled",True): row.append(KeyboardButton("ᴛɢ ɪᴅ ➜ 📞 ɴᴜᴍʙᴇʀ 🔍"))
-    if s.get("ifsc_enabled",True): row.append(KeyboardButton("🏦 ɪꜰꜱᴄ ɪɴꜰᴏ➜🔎"))
+    if s.get("tgid_enabled",True): row.append(KeyboardButton(f"{EMOJI_PHONE} ᴛɢ ɪᴅ ➜ {EMOJI_PHONE2} ɴᴜᴍʙᴇʀ {EMOJI_SEARCH}"))
+    if s.get("ifsc_enabled",True): row.append(KeyboardButton(f"{EMOJI_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ➜{EMOJI_SEARCH}"))
     if row: kb.append(row)
-    if s.get("bypass_enabled",True): kb.append([KeyboardButton("🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ")])
+    if s.get("bypass_enabled",True): kb.append([KeyboardButton(f"{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ")])
     row2 = []
-    if s.get("aadhaar_enabled",True): row2.append(KeyboardButton("🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜👤"))
-    if s.get("mobile_enabled",True): row2.append(KeyboardButton("🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜👤"))
+    if s.get("aadhaar_enabled",True): row2.append(KeyboardButton(f"{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜{EMOJI_USER}"))
+    if s.get("mobile_enabled",True): row2.append(KeyboardButton(f"{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜{EMOJI_USER}"))
     if row2: kb.append(row2)
     row3 = []
-    if s.get("rc_enabled",True): row3.append(KeyboardButton("🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ"))
-    if s.get("gst_enabled",True): row3.append(KeyboardButton("📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ"))
+    if s.get("rc_enabled",True): row3.append(KeyboardButton(f"{EMOJI_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ"))
+    if s.get("gst_enabled",True): row3.append(KeyboardButton(f"{EMOJI_CARD} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ"))
     if row3: kb.append(row3)
     row4 = []
-    if s.get("pak_enabled",True): row4.append(KeyboardButton("🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ"))
-    if s.get("indnum_enabled",True): row4.append(KeyboardButton("📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸"))
+    if s.get("pak_enabled",True): row4.append(KeyboardButton(f"{EMOJI_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ"))
+    if s.get("indnum_enabled",True): row4.append(KeyboardButton(f"{EMOJI_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸"))
     if row4: kb.append(row4)
-    if s.get("indnum3_enabled",True): kb.append([KeyboardButton("🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜👤")])
-    kb.append([KeyboardButton("👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"), KeyboardButton("🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ")])
-    if is_admin: kb.append([KeyboardButton("👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ")])
+    if s.get("indnum3_enabled",True): kb.append([KeyboardButton(f"{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜{EMOJI_USER}")])
+    kb.append([KeyboardButton(f"{EMOJI_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"), KeyboardButton(f"{EMOJI_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ")])
+    if is_admin: kb.append([KeyboardButton(f"{EMOJI_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ")])
     
     markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
     cr = user.get("credits",0)
     
-    # SIMPLE DIRECT MENU TEXT
     txt = (
-        f"<b>💎 ᴘʀᴇᴍɪᴜᴍ ʜᴜʙ</b>\n"
+        f"<b>{EMOJI_DIAMOND} ᴘʀᴇᴍɪᴜᴍ ʜᴜʙ</b>\n"
         f"<b>ᴡᴇʟᴄᴏᴍᴇ</b> <code>{update.effective_user.first_name}</code>\n"
-        f"<b>💰 ᴄʀ: {cr} | 📊 ǫ: {user.get('total_queries',0)} | 👥 ɪɴᴠ: {user.get('invites',0)}</b>\n"
-        f"<b>🔄 +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | ⏱ {AUTO_DELETE_TIME}ꜱ</b>\n\n"
+        f"<b>{EMOJI_CREDIT} ᴄʀ: {cr} | {EMOJI_SEARCH} ǫ: {user.get('total_queries',0)} | {EMOJI_INVITE} ɪɴᴠ: {user.get('invites',0)}</b>\n"
+        f"<b>{EMOJI_REFRESH} +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ | {EMOJI_CLOCK} {AUTO_DELETE_TIME}ꜱ</b>\n\n"
         f"<b>ꜱᴇʟᴇᴄᴛ ᴀ ꜱᴇʀᴠɪᴄᴇ ʙᴇʟᴏᴡ</b>"
     )
     
@@ -229,7 +261,7 @@ async def main_menu(update, context):
 async def safe_api_fetch(session, url, timeout=20):
     for attempt in range(3):
         try:
-            headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36','Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8','Accept-Language': 'en-US,en;q=0.5','Connection': 'keep-alive'}
+            headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36','Accept': '*/*','Accept-Language': 'en-US,en;q=0.5'}
             async with session.get(url, timeout=aiohttp.ClientTimeout(total=timeout), headers=headers, allow_redirects=True) as r:
                 text = await r.text()
                 if not text: continue
@@ -242,165 +274,116 @@ async def safe_api_fetch(session, url, timeout=20):
 
 async def chatid_lookup(session, query):
     data = await safe_api_fetch(session, f"{LOOKUP_API}{query}")
-    if not data: return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+    if not data: return f"<blockquote>{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     if isinstance(data, dict) and not data.get("raw_text") and data.get("success"):
         d = data.get("data", data)
         if isinstance(d, dict):
-            result = "<blockquote expandable>✨ 📱 ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ɪɴꜰᴏ</blockquote>\n"
-            if d.get('chat_id') or d.get('userid'): result += f"<blockquote>🆔 ᴄʜᴀᴛ ɪᴅ: <code>{d.get('chat_id', d.get('userid', query))}</code></blockquote>\n"
-            if d.get('number'): result += f"<blockquote>📞 ᴘʜᴏɴᴇ: <code>{d['number']}</code></blockquote>\n"
-            if d.get('name'): result += f"<blockquote>👤 ɴᴀᴍᴇ: <code>{d['name']}</code></blockquote>\n"
+            result = f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ɪɴꜰᴏ</blockquote>\n"
+            if d.get('chat_id') or d.get('userid'): result += f"<blockquote>{EMOJI_USER} ᴄʜᴀᴛ ɪᴅ: <code>{d.get('chat_id', d.get('userid', query))}</code></blockquote>\n"
+            if d.get('number'): result += f"<blockquote>{EMOJI_PHONE2} ᴘʜᴏɴᴇ: <code>{d['number']}</code></blockquote>\n"
+            if d.get('name'): result += f"<blockquote>{EMOJI_USER} ɴᴀᴍᴇ: <code>{d['name']}</code></blockquote>\n"
             return result
-    return "<blockquote>❌ ɴᴏᴛ ꜰᴏᴜɴᴅ</blockquote>"
+    return f"<blockquote>{EMOJI_CROSS} ɴᴏᴛ ꜰᴏᴜɴᴅ</blockquote>"
 
 async def ifsc_lookup(session, code):
     data = await safe_api_fetch(session, f"{IFSC_API}{code.upper()}")
-    if not data or isinstance(data, dict) and data.get("raw_text"): return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+    if not data or isinstance(data, dict) and data.get("raw_text"): return f"<blockquote>{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     if isinstance(data, dict):
-        return (f"<blockquote expandable>✨ 🏦 ɪꜰꜱᴄ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n"
-                f"<blockquote>🏛 ʙᴀɴᴋ: <code>{data.get('BANK','N/A')}</code></blockquote>\n"
-                f"<blockquote>📍 ʙʀᴀɴᴄʜ: <code>{data.get('BRANCH','N/A')}</code></blockquote>\n"
-                f"<blockquote>🔑 ɪꜰꜱᴄ: <code>{data.get('IFSC',code.upper())}</code></blockquote>\n"
-                f"<blockquote>📫 ᴀᴅᴅʀᴇꜱꜱ: <code>{data.get('ADDRESS','N/A')}</code></blockquote>")
-    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
+        return (f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_BANK} ɪꜰꜱᴄ ᴅᴇᴛᴀɪʟꜱ</blockquote>\n"
+                f"<blockquote>{EMOJI_BANK} ʙᴀɴᴋ: <code>{data.get('BANK','N/A')}</code></blockquote>\n"
+                f"<blockquote>{EMOJI_SEARCH} ʙʀᴀɴᴄʜ: <code>{data.get('BRANCH','N/A')}</code></blockquote>\n"
+                f"<blockquote>{EMOJI_CARD} ɪꜰꜱᴄ: <code>{data.get('IFSC',code.upper())}</code></blockquote>\n"
+                f"<blockquote>{EMOJI_USER} ᴀᴅᴅʀᴇꜱꜱ: <code>{data.get('ADDRESS','N/A')}</code></blockquote>")
+    return f"<blockquote>{EMOJI_CROSS} ɪɴᴠᴀʟɪᴅ</blockquote>"
 
 async def bypass_lookup(session, link):
     s = get_settings()
-    if s.get("bypass_maintenance",False): return "<blockquote>🛠️ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</blockquote>"
+    if s.get("bypass_maintenance",False): return f"<blockquote>{EMOJI_TOOLS} ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ</blockquote>"
     data = await safe_api_fetch(session, f"{SHORTLINK_API}{link}", timeout=20)
-    if not data or isinstance(data, dict) and data.get("raw_text"): return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+    if not data or isinstance(data, dict) and data.get("raw_text"): return f"<blockquote>{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     if isinstance(data, dict):
         r = data.get('bypassed_url') or data.get('url') or str(data)
-        return f"<blockquote expandable>✨ 🔗 ʙʏᴘᴀꜱꜱᴇᴅ</blockquote>\n<blockquote>🔗 <code>{str(r)}</code></blockquote>"
-    return f"<blockquote>🔗 <code>{str(data)}</code></blockquote>"
+        return f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_LINK} ʙʏᴘᴀꜱꜱᴇᴅ</blockquote>\n<blockquote>{EMOJI_LINK} <code>{str(r)}</code></blockquote>"
+    return f"<blockquote>{EMOJI_LINK} <code>{str(data)}</code></blockquote>"
 
 async def gst_lookup(session, gst_number):
     data = await safe_api_fetch(session, f"{GST_API}{gst_number.upper()}", timeout=20)
-    if not data or isinstance(data, dict) and data.get("raw_text"): return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+    if not data or isinstance(data, dict) and data.get("raw_text"): return f"<blockquote>{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     if isinstance(data, dict) and data.get("status") == "success" and data.get("data"):
         d = data["data"]
-        result = "<blockquote expandable>✨ 📋 ɢꜱᴛ ɪɴꜰᴏ</blockquote>\n"
-        if d.get('TradeName'): result += f"<blockquote>🏢 ɴᴀᴍᴇ: <code>{d['TradeName']}</code></blockquote>\n"
-        if d.get('Gstin'): result += f"<blockquote>🔑 ɢꜱᴛ: <code>{d['Gstin']}</code></blockquote>\n"
-        if d.get('Status'):
-            sm = {'ACT':'🟢 ᴀᴄᴛɪᴠᴇ','SUS':'🔴 ꜱᴜꜱᴘᴇɴᴅᴇᴅ','CAN':'⚫ ᴄᴀɴᴄᴇʟʟᴇᴅ'}
-            result += f"<blockquote>📊 ꜱᴛᴀᴛᴜꜱ: {sm.get(d['Status'], d['Status'])}</blockquote>\n"
+        result = f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_CARD} ɢꜱᴛ ɪɴꜰᴏ</blockquote>\n"
+        if d.get('TradeName'): result += f"<blockquote>{EMOJI_BANK} ɴᴀᴍᴇ: <code>{d['TradeName']}</code></blockquote>\n"
+        if d.get('Gstin'): result += f"<blockquote>{EMOJI_CARD} ɢꜱᴛ: <code>{d['Gstin']}</code></blockquote>\n"
         return result
-    return "<blockquote>❌ ɪɴᴠᴀʟɪᴅ</blockquote>"
+    return f"<blockquote>{EMOJI_CROSS} ɪɴᴠᴀʟɪᴅ</blockquote>"
 
 async def pakistan_lookup(session, number):
     try:
         data = await safe_api_fetch(session, f"{PAK_API}{number}", timeout=20)
-        if not data or isinstance(data, dict) and data.get("raw_text"): return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+        if not data or isinstance(data, dict) and data.get("raw_text"): return f"<blockquote>{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
         if isinstance(data, dict) and data.get("success") and data.get("data"):
             valid = [r for r in data["data"] if isinstance(r, dict) and any(r.get(k) for k in ['name','number','cnic','address'])]
-            if not valid: return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
-            result = f"<blockquote expandable>✨ 🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ</blockquote>\n"
+            if not valid: return f"<blockquote>{EMOJI_CROSS} ɴᴏ ᴅᴀᴛᴀ</blockquote>"
+            result = f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ</blockquote>\n"
             for i, r in enumerate(valid[:3], 1):
                 if len(valid) > 1: result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
-                if r.get('number'): result += f"<blockquote>📞: <code>{r['number']}</code></blockquote>\n"
-                if r.get('name'): result += f"<blockquote>👤: <code>{r['name']}</code></blockquote>\n"
-                if r.get('cnic'): result += f"<blockquote>🪪: <code>{r['cnic']}</code></blockquote>\n"
-                if r.get('address'): result += f"<blockquote>📍: <code>{r['address'][:200]}</code></blockquote>\n"
+                if r.get('number'): result += f"<blockquote>{EMOJI_PHONE2}: <code>{r['number']}</code></blockquote>\n"
+                if r.get('name'): result += f"<blockquote>{EMOJI_USER}: <code>{r['name']}</code></blockquote>\n"
+                if r.get('cnic'): result += f"<blockquote>{EMOJI_CARD}: <code>{r['cnic']}</code></blockquote>\n"
+                if r.get('address'): result += f"<blockquote>{EMOJI_USER}: <code>{r['address'][:200]}</code></blockquote>\n"
             return result
-        return "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
-    except: return "<blockquote>❌ ᴇʀʀᴏʀ</blockquote>"
+        return f"<blockquote>{EMOJI_CROSS} ɴᴏ ᴅᴀᴛᴀ</blockquote>"
+    except: return f"<blockquote>{EMOJI_CROSS} ᴇʀʀᴏʀ</blockquote>"
 
 async def indnum_lookup(session, number):
     for attempt in range(3):
         data = await safe_api_fetch(session, f"{IND_NUM_API}{number}", timeout=30)
         if data and isinstance(data, dict) and not data.get("raw_text") and data.get("results"): break
         if attempt < 2: await asyncio.sleep(2)
-    if not data or isinstance(data, dict) and data.get("raw_text"): return "<blockquote>❌ ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
+    if not data or isinstance(data, dict) and data.get("raw_text"): return f"<blockquote>{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ</blockquote>"
     results = data.get("results", {})
-    if not results: return "<blockquote>❌ ɴᴏ ʀᴇꜱᴜʟᴛꜱ</blockquote>"
-    result = f"<blockquote expandable>✨ 📲 ɪɴᴅ ɴᴜᴍ ᴀᴅᴠᴀɴᴄᴇᴅ</blockquote>\n<blockquote>📞: <code>{number}</code></blockquote>\n"
+    if not results: return f"<blockquote>{EMOJI_CROSS} ɴᴏ ʀᴇꜱᴜʟᴛꜱ</blockquote>"
+    result = f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_PHONE2} ɪɴᴅ ɴᴜᴍ ᴀᴅᴠᴀɴᴄᴇᴅ</blockquote>\n<blockquote>{EMOJI_PHONE2}: <code>{number}</code></blockquote>\n"
     found = False
     s3 = results.get("source_3", {}).get("data", {})
     if isinstance(s3, dict):
-        for k, e in [("SIM card","💳"),("Connection","📶"),("Mobile State","📍"),("Hometown","🏠"),("Language","🗣")]:
+        for k, e in [("SIM card",EMOJI_CARD),("Connection",EMOJI_PHONE2),("Mobile State",EMOJI_USER),("Hometown",EMOJI_USER)]:
             if s3.get(k): result += f"<blockquote>{e} {k}: <code>{str(s3[k])[:200]}</code></blockquote>\n"; found = True
     s4 = results.get("source_4", {}).get("data", {})
-    if isinstance(s4, dict) and s4.get("carrier"): result += f"<blockquote>📡 ᴄᴀʀʀɪᴇʀ: <code>{s4['carrier']}</code></blockquote>\n"; found = True
-    s8 = results.get("source_8", {}).get("data", {})
-    if isinstance(s8, dict) and s8.get("success"):
-        tc = s8.get("data", {}).get("results", {})
-        if isinstance(tc, dict) and tc.get("name"): result += f"<blockquote>👤 ᴛʀᴜᴇᴄᴀʟʟᴇʀ: <code>{tc['name']}</code></blockquote>\n"; found = True
-    return result if found else "<blockquote>❌ ɴᴏ ᴅᴀᴛᴀ</blockquote>"
+    if isinstance(s4, dict) and s4.get("carrier"): result += f"<blockquote>{EMOJI_PHONE2} ᴄᴀʀʀɪᴇʀ: <code>{s4['carrier']}</code></blockquote>\n"; found = True
+    return result if found else f"<blockquote>{EMOJI_CROSS} ɴᴏ ᴅᴀᴛᴀ</blockquote>"
 
 async def indnum3_lookup(session, number):
-    """FIXED: Show ALL data from exploitsindia.site"""
     url = f"{IND_NUM_API_3}{number}"
-    logger.info(f"INDNUM3: {url}")
-    
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36','Accept': '*/*','Accept-Language': 'en-US,en;q=0.5'}
+        headers = {'User-Agent': 'Mozilla/5.0','Accept': '*/*'}
         async with session.get(url, timeout=aiohttp.ClientTimeout(total=25), headers=headers, allow_redirects=True) as r:
             text = await r.text()
-            logger.info(f"INDNUM3 Response ({len(text)} chars): {text[:500]}")
-            
-            if not text or len(text) < 20:
-                return "<blockquote>❌ ᴇᴍᴘᴛʏ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
-            
-            # Try JSON first
+            if not text or len(text) < 20: return f"<blockquote>{EMOJI_CROSS} ᴇᴍᴘᴛʏ ʀᴇꜱᴘᴏɴꜱᴇ</blockquote>"
             try:
                 data = json.loads(text)
                 if isinstance(data, dict):
-                    result = f"<blockquote expandable>✨ 🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n"
-                    result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
+                    result = f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n<blockquote>{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
                     for k, v in data.items():
-                        if v and str(v).strip() and k.lower() not in ['success','message','error']:
-                            emoji = '👤' if 'name' in k.lower() else '📡' if 'carrier' in k.lower() or 'operator' in k.lower() else '📍' if 'location' in k.lower() or 'city' in k.lower() or 'state' in k.lower() else '📞' if 'phone' in k.lower() or 'mobile' in k.lower() else '🔹'
-                            result += f"<blockquote>{emoji} {k}: <code>{str(v)[:200]}</code></blockquote>\n"
+                        if v and str(v).strip():
+                            e = EMOJI_USER if 'name' in k.lower() else EMOJI_PHONE2 if 'carrier' in k.lower() else EMOJI_USER if 'location' in k.lower() else EMOJI_CARD
+                            result += f"<blockquote>{e} {k}: <code>{str(v)[:200]}</code></blockquote>\n"
                     return result
             except: pass
-            
-            # Parse HTML/PHP - Extract ALL table data
             clean = re.sub(r'<[^>]+>', '\n', text)
-            clean = re.sub(r'&[a-z]+;', ' ', clean)
-            clean = re.sub(r'\n\s*\n', '\n', clean)
-            
             lines = [l.strip() for l in clean.split('\n') if l.strip() and len(l.strip()) > 1]
-            
-            result = f"<blockquote expandable>✨ 🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n"
-            result += f"<blockquote>📞 ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
-            
-            # Extract ALL data fields
+            result = f"<blockquote expandable>{EMOJI_SPARKLE} {EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n<blockquote>{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code></blockquote>\n"
             found = 0
             for line in lines[:20]:
-                line = line.strip()
-                if not line or len(line) < 2: continue
-                
-                # Skip common headers/footers
-                if line.lower() in ['track','live','php','result','results','search','data','info','details','home','back','refresh']: continue
-                
-                # Try to split key:value
                 if ':' in line:
                     parts = line.split(':', 1)
-                    key = parts[0].strip()
-                    val = parts[1].strip() if len(parts) > 1 else ''
-                    if val and len(val) > 0:
-                        emoji = '👤' if any(w in key.lower() for w in ['name','nama']) else '📡' if any(w in key.lower() for w in ['carrier','operator','network','sim']) else '📍' if any(w in key.lower() for w in ['location','address','city','state','area']) else '📞' if any(w in key.lower() for w in ['phone','mobile','number','no']) else '🔹'
-                        result += f"<blockquote>{emoji} {key}: <code>{val[:200]}</code></blockquote>\n"
-                        found += 1
-                else:
-                    # Single value line
-                    if any(c.isalpha() for c in line) and len(line) > 3:
-                        result += f"<blockquote>🔹 <code>{line[:200]}</code></blockquote>\n"
-                        found += 1
-            
-            if found == 0:
-                # Show raw text if nothing parsed
-                if len(clean) > 500: clean = clean[:497] + '...'
-                result += f"<blockquote>📋 ʀᴀᴡ: <code>{clean}</code></blockquote>\n"
-            
+                    key, val = parts[0].strip(), parts[1].strip() if len(parts) > 1 else ''
+                    if val:
+                        e = EMOJI_USER if any(w in key.lower() for w in ['name','nama']) else EMOJI_PHONE2 if any(w in key.lower() for w in ['carrier','operator','network','sim']) else EMOJI_USER if any(w in key.lower() for w in ['location','address','city','state','area']) else EMOJI_PHONE2 if any(w in key.lower() for w in ['phone','mobile','number','no']) else EMOJI_CARD
+                        result += f"<blockquote>{e} {key}: <code>{val[:200]}</code></blockquote>\n"; found += 1
+            if found == 0: result += f"<blockquote>{EMOJI_CARD} ʀᴀᴡ: <code>{clean[:500]}</code></blockquote>\n"
             return result
-            
-    except asyncio.TimeoutError:
-        return "<blockquote>⏱ ᴛɪᴍᴇᴏᴜᴛ</blockquote>"
-    except Exception as e:
-        logger.error(f"INDNUM3: {e}")
-        return f"<blockquote>⚠️ ᴇʀʀᴏʀ</blockquote>"
+    except: return f"<blockquote>{EMOJI_CROSS} ᴛɪᴍᴇᴏᴜᴛ</blockquote>"
 
 # --- 📊 INDIA DATA ---
 
@@ -426,7 +409,7 @@ def parse_all_india_records(raw):
         section = section.strip()
         if len(section) < 10: continue
         record = {}
-        for field, label in {'Name':'👤 ɴᴀᴍᴇ',"Father's Name":'👨 ꜰᴀᴛʜᴇʀ','Mobile':'📱 ᴍᴏʙɪʟᴇ','Address':'📍 ᴀᴅᴅʀᴇꜱꜱ','Circle':'📡 ᴄɪʀᴄʟᴇ','State':'🏛 ꜱᴛᴀᴛᴇ'}.items():
+        for field, label in {'Name':f'{EMOJI_USER} ɴᴀᴍᴇ',"Father's Name":f'{EMOJI_USER} ꜰᴀᴛʜᴇʀ','Mobile':f'{EMOJI_PHONE2} ᴍᴏʙɪʟᴇ','Address':f'{EMOJI_USER} ᴀᴅᴅʀᴇꜱꜱ','Circle':f'{EMOJI_PHONE2} ᴄɪʀᴄʟᴇ','State':f'{EMOJI_USER} ꜱᴛᴀᴛᴇ'}.items():
             match = re.search(rf'{re.escape(field)}:\s*([^\n]+)', section, re.IGNORECASE)
             if match and match.group(1).strip() not in ['None','','N/A','null']: record[label] = match.group(1).strip()
         if record:
@@ -441,9 +424,9 @@ def parse_all_india_records(raw):
     return final
 
 def format_records_result(records, search_type):
-    if not records: return "<blockquote>❌ ɴᴏ ʀᴇᴄᴏʀᴅꜱ</blockquote>"
-    title = {'aadhaar':'🪪 ᴀᴀᴅʜᴀʀ','mobile':'🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ','vehicle':'🚘 ᴠᴇʜɪᴄʟᴇ'}.get(search_type, '📊 ʀᴇꜱᴜʟᴛ')
-    result = f"<blockquote expandable>✨ {title}</blockquote>\n<blockquote>📊 ʀᴇᴄᴏʀᴅꜱ: {len(records)}</blockquote>\n"
+    if not records: return f"<blockquote>{EMOJI_CROSS} ɴᴏ ʀᴇᴄᴏʀᴅꜱ</blockquote>"
+    title = {'aadhaar':f'{EMOJI_CARD} ᴀᴀᴅʜᴀʀ','mobile':f'{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ','vehicle':f'{EMOJI_CAR} ᴠᴇʜɪᴄʟᴇ'}.get(search_type, f'{EMOJI_SEARCH} ʀᴇꜱᴜʟᴛ')
+    result = f"<blockquote expandable>{EMOJI_SPARKLE} {title}</blockquote>\n<blockquote>{EMOJI_SEARCH} ʀᴇᴄᴏʀᴅꜱ: {len(records)}</blockquote>\n"
     for i, record in enumerate(records, 1):
         if len(records) > 1: result += f"\n<blockquote>━━ ʀᴇᴄᴏʀᴅ {i} ━━</blockquote>\n"
         for key, value in record.items(): result += f"<blockquote>{key}: <code>{value}</code></blockquote>\n"
@@ -456,8 +439,8 @@ async def admin_panel(update, context):
     s = get_settings()
     ms = lambda key: "🔴" if s.get(f"maint_{key}") else "🟢"
     kb = [
-        [InlineKeyboardButton("🎫 ɢᴇɴ ᴄᴏᴅᴇ", callback_data="ad_gen"), InlineKeyboardButton("📋 ᴄᴏᴅᴇꜱ", callback_data="ad_codes")],
-        [InlineKeyboardButton("🎁 ᴀᴅᴅ ᴄʀ", callback_data="ad_credit"), InlineKeyboardButton("📢 ʙᴄᴀꜱᴛ", callback_data="ad_bcast")],
+        [InlineKeyboardButton(f"{EMOJI_TICKET} ɢᴇɴ ᴄᴏᴅᴇ", callback_data="ad_gen"), InlineKeyboardButton(f"{EMOJI_CARD} ᴄᴏᴅᴇꜱ", callback_data="ad_codes")],
+        [InlineKeyboardButton(f"{EMOJI_GIFT} ᴀᴅᴅ ᴄʀ", callback_data="ad_credit"), InlineKeyboardButton(f"{EMOJI_BOLT} ʙᴄᴀꜱᴛ", callback_data="ad_bcast")],
         [InlineKeyboardButton(f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", callback_data="ad_maint")],
         [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ", callback_data="ad_tgid"), InlineKeyboardButton(f"{ms('tgid')} ᴍ", callback_data="ad_maint_tgid")],
         [InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰ", callback_data="ad_ifsc"), InlineKeyboardButton(f"{ms('ifsc')} ᴍ", callback_data="ad_maint_ifsc")],
@@ -469,24 +452,24 @@ async def admin_panel(update, context):
         [InlineKeyboardButton(f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", callback_data="ad_pak"), InlineKeyboardButton(f"{ms('pak')} ᴍ", callback_data="ad_maint_pak")],
         [InlineKeyboardButton(f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", callback_data="ad_indnum"), InlineKeyboardButton(f"{ms('indnum')} ᴍ", callback_data="ad_maint_indnum")],
         [InlineKeyboardButton(f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", callback_data="ad_indnum3"), InlineKeyboardButton(f"{ms('indnum3')} ᴍ", callback_data="ad_maint_indnum3")],
-        [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="ad_close")]
+        [InlineKeyboardButton(f"{EMOJI_CROSS} ᴄʟᴏꜱᴇ", callback_data="ad_close")]
     ]
-    txt = f"<blockquote>👑 ᴀᴅᴍɪɴ</blockquote>\n<blockquote>👥 {len(load_json(USERS_FILE))} | 🎫 {len(load_json(REDEEM_FILE))}</blockquote>"
+    txt = f"<blockquote>{EMOJI_CROWN} ᴀᴅᴍɪɴ</blockquote>\n<blockquote>{EMOJI_INVITE} {len(load_json(USERS_FILE))} | {EMOJI_TICKET} {len(load_json(REDEEM_FILE))}</blockquote>"
     if update.callback_query: await update.callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
     else: await update.message.reply_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
 
 async def admin_callback(update, context):
     q = update.callback_query
-    if q.from_user.id != ADMIN_ID: await q.answer("❌"); return
+    if q.from_user.id != ADMIN_ID: await q.answer(f"{EMOJI_CROSS}"); return
     d = q.data; s = get_settings()
     if d == "ad_close": await q.message.delete()
     elif d == "ad_codes":
-        codes = load_json(REDEEM_FILE); txt = f"<blockquote>🎫 {len(codes)}</blockquote>\n"
+        codes = load_json(REDEEM_FILE); txt = f"<blockquote>{EMOJI_TICKET} {len(codes)}</blockquote>\n"
         for c, v in list(codes.items())[-15:]: txt += f"<blockquote>{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr</blockquote>\n"
-        await q.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-    elif d == "ad_gen": ADMIN_STATE[q.from_user.id] = "gen"; await q.message.edit_text("<blockquote>🎫 ᴄʀᴇᴅɪᴛꜱ:</blockquote>\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-    elif d == "ad_credit": ADMIN_STATE[q.from_user.id] = "credit"; await q.message.edit_text("<blockquote>🎁 ɪᴅ ᴀᴍᴏᴜɴᴛ:</blockquote>\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-    elif d == "ad_bcast": ADMIN_STATE[q.from_user.id] = "bcast"; await q.message.edit_text("<blockquote>📢 ᴍᴇꜱꜱᴀɢᴇ:</blockquote>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+        await q.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+    elif d == "ad_gen": ADMIN_STATE[q.from_user.id] = "gen"; await q.message.edit_text(f"<blockquote>{EMOJI_TICKET} ᴄʀᴇᴅɪᴛꜱ:</blockquote>\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+    elif d == "ad_credit": ADMIN_STATE[q.from_user.id] = "credit"; await q.message.edit_text(f"<blockquote>{EMOJI_GIFT} ɪᴅ ᴀᴍᴏᴜɴᴛ:</blockquote>\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+    elif d == "ad_bcast": ADMIN_STATE[q.from_user.id] = "bcast"; await q.message.edit_text(f"<blockquote>{EMOJI_BOLT} ᴍᴇꜱꜱᴀɢᴇ:</blockquote>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
     elif d == "ad_maint": s["maintenance_mode"] = not s.get("maintenance_mode", False); save_settings(s); await q.answer(f"Global: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
     elif d.startswith("ad_maint_"):
         f = d.replace("ad_maint_", ""); s[f"maint_{f}"] = not s.get(f"maint_{f}", False); save_settings(s); await q.answer(f"{f}: {'ON' if s[f'maint_{f}'] else 'OFF'}", show_alert=True); await admin_panel(update, context)
@@ -507,7 +490,7 @@ async def start(update, context):
             for inviter, data in users.items():
                 if data.get("invite_code") == args[0] and inviter != str(uid):
                     cr = process_invite(inviter, uid)
-                    try: await context.bot.send_message(chat_id=int(inviter), text=f"<blockquote>🎉 +{cr} ᴄʀᴇᴅɪᴛꜱ!</blockquote>", parse_mode=ParseMode.HTML)
+                    try: await context.bot.send_message(chat_id=int(inviter), text=f"<blockquote>{EMOJI_GIFT} +{cr} ᴄʀᴇᴅɪᴛꜱ!</blockquote>", parse_mode=ParseMode.HTML)
                     except: pass; break
         user = get_user(uid)
         if not user.get("verified"):
@@ -520,11 +503,11 @@ async def verify_cb(update, context):
     q = update.callback_query
     if await check_channels(q.from_user.id, context):
         user = get_user(q.from_user.id); user["verified"] = True; save_user(q.from_user.id, user)
-        await q.answer("✅ Verified!")
+        await q.answer(f"{EMOJI_CHECK} Verified!")
         try: await q.message.delete()
         except: pass
         await main_menu(update, context)
-    else: await q.answer("❌ Join both!", show_alert=True)
+    else: await q.answer(f"{EMOJI_CROSS} Join both!", show_alert=True)
 
 async def msg_handler(update, context):
     try:
@@ -532,25 +515,25 @@ async def msg_handler(update, context):
         asyncio.create_task(schedule_delete(update.message, AUTO_DELETE_TIME))
         s = get_settings()
         if s.get("maintenance_mode", False) and uid != ADMIN_ID:
-            m = await update.message.reply_text(f"<blockquote>🛠️ {s.get('maintenance_msg','Under maintenance')}</blockquote>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} Under maintenance</blockquote>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m)); return
         if uid == ADMIN_ID and uid in ADMIN_STATE:
             state = ADMIN_STATE.pop(uid)
             if state == "gen":
-                try: cr = int(txt); code = generate_redeem_code(cr); msg = await update.message.reply_text(f"<blockquote>✅ <code>{code}</code> | 💰 {cr}cr</blockquote>", parse_mode=ParseMode.HTML)
-                except: msg = await update.message.reply_text("<blockquote>❌ Number</blockquote>", parse_mode=ParseMode.HTML)
+                try: cr = int(txt); code = generate_redeem_code(cr); msg = await update.message.reply_text(f"<blockquote>{EMOJI_CHECK} <code>{code}</code> | {EMOJI_CREDIT} {cr}cr</blockquote>", parse_mode=ParseMode.HTML)
+                except: msg = await update.message.reply_text(f"<blockquote>{EMOJI_CROSS} Number</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(msg)); return
             elif state == "credit":
                 p = txt.split()
-                if len(p) >= 2: bal = add_credits(p[0], int(p[1])); msg = await update.message.reply_text(f"<blockquote>✅ +{p[1]} | {bal}</blockquote>", parse_mode=ParseMode.HTML)
-                else: msg = await update.message.reply_text("<blockquote>❌ Format: ID AMOUNT</blockquote>", parse_mode=ParseMode.HTML)
+                if len(p) >= 2: bal = add_credits(p[0], int(p[1])); msg = await update.message.reply_text(f"<blockquote>{EMOJI_CHECK} +{p[1]} | {bal}</blockquote>", parse_mode=ParseMode.HTML)
+                else: msg = await update.message.reply_text(f"<blockquote>{EMOJI_CROSS} Format: ID AMOUNT</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(msg)); return
             elif state == "bcast":
                 users = load_json(USERS_FILE); cnt = 0
                 for u in users:
-                    try: await context.bot.send_message(chat_id=int(u), text=f"📢 {txt}"); cnt += 1
+                    try: await context.bot.send_message(chat_id=int(u), text=f"{EMOJI_BOLT} {txt}"); cnt += 1
                     except: pass
-                msg = await update.message.reply_text(f"<blockquote>✅ Sent: {cnt}</blockquote>", parse_mode=ParseMode.HTML)
+                msg = await update.message.reply_text(f"<blockquote>{EMOJI_CHECK} Sent: {cnt}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(msg)); return
         user = get_user(uid)
         if not user.get("verified"):
@@ -558,105 +541,104 @@ async def msg_handler(update, context):
             else: await show_verification_page(update, context)
             return
         
-        # MENU HANDLING
-        if txt in ["👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "👑 ᴀᴅᴍɪɴ"]: await admin_panel(update, context)
+        if txt in [f"{EMOJI_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", f"{EMOJI_CROWN} ᴀᴅᴍɪɴ"]: await admin_panel(update, context)
         
-        elif txt in ["ᴛɢ ɪᴅ ➜ 📞 ɴᴜᴍʙᴇʀ 🔍"]:
-            if not s.get("tgid_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt in [f"{EMOJI_PHONE} ᴛɢ ɪᴅ ➜ {EMOJI_PHONE2} ɴᴜᴍʙᴇʀ {EMOJI_SEARCH}"]:
+            if not s.get("tgid_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("tgid")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'TG'
-            btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
-            m = await update.message.reply_text("<blockquote>📱 ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ</blockquote>\n<blockquote>1️⃣ @ChatIdInfoBot 2️⃣ Select user 3️⃣ Get ID 4️⃣ Enter</blockquote>\n<i>7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
+            btn = [[InlineKeyboardButton(f"{EMOJI_BOLT} @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_PHONE} ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ</blockquote>\n<i>7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt in ["🏦 ɪꜰꜱᴄ ɪɴꜰᴏ➜🔎"]:
-            if not s.get("ifsc_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt in [f"{EMOJI_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ➜{EMOJI_SEARCH}"]:
+            if not s.get("ifsc_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("ifsc")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'IFSC'
-            m = await update.message.reply_text("<blockquote>🏦 ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_BANK} ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt in ["🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ"]:
-            if not s.get("bypass_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt in [f"{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ"]:
+            if not s.get("bypass_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("bypass")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'SHORTLINK'
-            m = await update.message.reply_text("<blockquote>🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜👤":
-            if not s.get("mobile_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜{EMOJI_USER}":
+            if not s.get("mobile_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("mobile")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'MOBILE'
-            m = await update.message.reply_text("<blockquote>🇮🇳 ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_INDIA} ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜👤":
-            if not s.get("aadhaar_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜{EMOJI_USER}":
+            if not s.get("aadhaar_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("aadhaar")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'AADHAAR'
-            m = await update.message.reply_text("<blockquote>🪪 ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
-            if not s.get("rc_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
+            if not s.get("rc_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("rc")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'VEHICLE'
-            m = await update.message.reply_text("<blockquote>🚘 ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
-            if not s.get("gst_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_CARD} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
+            if not s.get("gst_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("gst")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'GST'
-            m = await update.message.reply_text("<blockquote>📋 ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
-            if not s.get("pak_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
+            if not s.get("pak_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("pak")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'PAK'
-            m = await update.message.reply_text("<blockquote>🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ</blockquote>\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ</blockquote>\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸":
-            if not s.get("indnum_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸":
+            if not s.get("indnum_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("indnum")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'INDNUM'
-            m = await update.message.reply_text("<blockquote>📲 ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt == "🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜👤":
-            if not s.get("indnum3_enabled",True): m=await update.message.reply_text("<blockquote>📴 Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+        elif txt == f"{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜{EMOJI_USER}":
+            if not s.get("indnum3_enabled",True): m=await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             maint, msg = check_feature_maintenance("indnum3")
-            if maint: m=await update.message.reply_text(f"<blockquote>🛠️ {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
+            if maint: m=await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML); asyncio.create_task(schedule_delete(m)); return
             context.user_data['mode'] = 'INDNUM3'
-            m = await update.message.reply_text("<blockquote>🇮🇳 ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n<blockquote>Send 10-digit Indian number</blockquote>\n<blockquote>💡 Gets: Name, Location, Carrier, Full Details</blockquote>\n<i>6363016966, 9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n<blockquote>Send 10-digit Indian number</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m))
         
-        elif txt in ["👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "👥 ɪɴᴠɪᴛᴇ"]:
+        elif txt in [f"{EMOJI_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", f"{EMOJI_INVITE} ɪɴᴠɪᴛᴇ"]:
             user = get_user(uid); bot_username = context.bot.username or BOT_USERNAME
             link = f"https://t.me/{bot_username}?start={user['invite_code']}"
-            m = await update.message.reply_text(f"<blockquote>👥 ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)</blockquote>\n<blockquote><code>{link}</code></blockquote>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)</blockquote>\n<blockquote><code>{link}</code></blockquote>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m, 120))
         
-        elif txt in ["🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ"]:
+        elif txt in [f"{EMOJI_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ"]:
             context.user_data['redeem_mode'] = True
-            m = await update.message.reply_text("<blockquote>🎫 ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
+            m = await update.message.reply_text(f"<blockquote>{EMOJI_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(m, 30))
         
         else:
             if context.user_data.get('redeem_mode'):
                 context.user_data['redeem_mode'] = False
-                msg = redeem_code(uid, txt)[1] if txt.upper().startswith("HEX-") else "❌ Invalid!"
+                msg = redeem_code(uid, txt)[1] if txt.upper().startswith("HEX-") else f"{EMOJI_CROSS} Invalid!"
                 m = await update.message.reply_text(f"<blockquote>{msg}</blockquote>", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(m)); return
             
@@ -669,7 +651,7 @@ async def msg_handler(update, context):
                 
                 user = get_user(uid)
                 if user.get("credits", 0) <= 0:
-                    m = await update.message.reply_text("<blockquote>❌ No credits! +10 daily | +3 invite</blockquote>", parse_mode=ParseMode.HTML)
+                    m = await update.message.reply_text(f"<blockquote>{EMOJI_CROSS} No credits! +10 daily | +3 invite</blockquote>", parse_mode=ParseMode.HTML)
                     asyncio.create_task(schedule_delete(m)); context.user_data['mode'] = None; return
                 
                 await run_query(update, context, mode, txt); context.user_data['mode'] = None
@@ -677,12 +659,12 @@ async def msg_handler(update, context):
 
 async def run_query(update, context, mode, query):
     if not await net_ok():
-        m = await update.message.reply_text("<blockquote>🔴 No internet</blockquote>", parse_mode=ParseMode.HTML)
+        m = await update.message.reply_text(f"<blockquote>{EMOJI_CROSS} No internet</blockquote>", parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(m)); return
     
     await update.message.reply_chat_action(ChatAction.TYPING)
-    names = {'TG':'📱','IFSC':'🏦','SHORTLINK':'🔗','AADHAAR':'🪪','MOBILE':'🇮🇳','VEHICLE':'🚘','GST':'📋','PAK':'🇵🇰','INDNUM':'📲','INDNUM3':'🇮🇳 ᴛʀᴀᴄᴋ'}
-    st = await update.message.reply_text("<blockquote>🟩 ꜱᴇᴀʀᴄʜɪɴɢ...</blockquote>", parse_mode=ParseMode.HTML)
+    names = {'TG':f'{EMOJI_PHONE}','IFSC':f'{EMOJI_BANK}','SHORTLINK':f'{EMOJI_LINK}','AADHAAR':f'{EMOJI_CARD}','MOBILE':f'{EMOJI_INDIA}','VEHICLE':f'{EMOJI_CAR}','GST':f'{EMOJI_CARD}','PAK':f'{EMOJI_PAK}','INDNUM':f'{EMOJI_PHONE2}','INDNUM3':f'{EMOJI_INDIA}'}
+    st = await update.message.reply_text(f"<blockquote>{EMOJI_GREEN} ꜱᴇᴀʀᴄʜɪɴɢ...</blockquote>", parse_mode=ParseMode.HTML)
     lt = asyncio.create_task(loading_animation(st, names.get(mode, '')))
     credit_deducted = False
     
@@ -692,8 +674,8 @@ async def run_query(update, context, mode, query):
             if raw:
                 records = parse_all_india_records(raw)
                 result = format_records_result(records, {'AADHAAR':'aadhaar','MOBILE':'mobile','VEHICLE':'vehicle'}[mode])
-                if records and "❌" not in str(result): use_credit(update.effective_user.id); credit_deducted = True
-            else: result = "<blockquote>❌ Script failed</blockquote>"
+                if records and f"{EMOJI_CROSS}" not in str(result): use_credit(update.effective_user.id); credit_deducted = True
+            else: result = f"<blockquote>{EMOJI_CROSS} Script failed</blockquote>"
         else:
             async with aiohttp.ClientSession() as s:
                 if mode == 'TG': result = await chatid_lookup(s, query)
@@ -703,26 +685,25 @@ async def run_query(update, context, mode, query):
                 elif mode == 'PAK': result = await pakistan_lookup(s, query)
                 elif mode == 'INDNUM': result = await indnum_lookup(s, query)
                 elif mode == 'INDNUM3': result = await indnum3_lookup(s, query)
-                else: result = "❌"
+                else: result = f"{EMOJI_CROSS}"
             
-            if result and "❌" not in str(result) and "unavailable" not in str(result).lower() and "error" not in str(result).lower():
-                use_credit(update.effective_user.id); credit_deducted = True
+            if result and f"{EMOJI_CROSS}" not in str(result) and "unavailable" not in str(result).lower(): use_credit(update.effective_user.id); credit_deducted = True
         
         lt.cancel()
         try: await lt
         except asyncio.CancelledError: pass
         
         user = get_user(update.effective_user.id)
-        final = f"{result}\n{SEP}\n<blockquote>💰 {'ᴄʀ: '+str(user.get('credits',0)) if credit_deducted else 'ɴᴏ ᴄʀ ᴅᴇᴅᴜᴄᴛᴇᴅ'} | ⏱ {AUTO_DELETE_TIME}ꜱ</blockquote>{DISCLAIMER}{FOOTER}"
+        final = f"{result}\n{SEP}\n<blockquote>{EMOJI_CREDIT} {'ᴄʀ: '+str(user.get('credits',0)) if credit_deducted else 'ɴᴏ ᴄʀ ᴅᴇᴅᴜᴄᴛᴇᴅ'} | {EMOJI_CLOCK} {AUTO_DELETE_TIME}ꜱ</blockquote>{DISCLAIMER}{FOOTER}"
         sent = await st.edit_text(final, parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(sent))
     except Exception as e:
         lt.cancel(); logger.error(f"Query: {e}")
-        try: await st.edit_text(f"<blockquote>⚠️ ᴇʀʀᴏʀ</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
+        try: await st.edit_text(f"<blockquote>{EMOJI_WARNING} ᴇʀʀᴏʀ</blockquote>{FOOTER}", parse_mode=ParseMode.HTML)
         except: pass
 
 def main():
-    print("🔄 Hex Terminal...")
+    print(f"{EMOJI_REFRESH} Hex Terminal...")
     try: subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], capture_output=True, timeout=30)
     except: pass
     app = Application.builder().token(BOT_TOKEN).build()
@@ -730,8 +711,8 @@ def main():
     app.add_handler(CallbackQueryHandler(verify_cb, pattern="^verify$"))
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
-    print(f"✅ {BOT_NAME} Ready!")
-    print("🇮🇳 INDNUM3 Fixed - Shows ALL data")
+    print(f"{EMOJI_CHECK} {BOT_NAME} Ready!")
+    print(f"{EMOJI_DIAMOND} Premium Emojis Active!")
     app.run_polling()
 
 if __name__ == '__main__':
