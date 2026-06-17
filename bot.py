@@ -92,7 +92,32 @@ EMOJI_SIGNAL = PE("6147892053796725336", "📶")
 EMOJI_SIM = PE("5800717980266403037", "💳")
 EMOJI_CHART = PE("6093382540784046658", "📊")
 
-# --- BUTTON EMOJIS (Normal Unicode) ---
+# --- INLINE BUTTON STYLES (Only work for InlineKeyboardButton) ---
+# These are premium emoji IDs for colored buttons
+INLINE_BTN_STYLES = {
+    "primary": {
+        "emoji_id": "5258096772776991776",  # Blue/Primary
+        "style": "primary"
+    },
+    "success": {
+        "emoji_id": "5258503720928288433",  # Green/Success
+        "style": "success"
+    },
+    "danger": {
+        "emoji_id": "5258331647358540449",  # Red/Danger
+        "style": "danger"
+    },
+    "warning": {
+        "emoji_id": "5258478058097409351",  # Yellow/Warning
+        "style": None  # Fallback to normal
+    },
+    "info": {
+        "emoji_id": "5258024981144066782",  # Blue/Info
+        "style": None
+    }
+}
+
+# --- BUTTON EMOJIS (Normal Unicode for KeyboardButtons) ---
 BTN_PHONE = "📱"
 BTN_BANK = "🏦"
 BTN_LINK = "🔗"
@@ -114,6 +139,7 @@ BTN_HELP = "❓"
 BTN_ABOUT = "ℹ️"
 BTN_REDEEM = "🎟️"
 BTN_EARN = "💰"
+BTN_START = "🚀"
 
 DISCLAIMER = f"\n\n<b>{EMOJI_WARN} ᴅɪꜱᴄʟᴀɪᴍᴇʀ:</b>\n<i>ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ.</i>"
 
@@ -256,71 +282,75 @@ async def show_verification_page(update, context):
     sent2 = await update.message.reply_text(f"<blockquote>{EMOJI_LOCK} ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ</blockquote>", reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML)
     asyncio.create_task(schedule_delete(sent2, 120))
 
-# --- 🎨 CREATE STYLISH BUTTONS WITH EMOJIS AND COLORS ---
+# --- 🎨 CREATE COLORED INLINE BUTTONS WITH PREMIUM EMOJIS ---
 
-def create_styled_button(text: str, emoji: str = None, style: str = None, callback_data: str = None, url: str = None):
-    """Create a button with optional emoji and Telegram button style"""
-    button_text = f"{emoji} {text}" if emoji else text
+def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", custom_emoji_id: str = None):
+    """
+    Create a colored inline button with premium emoji
     
-    # Determine style (Telegram button styles)
-    # style: "success" (green), "danger" (red), "primary" (blue), or None (default)
-    if style:
+    Colors: "primary" (blue), "success" (green), "danger" (red), "warning" (yellow), "info" (blue)
+    """
+    style_map = {
+        "primary": {"emoji_id": "5258096772776991776", "style": "primary"},
+        "success": {"emoji_id": "5258503720928288433", "style": "success"},
+        "danger": {"emoji_id": "5258331647358540449", "style": "danger"},
+        "warning": {"emoji_id": "5258478058097409351", "style": None},
+        "info": {"emoji_id": "5258024981144066782", "style": None}
+    }
+    
+    style_info = style_map.get(color, style_map["primary"])
+    emoji_id = custom_emoji_id or style_info["emoji_id"]
+    style = style_info["style"]
+    
+    try:
+        # Try creating button with both icon and style
+        return InlineKeyboardButton(
+            text=text,
+            callback_data=callback_data,
+            url=url,
+            icon_custom_emoji_id=emoji_id,
+            style=style
+        )
+    except TypeError:
         try:
-            # Some Telegram bot libraries support style parameter
+            # Try with just icon (no style)
             return InlineKeyboardButton(
-                text=button_text,
+                text=text,
                 callback_data=callback_data,
                 url=url,
-                style=style
+                icon_custom_emoji_id=emoji_id
             )
         except TypeError:
-            pass
-    
-    # Fallback without style
-    return InlineKeyboardButton(
-        text=button_text,
-        callback_data=callback_data,
-        url=url
-    )
-
-def create_styled_row(buttons_config: list) -> list:
-    """Create a row of styled buttons"""
-    row = []
-    for cfg in buttons_config:
-        emoji = cfg.get("emoji")
-        text = cfg.get("text", "")
-        style = cfg.get("style")
-        callback_data = cfg.get("callback_data")
-        url = cfg.get("url")
-        
-        # Build button text with emoji
-        button_text = f"{emoji} {text}" if emoji else text
-        
-        try:
-            btn = InlineKeyboardButton(
-                text=button_text,
-                callback_data=callback_data,
-                url=url,
-                style=style
-            )
-        except TypeError:
-            btn = InlineKeyboardButton(
-                text=button_text,
+            # Fallback to normal button
+            return InlineKeyboardButton(
+                text=text,
                 callback_data=callback_data,
                 url=url
             )
+
+def create_styled_row(buttons_config: list) -> list:
+    """Create a row of colored buttons"""
+    row = []
+    for cfg in buttons_config:
+        text = cfg.get("text", "")
+        callback_data = cfg.get("callback_data")
+        url = cfg.get("url")
+        color = cfg.get("color", "primary")
+        custom_emoji_id = cfg.get("custom_emoji_id")
+        
+        btn = create_colored_button(text, callback_data, url, color, custom_emoji_id)
         row.append(btn)
     return row
 
-# --- 📋 MAIN MENU WITH STYLED BUTTONS ---
+# --- 📋 MAIN MENU ---
 
 async def main_menu(update, context):
-    """Main menu with styled buttons and premium emojis"""
+    """Main menu with styled buttons"""
     is_admin = update.effective_user.id == ADMIN_ID
     user = get_user(update.effective_user.id)
     s = get_settings()
     
-    # Build keyboard with styled buttons using normal emojis
+    # Build keyboard with normal buttons (ReplyKeyboardMarkup doesn't support colors)
     kb = []
     
     # Row 1: TG ID & IFSC
@@ -379,7 +409,7 @@ async def main_menu(update, context):
         KeyboardButton(f"{BTN_ABOUT} ᴀʙᴏᴜᴛ")
     ])
     
-    # Row 9: Stats (for all users)
+    # Row 9: Stats
     kb.append([KeyboardButton(f"{BTN_STATS} ꜱᴛᴀᴛꜱ")])
     
     # Admin buttons
@@ -588,25 +618,75 @@ async def admin_panel(update, context):
     if update.effective_user.id != ADMIN_ID: return
     s = get_settings()
     ms = lambda key: "🔴" if s.get(f"maint_{key}") else "🟢"
+    
+    # Create colored admin buttons
     kb = [
-        [InlineKeyboardButton("🎫 ɢᴇɴ ᴄᴏᴅᴇ", callback_data="ad_gen"), InlineKeyboardButton("📋 ᴄᴏᴅᴇꜱ", callback_data="ad_codes")],
-        [InlineKeyboardButton("🎁 ᴀᴅᴅ ᴄʀ", callback_data="ad_credit"), InlineKeyboardButton("📢 ʙᴄᴀꜱᴛ", callback_data="ad_bcast")],
-        [InlineKeyboardButton(f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", callback_data="ad_maint")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ", callback_data="ad_tgid"), InlineKeyboardButton(f"{ms('tgid')} ᴍ", callback_data="ad_maint_tgid")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰ", callback_data="ad_ifsc"), InlineKeyboardButton(f"{ms('ifsc')} ᴍ", callback_data="ad_maint_ifsc")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏ", callback_data="ad_bypass_toggle"), InlineKeyboardButton(f"{ms('bypass')} ᴍ", callback_data="ad_maint_bypass")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏ", callback_data="ad_mobile"), InlineKeyboardButton(f"{ms('mobile')} ᴍ", callback_data="ad_maint_mobile")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀ", callback_data="ad_aadhaar"), InlineKeyboardButton(f"{ms('aadhaar')} ᴍ", callback_data="ad_maint_aadhaar")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", callback_data="ad_rc"), InlineKeyboardButton(f"{ms('rc')} ᴍ", callback_data="ad_maint_rc")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱ", callback_data="ad_gst"), InlineKeyboardButton(f"{ms('gst')} ᴍ", callback_data="ad_maint_gst")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", callback_data="ad_pak"), InlineKeyboardButton(f"{ms('pak')} ᴍ", callback_data="ad_maint_pak")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", callback_data="ad_indnum"), InlineKeyboardButton(f"{ms('indnum')} ᴍ", callback_data="ad_maint_indnum")],
-        [InlineKeyboardButton(f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", callback_data="ad_indnum3"), InlineKeyboardButton(f"{ms('indnum3')} ᴍ", callback_data="ad_maint_indnum3")],
-        [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="ad_close")]
+        create_styled_row([
+            {"text": "🎫 ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success"},
+            {"text": "📋 ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": "🎁 ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning"},
+            {"text": "📢 ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ", "callback_data": "ad_tgid", "color": "success" if s.get('tgid_enabled',True) else "danger"},
+            {"text": f"{ms('tgid')} ᴍ", "callback_data": "ad_maint_tgid", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰ", "callback_data": "ad_ifsc", "color": "success" if s.get('ifsc_enabled',True) else "danger"},
+            {"text": f"{ms('ifsc')} ᴍ", "callback_data": "ad_maint_ifsc", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏ", "callback_data": "ad_bypass_toggle", "color": "success" if s.get('bypass_enabled',True) else "danger"},
+            {"text": f"{ms('bypass')} ᴍ", "callback_data": "ad_maint_bypass", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏ", "callback_data": "ad_mobile", "color": "success" if s.get('mobile_enabled',True) else "danger"},
+            {"text": f"{ms('mobile')} ᴍ", "callback_data": "ad_maint_mobile", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀ", "callback_data": "ad_aadhaar", "color": "success" if s.get('aadhaar_enabled',True) else "danger"},
+            {"text": f"{ms('aadhaar')} ᴍ", "callback_data": "ad_maint_aadhaar", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", "callback_data": "ad_rc", "color": "success" if s.get('rc_enabled',True) else "danger"},
+            {"text": f"{ms('rc')} ᴍ", "callback_data": "ad_maint_rc", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱ", "callback_data": "ad_gst", "color": "success" if s.get('gst_enabled',True) else "danger"},
+            {"text": f"{ms('gst')} ᴍ", "callback_data": "ad_maint_gst", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", "callback_data": "ad_pak", "color": "success" if s.get('pak_enabled',True) else "danger"},
+            {"text": f"{ms('pak')} ᴍ", "callback_data": "ad_maint_pak", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", "callback_data": "ad_indnum", "color": "success" if s.get('indnum_enabled',True) else "danger"},
+            {"text": f"{ms('indnum')} ᴍ", "callback_data": "ad_maint_indnum", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", "callback_data": "ad_indnum3", "color": "success" if s.get('indnum3_enabled',True) else "danger"},
+            {"text": f"{ms('indnum3')} ᴍ", "callback_data": "ad_maint_indnum3", "color": "info"}
+        ]),
+        create_styled_row([
+            {"text": "❌ ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
+        ])
     ]
+    
+    # Flatten the keyboard
+    flat_kb = []
+    for row in kb:
+        flat_kb.append(row)
+    
     txt = f"<blockquote>{EMOJI_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ {EMOJI_CROWN}</blockquote>\n<blockquote>{EMOJI_INVITE} ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | {EMOJI_TICKET} ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}</blockquote>"
-    if update.callback_query: await update.callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
-    else: await update.message.reply_text(txt, reply_markup=InlineKeyboardMarkup(kb), parse_mode=ParseMode.HTML)
+    if update.callback_query:
+        await update.callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
+    else:
+        await update.message.reply_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
 
 async def admin_callback(update, context):
     q = update.callback_query
@@ -677,7 +757,7 @@ async def show_about(update, context):
 
 <blockquote><b>𝐍𝐀𝐌𝐄:</b> {BOT_NAME}</blockquote>
 <blockquote><b>𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄:</b> @{BOT_USERNAME}</blockquote>
-<blockquote><b>𝐕𝐄𝐑𝐒𝐈𝐎𝐍:</b> 2.0</blockquote>
+<blockquote><b>𝐕𝐄𝐑𝐒𝐈𝐎𝐍:</b> 3.0</blockquote>
 
 <blockquote>{EMOJI_DIAMOND} <b>𝐏𝐑𝐄𝐌𝐈𝐔𝐌 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒</b></blockquote>
 
@@ -689,6 +769,7 @@ async def show_about(update, context):
 <blockquote>• <b>RC Details</b></blockquote>
 <blockquote>• <b>GST Lookup</b></blockquote>
 <blockquote>• <b>Pakistan Number Info</b></blockquote>
+<blockquote>• <b>Colored Admin Buttons 🎨</b></blockquote>
 
 <blockquote>{EMOJI_CROWN} <b>𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐄𝐃 𝐁𝐘:</b> @Hexh4ckerOFC</blockquote>
 
@@ -717,7 +798,7 @@ async def show_stats(update, context):
     msg = await update.message.reply_text(text, parse_mode=ParseMode.HTML)
     asyncio.create_task(schedule_delete(msg, 60))
 
-# --- 🚀 MAIN HANDLER ---
+# --- 🚀 START HANDLER ---
 
 async def start(update, context):
     try:
@@ -1114,6 +1195,7 @@ async def run_query(update, context, mode, query):
 
 def main():
     print("🔄 Hex Terminal Premium Starting...")
+    print("🎨 Colored Buttons with Premium Emojis Enabled!")
     try:
         subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], capture_output=True, timeout=30)
     except: pass
@@ -1127,8 +1209,8 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     
     print(f"{EMOJI_CHECK} {BOT_NAME} Ready!")
-    print(f"{EMOJI_DIAMOND} Premium Emojis in Text | Normal Emojis in Buttons")
-    print(f"{EMOJI_STAR} Help, About, Stats buttons added!")
+    print(f"{EMOJI_DIAMOND} Premium Emojis in Text | Normal Emojis in Reply Buttons")
+    print(f"{EMOJI_STAR} Colored Inline Buttons in Admin Panel!")
     
     app.run_polling()
 
