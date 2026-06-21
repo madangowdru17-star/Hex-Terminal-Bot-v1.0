@@ -49,6 +49,87 @@ AUTO_DELETE_TIME = 60
 BOT_NAME = "𝗛𝗲𝘅 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝗹"
 BOT_USERNAME = "Hex_Terminal_bot"
 
+# ============================================================
+# PREMIUM EMOJI IDs FOR ALL BUTTONS (Colored Inline Buttons)
+# ============================================================
+
+# Color Styles with Premium Emoji IDs (Kurigram/Pyrogram style)
+BUTTON_STYLES = {
+    "primary": {
+        "emoji_id": "5258096772776991776",
+        "style": "primary",
+        "color": "🔵"
+    },
+    "success": {
+        "emoji_id": "5258503720928288433",
+        "style": "success",
+        "color": "🟢"
+    },
+    "danger": {
+        "emoji_id": "5258331647358540449",
+        "style": "danger",
+        "color": "🔴"
+    },
+    "warning": {
+        "emoji_id": "5258478058097409351",
+        "style": "warning",
+        "color": "🟡"
+    },
+    "info": {
+        "emoji_id": "5258024981144066782",
+        "style": "info",
+        "color": "🔵"
+    }
+}
+
+# Premium Emoji IDs for Button Icons
+PREMIUM_EMOJI_IDS = {
+    "phone": "5947494995798789024",
+    "bank": "5264895611517300926",
+    "link": "5271604874419647061",
+    "car": "5253752975997803460",
+    "card": "5260561650213220533",
+    "user": "5249053508681883137",
+    "india": "6284779941489812433",
+    "pak": "5913705895375672082",
+    "phone2": "5406809207947142040",
+    "invite": "5244933196230972438",
+    "ticket": "5285515895534278367",
+    "credit": "6267068789146260253",
+    "refresh": "5375338737028841420",
+    "clock": "5382194935057372936",
+    "bolt": "6284971355297290197",
+    "green": "5386367538735104399",
+    "search": "5231012545799666522",
+    "magnify": "5258024981144066782",
+    "crown": "6267128480601741166",
+    "diamond": "6264791387032523779",
+    "star": "6266969287638913443",
+    "gift": "5203996991054432397",
+    "fire": "6264785189394717307",
+    "tools": "5462921117423384478",
+    "disabled": "5373165973203348165",
+    "location": "5391032818111363540",
+    "home": "5280955052582785391",
+    "state": "5388927107315283144",
+    "network": "5321141214735508486",
+    "signal": "6147892053796725336",
+    "sim": "5800717980266403037",
+    "chart": "6093382540784046658",
+    "check": "6267008582294705964",
+    "cross": "6267000941547885720",
+    "lock": "5316522278056399236",
+    "warn": "6267039884016358504",
+    "rocket": "5195033767969839232",
+    "sparkle": "5467683093693354332",
+    "help": "5244933196230972438",
+    "about": "5285515895534278367",
+    "stats": "6093382540784046658",
+    "admin": "6267128480601741166",
+    "earn": "6267068789146260253",
+    "redeem": "5285515895534278367"
+}
+
 # --- PREMIUM EMOJIS FOR TEXT MESSAGES ---
 PE = lambda eid, fallback: f'<tg-emoji emoji-id="{eid}">{fallback}</tg-emoji>'
 
@@ -91,55 +172,9 @@ EMOJI_NETWORK = PE("5321141214735508486", "📡")
 EMOJI_SIGNAL = PE("6147892053796725336", "📶")
 EMOJI_SIM = PE("5800717980266403037", "💳")
 EMOJI_CHART = PE("6093382540784046658", "📊")
-
-# --- INLINE BUTTON STYLES (Only work for InlineKeyboardButton) ---
-# These are premium emoji IDs for colored buttons
-INLINE_BTN_STYLES = {
-    "primary": {
-        "emoji_id": "5258096772776991776",  # Blue/Primary
-        "style": "primary"
-    },
-    "success": {
-        "emoji_id": "5258503720928288433",  # Green/Success
-        "style": "success"
-    },
-    "danger": {
-        "emoji_id": "5258331647358540449",  # Red/Danger
-        "style": "danger"
-    },
-    "warning": {
-        "emoji_id": "5258478058097409351",  # Yellow/Warning
-        "style": None  # Fallback to normal
-    },
-    "info": {
-        "emoji_id": "5258024981144066782",  # Blue/Info
-        "style": None
-    }
-}
-
-# --- BUTTON EMOJIS (Normal Unicode for KeyboardButtons) ---
-BTN_PHONE = "📱"
-BTN_BANK = "🏦"
-BTN_LINK = "🔗"
-BTN_AADHAAR = "🪪"
-BTN_INDIA = "🇮🇳"
-BTN_CAR = "🚘"
-BTN_GST = "📋"
-BTN_PAK = "🇵🇰"
-BTN_PHONE2 = "📲"
-BTN_INVITE = "👥"
-BTN_TICKET = "🎫"
-BTN_CROWN = "👑"
-BTN_SEARCH = "🔍"
-BTN_MAGNIFY = "🔎"
-BTN_USER = "👤"
-BTN_ADMIN = "👑"
-BTN_STATS = "📊"
-BTN_HELP = "❓"
-BTN_ABOUT = "ℹ️"
-BTN_REDEEM = "🎟️"
-BTN_EARN = "💰"
-BTN_START = "🚀"
+EMOJI_HELP = PE("5244933196230972438", "❓")
+EMOJI_ABOUT = PE("5285515895534278367", "ℹ️")
+EMOJI_STATS = PE("6093382540784046658", "📊")
 
 DISCLAIMER = f"\n\n<b>{EMOJI_WARN} ᴅɪꜱᴄʟᴀɪᴍᴇʀ:</b>\n<i>ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ.</i>"
 
@@ -250,6 +285,63 @@ def check_feature_maintenance(feature_key):
         return True, s.get(f"maint_msg_{feature_key}", f"{EMOJI_TOOLS} Under maintenance.")
     return False, ""
 
+# ============================================================
+# CREATE COLORED INLINE BUTTONS WITH PREMIUM EMOJIS
+# ============================================================
+
+def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", icon_emoji_id: str = None):
+    """
+    Create a colored inline button with premium emoji icon
+    Colors: "primary" (blue), "success" (green), "danger" (red), "warning" (yellow), "info" (blue)
+    """
+    style_info = BUTTON_STYLES.get(color, BUTTON_STYLES["primary"])
+    emoji_id = icon_emoji_id or style_info["emoji_id"]
+    
+    # Try different button creation methods for compatibility
+    try:
+        # Method 1: With both icon and style
+        return InlineKeyboardButton(
+            text=text,
+            callback_data=callback_data,
+            url=url,
+            icon_custom_emoji_id=emoji_id,
+            style=style_info["style"]
+        )
+    except TypeError:
+        try:
+            # Method 2: With icon only (no style)
+            return InlineKeyboardButton(
+                text=text,
+                callback_data=callback_data,
+                url=url,
+                icon_custom_emoji_id=emoji_id
+            )
+        except TypeError:
+            # Method 3: Fallback to normal button
+            return InlineKeyboardButton(
+                text=text,
+                callback_data=callback_data,
+                url=url
+            )
+
+def create_styled_row(buttons_config: list) -> list:
+    """Create a row of colored inline buttons with premium emojis"""
+    row = []
+    for cfg in buttons_config:
+        text = cfg.get("text", "")
+        callback_data = cfg.get("callback_data")
+        url = cfg.get("url")
+        color = cfg.get("color", "primary")
+        icon_emoji_id = cfg.get("icon_emoji_id")
+        
+        btn = create_colored_button(text, callback_data, url, color, icon_emoji_id)
+        row.append(btn)
+    return row
+
+# ============================================================
+# MAIN MENU WITH COLORED INLINE BUTTONS
+# ============================================================
+
 async def show_verification_page(update, context):
     try:
         bot = await context.bot.get_me()
@@ -274,150 +366,118 @@ async def show_verification_page(update, context):
         asyncio.create_task(schedule_delete(sent, 120))
     except: pass
     
+    # Colored verification buttons with premium emojis
     buttons = [
-        [InlineKeyboardButton("📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟷", url=LINK_1)],
-        [InlineKeyboardButton("📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟸", url=LINK_2)],
-        [InlineKeyboardButton("✅ ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", callback_data="verify")]
+        create_styled_row([
+            {"text": "📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟷", "url": LINK_1, "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
+        ]),
+        create_styled_row([
+            {"text": "📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟸", "url": LINK_2, "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
+        ]),
+        create_styled_row([
+            {"text": "✅ ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", "callback_data": "verify", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["check"]}
+        ])
     ]
-    sent2 = await update.message.reply_text(f"<blockquote>{EMOJI_LOCK} ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ</blockquote>", reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML)
+    
+    # Flatten buttons
+    flat_buttons = []
+    for row in buttons:
+        flat_buttons.append(row)
+    
+    sent2 = await update.message.reply_text(
+        f"<blockquote>{EMOJI_LOCK} ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ</blockquote>",
+        reply_markup=InlineKeyboardMarkup(flat_buttons),
+        parse_mode=ParseMode.HTML
+    )
     asyncio.create_task(schedule_delete(sent2, 120))
 
-# --- 🎨 CREATE COLORED INLINE BUTTONS WITH PREMIUM EMOJIS ---
-
-def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", custom_emoji_id: str = None):
-    """
-    Create a colored inline button with premium emoji
-    
-    Colors: "primary" (blue), "success" (green), "danger" (red), "warning" (yellow), "info" (blue)
-    """
-    style_map = {
-        "primary": {"emoji_id": "5258096772776991776", "style": "primary"},
-        "success": {"emoji_id": "5258503720928288433", "style": "success"},
-        "danger": {"emoji_id": "5258331647358540449", "style": "danger"},
-        "warning": {"emoji_id": "5258478058097409351", "style": None},
-        "info": {"emoji_id": "5258024981144066782", "style": None}
-    }
-    
-    style_info = style_map.get(color, style_map["primary"])
-    emoji_id = custom_emoji_id or style_info["emoji_id"]
-    style = style_info["style"]
-    
-    try:
-        # Try creating button with both icon and style
-        return InlineKeyboardButton(
-            text=text,
-            callback_data=callback_data,
-            url=url,
-            icon_custom_emoji_id=emoji_id,
-            style=style
-        )
-    except TypeError:
-        try:
-            # Try with just icon (no style)
-            return InlineKeyboardButton(
-                text=text,
-                callback_data=callback_data,
-                url=url,
-                icon_custom_emoji_id=emoji_id
-            )
-        except TypeError:
-            # Fallback to normal button
-            return InlineKeyboardButton(
-                text=text,
-                callback_data=callback_data,
-                url=url
-            )
-
-def create_styled_row(buttons_config: list) -> list:
-    """Create a row of colored buttons"""
-    row = []
-    for cfg in buttons_config:
-        text = cfg.get("text", "")
-        callback_data = cfg.get("callback_data")
-        url = cfg.get("url")
-        color = cfg.get("color", "primary")
-        custom_emoji_id = cfg.get("custom_emoji_id")
-        
-        btn = create_colored_button(text, callback_data, url, color, custom_emoji_id)
-        row.append(btn)
-    return row
-
-# --- 📋 MAIN MENU ---
-
 async def main_menu(update, context):
-    """Main menu with styled buttons"""
+    """Main menu with colored inline buttons and premium emojis"""
     is_admin = update.effective_user.id == ADMIN_ID
     user = get_user(update.effective_user.id)
     s = get_settings()
+    cr = user.get("credits", 0)
     
-    # Build keyboard with normal buttons (ReplyKeyboardMarkup doesn't support colors)
+    # Build colored inline buttons
     kb = []
     
     # Row 1: TG ID & IFSC
     row1 = []
     if s.get("tgid_enabled", True):
-        row1.append(KeyboardButton(f"{BTN_PHONE} ᴛɢ ɪᴅ ➜ {BTN_PHONE2} ɴᴜᴍʙᴇʀ {BTN_SEARCH}"))
+        row1.append({"text": f"{EMOJI_PHONE} ᴛɢ ɪᴅ ➜ {EMOJI_PHONE2} ɴᴜᴍʙᴇʀ {EMOJI_SEARCH}", "callback_data": "menu_tgid", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["phone"]})
     if s.get("ifsc_enabled", True):
-        row1.append(KeyboardButton(f"{BTN_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ➜{BTN_MAGNIFY}"))
+        row1.append({"text": f"{EMOJI_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ➜{EMOJI_SEARCH}", "callback_data": "menu_ifsc", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["bank"]})
     if row1:
-        kb.append(row1)
+        kb.append(create_styled_row(row1))
     
     # Row 2: Link Bypass
     if s.get("bypass_enabled", True):
-        kb.append([KeyboardButton(f"{BTN_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ")])
+        kb.append(create_styled_row([
+            {"text": f"{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ", "callback_data": "menu_bypass", "color": "warning", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
+        ]))
     
     # Row 3: Aadhaar & India Number
     row2 = []
     if s.get("aadhaar_enabled", True):
-        row2.append(KeyboardButton(f"{BTN_AADHAAR} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜{BTN_USER}"))
+        row2.append({"text": f"{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜{EMOJI_USER}", "callback_data": "menu_aadhaar", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["card"]})
     if s.get("mobile_enabled", True):
-        row2.append(KeyboardButton(f"{BTN_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜{BTN_USER}"))
+        row2.append({"text": f"{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜{EMOJI_USER}", "callback_data": "menu_mobile", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["india"]})
     if row2:
-        kb.append(row2)
+        kb.append(create_styled_row(row2))
     
     # Row 4: RC & GST
     row3 = []
     if s.get("rc_enabled", True):
-        row3.append(KeyboardButton(f"{BTN_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ"))
+        row3.append({"text": f"{EMOJI_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ", "callback_data": "menu_rc", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["car"]})
     if s.get("gst_enabled", True):
-        row3.append(KeyboardButton(f"{BTN_GST} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ"))
+        row3.append({"text": f"{EMOJI_CARD} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ", "callback_data": "menu_gst", "color": "warning", "icon_emoji_id": PREMIUM_EMOJI_IDS["card"]})
     if row3:
-        kb.append(row3)
+        kb.append(create_styled_row(row3))
     
     # Row 5: Pakistan & India Num 2
     row4 = []
     if s.get("pak_enabled", True):
-        row4.append(KeyboardButton(f"{BTN_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ"))
+        row4.append({"text": f"{EMOJI_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_pak", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["pak"]})
     if s.get("indnum_enabled", True):
-        row4.append(KeyboardButton(f"{BTN_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸"))
+        row4.append({"text": f"{EMOJI_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸", "callback_data": "menu_indnum", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["phone2"]})
     if row4:
-        kb.append(row4)
+        kb.append(create_styled_row(row4))
     
     # Row 6: India Number 3
     if s.get("indnum3_enabled", True):
-        kb.append([KeyboardButton(f"{BTN_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜{BTN_USER}")])
+        kb.append(create_styled_row([
+            {"text": f"{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜{EMOJI_USER}", "callback_data": "menu_indnum3", "color": "danger", "icon_emoji_id": PREMIUM_EMOJI_IDS["india"]}
+        ]))
     
     # Row 7: Invite & Redeem
-    kb.append([
-        KeyboardButton(f"{BTN_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"),
-        KeyboardButton(f"{BTN_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ")
-    ])
+    kb.append(create_styled_row([
+        {"text": f"{EMOJI_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "callback_data": "menu_invite", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["invite"]},
+        {"text": f"{EMOJI_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", "callback_data": "menu_redeem", "color": "warning", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]}
+    ]))
     
     # Row 8: Help & About
-    kb.append([
-        KeyboardButton(f"{BTN_HELP} ʜᴇʟᴘ"),
-        KeyboardButton(f"{BTN_ABOUT} ᴀʙᴏᴜᴛ")
-    ])
+    kb.append(create_styled_row([
+        {"text": f"{EMOJI_HELP} ʜᴇʟᴘ", "callback_data": "menu_help", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["help"]},
+        {"text": f"{EMOJI_ABOUT} ᴀʙᴏᴜᴛ", "callback_data": "menu_about", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["about"]}
+    ]))
     
     # Row 9: Stats
-    kb.append([KeyboardButton(f"{BTN_STATS} ꜱᴛᴀᴛꜱ")])
+    kb.append(create_styled_row([
+        {"text": f"{EMOJI_STATS} ꜱᴛᴀᴛꜱ", "callback_data": "menu_stats", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["stats"]}
+    ]))
     
     # Admin buttons
     if is_admin:
-        kb.append([KeyboardButton(f"{BTN_ADMIN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ")])
+        kb.append(create_styled_row([
+            {"text": f"{EMOJI_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "callback_data": "menu_admin", "color": "danger", "icon_emoji_id": PREMIUM_EMOJI_IDS["admin"]}
+        ]))
     
-    markup = ReplyKeyboardMarkup(kb, resize_keyboard=True)
-    cr = user.get("credits", 0)
+    # Flatten keyboard
+    flat_kb = []
+    for row in kb:
+        flat_kb.append(row)
+    
+    markup = InlineKeyboardMarkup(flat_kb)
     
     # Text with premium emojis
     txt = (
@@ -619,15 +679,15 @@ async def admin_panel(update, context):
     s = get_settings()
     ms = lambda key: "🔴" if s.get(f"maint_{key}") else "🟢"
     
-    # Create colored admin buttons
+    # Create colored admin buttons with premium emojis
     kb = [
         create_styled_row([
-            {"text": "🎫 ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success"},
-            {"text": "📋 ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info"}
+            {"text": "🎫 ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]},
+            {"text": "📋 ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]}
         ]),
         create_styled_row([
-            {"text": "🎁 ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning"},
-            {"text": "📢 ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary"}
+            {"text": "🎁 ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": PREMIUM_EMOJI_IDS["gift"]},
+            {"text": "📢 ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["bolt"]}
         ]),
         create_styled_row([
             {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
@@ -710,36 +770,38 @@ async def admin_callback(update, context):
     elif d == "ad_back": await admin_panel(update, context)
     await q.answer()
 
-# --- 🚀 HELP & ABOUT ---
+# --- 🚀 HELP, ABOUT, STATS (Inline Mode) ---
 
-async def show_help(update, context):
+async def show_help_inline(update, context):
+    q = update.callback_query
+    await q.answer()
     text = f"""
 <blockquote>{EMOJI_HELP} 𝐇𝐄𝐋𝐏 & 𝐆𝐔𝐈𝐃𝐄 {EMOJI_HELP}</blockquote>
 
 <blockquote>{EMOJI_STAR} 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒:</blockquote>
 
-<blockquote>{BTN_PHONE} <b>𝐓𝐆 𝐈𝐃 ➜ 𝐍𝐔𝐌𝐁𝐄𝐑</b>
+<blockquote>{EMOJI_PHONE} <b>𝐓𝐆 𝐈𝐃 ➜ 𝐍𝐔𝐌𝐁𝐄𝐑</b>
 Get phone number from Telegram ID</blockquote>
 
-<blockquote>{BTN_BANK} <b>𝐈𝐅𝐒𝐂 𝐈𝐍𝐅𝐎</b>
+<blockquote>{EMOJI_BANK} <b>𝐈𝐅𝐒𝐂 𝐈𝐍𝐅𝐎</b>
 Get bank details from IFSC code</blockquote>
 
-<blockquote>{BTN_LINK} <b>𝐋𝐈𝐍𝐊 𝐁𝐘𝐏𝐀𝐒𝐒</b>
+<blockquote>{EMOJI_LINK} <b>𝐋𝐈𝐍𝐊 𝐁𝐘𝐏𝐀𝐒𝐒</b>
 Bypass short links</blockquote>
 
-<blockquote>{BTN_AADHAAR} <b>𝐀𝐀𝐃𝐇𝐀𝐑 𝐈𝐍𝐅𝐎</b>
+<blockquote>{EMOJI_CARD} <b>𝐀𝐀𝐃𝐇𝐀𝐑 𝐈𝐍𝐅𝐎</b>
 Get details from Aadhaar number</blockquote>
 
-<blockquote>{BTN_INDIA} <b>𝐈𝐍𝐃 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎</b>
+<blockquote>{EMOJI_INDIA} <b>𝐈𝐍𝐃 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎</b>
 Get Indian number details</blockquote>
 
-<blockquote>{BTN_CAR} <b>𝐑𝐂 𝐃𝐄𝐓𝐀𝐈𝐋𝐒</b>
+<blockquote>{EMOJI_CAR} <b>𝐑𝐂 𝐃𝐄𝐓𝐀𝐈𝐋𝐒</b>
 Get vehicle RC details</blockquote>
 
-<blockquote>{BTN_GST} <b>𝐆𝐒𝐓 𝐋𝐎𝐎𝐊𝐔𝐏</b>
+<blockquote>{EMOJI_CARD} <b>𝐆𝐒𝐓 𝐋𝐎𝐎𝐊𝐔𝐏</b>
 Get business details from GST</blockquote>
 
-<blockquote>{BTN_PAK} <b>𝐏𝐀𝐊 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎</b>
+<blockquote>{EMOJI_PAK} <b>𝐏𝐀𝐊 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎</b>
 Get Pakistan number details</blockquote>
 
 <blockquote>{EMOJI_GIFT} <b>𝐃𝐀𝐈𝐋𝐘 𝐅𝐑𝐄𝐄: +{DAILY_FREE_CREDITS} ᴄʀᴇᴅɪᴛꜱ</b></blockquote>
@@ -748,10 +810,14 @@ Get Pakistan number details</blockquote>
 
 <blockquote>{EMOJI_CLOCK} <b>𝐀𝐔𝐓𝐎 𝐃𝐄𝐋𝐄𝐓𝐄: {AUTO_DELETE_TIME}ꜱ</b></blockquote>
 """
-    msg = await update.message.reply_text(text, parse_mode=ParseMode.HTML)
-    asyncio.create_task(schedule_delete(msg, 60))
+    await q.message.edit_text(text, parse_mode=ParseMode.HTML)
+    await asyncio.sleep(60)
+    try: await q.message.delete()
+    except: pass
 
-async def show_about(update, context):
+async def show_about_inline(update, context):
+    q = update.callback_query
+    await q.answer()
     text = f"""
 <blockquote>{EMOJI_ABOUT} 𝐀𝐁𝐎𝐔𝐓 𝐁𝐎𝐓 {EMOJI_ABOUT}</blockquote>
 
@@ -769,16 +835,20 @@ async def show_about(update, context):
 <blockquote>• <b>RC Details</b></blockquote>
 <blockquote>• <b>GST Lookup</b></blockquote>
 <blockquote>• <b>Pakistan Number Info</b></blockquote>
-<blockquote>• <b>Colored Admin Buttons 🎨</b></blockquote>
+<blockquote>• <b>Colored Inline Buttons 🎨</b></blockquote>
 
 <blockquote>{EMOJI_CROWN} <b>𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐄𝐃 𝐁𝐘:</b> @Hexh4ckerOFC</blockquote>
 
 <blockquote><i>{EMOJI_WARN} 𝐅𝐎𝐑 𝐄𝐃𝐔𝐂𝐀𝐓𝐈𝐎𝐍𝐀𝐋 𝐏𝐔𝐑𝐏𝐎𝐒𝐄𝐒 𝐎𝐍𝐋𝐘</i></blockquote>
 """
-    msg = await update.message.reply_text(text, parse_mode=ParseMode.HTML)
-    asyncio.create_task(schedule_delete(msg, 60))
+    await q.message.edit_text(text, parse_mode=ParseMode.HTML)
+    await asyncio.sleep(60)
+    try: await q.message.delete()
+    except: pass
 
-async def show_stats(update, context):
+async def show_stats_inline(update, context):
+    q = update.callback_query
+    await q.answer()
     users = load_json(USERS_FILE)
     total_users = len(users)
     total_queries = sum(u.get('total_queries', 0) for u in users.values())
@@ -795,8 +865,10 @@ async def show_stats(update, context):
 
 <blockquote>{EMOJI_DIAMOND} <b>𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐔𝐒:</b> 🟢 Active</blockquote>
 """
-    msg = await update.message.reply_text(text, parse_mode=ParseMode.HTML)
-    asyncio.create_task(schedule_delete(msg, 60))
+    await q.message.edit_text(text, parse_mode=ParseMode.HTML)
+    await asyncio.sleep(60)
+    try: await q.message.delete()
+    except: pass
 
 # --- 🚀 START HANDLER ---
 
@@ -831,12 +903,156 @@ async def verify_cb(update, context):
         user = get_user(q.from_user.id)
         user["verified"] = True
         save_user(q.from_user.id, user)
-        await q.answer("✅ Verified!")
+        await q.answer("✅ Verified!", show_alert=True)
         try: await q.message.delete()
         except: pass
+        # Send new main menu
         await main_menu(update, context)
     else:
-        await q.answer("❌ Join both!", show_alert=True)
+        await q.answer("❌ Join both channels!", show_alert=True)
+
+# --- 📝 CALLBACK QUERY HANDLER ---
+
+async def menu_callback(update, context):
+    q = update.callback_query
+    await q.answer()
+    data = q.data
+    uid = q.from_user.id
+    s = get_settings()
+    
+    # Handle menu callbacks
+    if data == "menu_tgid":
+        if not s.get("tgid_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("tgid")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'TG'
+        btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
+        await q.message.reply_text(f"<blockquote>{EMOJI_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_ifsc":
+        if not s.get("ifsc_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("ifsc")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'IFSC'
+        await q.message.reply_text(f"<blockquote>{EMOJI_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_bypass":
+        if not s.get("bypass_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("bypass")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'SHORTLINK'
+        await q.message.reply_text(f"<blockquote>{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_mobile":
+        if not s.get("mobile_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("mobile")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'MOBILE'
+        await q.message.reply_text(f"<blockquote>{EMOJI_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_aadhaar":
+        if not s.get("aadhaar_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("aadhaar")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'AADHAAR'
+        await q.message.reply_text(f"<blockquote>{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_rc":
+        if not s.get("rc_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("rc")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'VEHICLE'
+        await q.message.reply_text(f"<blockquote>{EMOJI_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_gst":
+        if not s.get("gst_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("gst")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'GST'
+        await q.message.reply_text(f"<blockquote>{EMOJI_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_pak":
+        if not s.get("pak_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("pak")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'PAK'
+        await q.message.reply_text(f"<blockquote>{EMOJI_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ</blockquote>\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_indnum":
+        if not s.get("indnum_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("indnum")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'INDNUM'
+        await q.message.reply_text(f"<blockquote>{EMOJI_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_indnum3":
+        if not s.get("indnum3_enabled", True):
+            await q.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        maint, msg = check_feature_maintenance("indnum3")
+        if maint:
+            await q.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
+            return
+        context.user_data['mode'] = 'INDNUM3'
+        await q.message.reply_text(f"<blockquote>{EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_invite":
+        user = get_user(uid)
+        bot_username = context.bot.username or BOT_USERNAME
+        link = f"https://t.me/{bot_username}?start={user['invite_code']}"
+        await q.message.reply_text(f"<blockquote>{EMOJI_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)</blockquote>\n<blockquote><code>{link}</code></blockquote>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_redeem":
+        context.user_data['redeem_mode'] = True
+        await q.message.reply_text(f"<blockquote>{EMOJI_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
+    
+    elif data == "menu_help":
+        await show_help_inline(update, context)
+    
+    elif data == "menu_about":
+        await show_about_inline(update, context)
+    
+    elif data == "menu_stats":
+        await show_stats_inline(update, context)
+    
+    elif data == "menu_admin":
+        await admin_panel(update, context)
 
 # --- 📝 MESSAGE HANDLER ---
 
@@ -896,206 +1112,7 @@ async def msg_handler(update, context):
                 await show_verification_page(update, context)
             return
         
-        # --- BUTTON HANDLING ---
-        
-        # Admin Panel
-        if txt in [f"{BTN_ADMIN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", f"{BTN_ADMIN} ᴀᴅᴍɪɴ"]:
-            await admin_panel(update, context)
-            return
-        
-        # Help
-        if txt == f"{BTN_HELP} ʜᴇʟᴘ":
-            await show_help(update, context)
-            return
-        
-        # About
-        if txt == f"{BTN_ABOUT} ᴀʙᴏᴜᴛ":
-            await show_about(update, context)
-            return
-        
-        # Stats
-        if txt == f"{BTN_STATS} ꜱᴛᴀᴛꜱ":
-            await show_stats(update, context)
-            return
-        
-        # TG ID
-        if txt in [f"{BTN_PHONE} ᴛɢ ɪᴅ ➜ {BTN_PHONE2} ɴᴜᴍʙᴇʀ {BTN_SEARCH}"]:
-            if not s.get("tgid_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("tgid")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'TG'
-            btn = [[InlineKeyboardButton("🤖 @ChatIdInfoBot", url="https://t.me/ChatIdInfoBot")]]
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>7123181749, 6884112825</i>", reply_markup=InlineKeyboardMarkup(btn), parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # IFSC
-        if txt in [f"{BTN_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ➜{BTN_MAGNIFY}"]:
-            if not s.get("ifsc_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("ifsc")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'IFSC'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ</blockquote>\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # Bypass
-        if txt in [f"{BTN_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ"]:
-            if not s.get("bypass_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("bypass")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'SHORTLINK'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ</blockquote>\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # Mobile
-        if txt == f"{BTN_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜{BTN_USER}":
-            if not s.get("mobile_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("mobile")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'MOBILE'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # Aadhaar
-        if txt == f"{BTN_AADHAAR} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜{BTN_USER}":
-            if not s.get("aadhaar_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("aadhaar")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'AADHAAR'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ</blockquote>\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # RC
-        if txt == f"{BTN_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
-            if not s.get("rc_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("rc")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'VEHICLE'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ</blockquote>\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # GST
-        if txt == f"{BTN_GST} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
-            if not s.get("gst_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("gst")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'GST'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ</blockquote>\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # Pakistan
-        if txt == f"{BTN_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
-            if not s.get("pak_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("pak")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'PAK'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ</blockquote>\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # IND NUM 2
-        if txt == f"{BTN_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸":
-            if not s.get("indnum_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("indnum")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'INDNUM'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # IND NUM 3
-        if txt == f"{BTN_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜{BTN_USER}":
-            if not s.get("indnum3_enabled", True):
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_DISABLED} Disabled</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            maint, msg = check_feature_maintenance("indnum3")
-            if maint:
-                m = await update.message.reply_text(f"<blockquote>{EMOJI_TOOLS} {msg}</blockquote>", parse_mode=ParseMode.HTML)
-                asyncio.create_task(schedule_delete(m))
-                return
-            context.user_data['mode'] = 'INDNUM3'
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ</blockquote>\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m))
-            return
-        
-        # Invite
-        if txt in [f"{BTN_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", f"{BTN_INVITE} ɪɴᴠɪᴛᴇ"]:
-            user = get_user(uid)
-            bot_username = context.bot.username or BOT_USERNAME
-            link = f"https://t.me/{bot_username}?start={user['invite_code']}"
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)</blockquote>\n<blockquote><code>{link}</code></blockquote>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m, 120))
-            return
-        
-        # Redeem
-        if txt in [f"{BTN_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ"]:
-            context.user_data['redeem_mode'] = True
-            m = await update.message.reply_text(f"<blockquote>{EMOJI_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:</blockquote>\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
-            asyncio.create_task(schedule_delete(m, 30))
-            return
-        
-        # Redeem mode
+        # Handle redeem mode
         if context.user_data.get('redeem_mode'):
             context.user_data['redeem_mode'] = False
             if txt.upper().startswith("HEX-"):
@@ -1195,7 +1212,7 @@ async def run_query(update, context, mode, query):
 
 def main():
     print("🔄 Hex Terminal Premium Starting...")
-    print("🎨 Colored Buttons with Premium Emojis Enabled!")
+    print("🎨 Colored Inline Buttons with Premium Emojis Enabled!")
     try:
         subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], capture_output=True, timeout=30)
     except: pass
@@ -1206,11 +1223,12 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(verify_cb, pattern="^verify$"))
     app.add_handler(CallbackQueryHandler(admin_callback, pattern="^ad_"))
+    app.add_handler(CallbackQueryHandler(menu_callback, pattern="^menu_"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, msg_handler))
     
     print(f"{EMOJI_CHECK} {BOT_NAME} Ready!")
-    print(f"{EMOJI_DIAMOND} Premium Emojis in Text | Normal Emojis in Reply Buttons")
-    print(f"{EMOJI_STAR} Colored Inline Buttons in Admin Panel!")
+    print(f"{EMOJI_DIAMOND} All buttons are colored InlineButtons with Premium Emojis!")
+    print(f"{EMOJI_STAR} Total Menu Buttons: 14 colored inline buttons")
     
     app.run_polling()
 
