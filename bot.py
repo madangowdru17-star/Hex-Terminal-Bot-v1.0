@@ -1154,9 +1154,9 @@ async def callback_handler(client, callback_query: CallbackQuery):
         
         await callback_query.answer()
 
-# --- 📝 MESSAGE HANDLER ---
+# --- 📝 MESSAGE HANDLER (FIXED) ---
 
-@app.on_message(filters.text & ~filters.command)
+@app.on_message(filters.text & ~filters.command("start"))
 async def handle_messages(client, message: Message):
     try:
         uid = message.from_user.id
