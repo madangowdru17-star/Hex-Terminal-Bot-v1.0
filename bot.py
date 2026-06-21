@@ -54,55 +54,10 @@ BOT_NAME = "𝗛𝗲𝘅 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝗹"
 BOT_USERNAME = "Hex_Terminal_bot"
 
 # ============================================================
-# PREMIUM EMOJI IDs (as STRINGS for text, INTEGERS for buttons)
+# PREMIUM EMOJI IDs for Buttons (INTEGERS)
 # ============================================================
 
-# For text messages (using <tg-emoji> tags)
-EMOJI_IDS = {
-    "warn": "6267039884016358504",
-    "check": "6267008582294705964",
-    "cross": "6267000941547885720",
-    "lock": "5316522278056399236",
-    "crown": "6267128480601741166",
-    "diamond": "6264791387032523779",
-    "star": "6266969287638913443",
-    "gift": "5203996991054432397",
-    "fire": "6264785189394717307",
-    "search": "5231012545799666522",
-    "phone": "5947494995798789024",
-    "bank": "5264895611517300926",
-    "link": "5271604874419647061",
-    "car": "5253752975997803460",
-    "card": "5260561650213220533",
-    "user": "5249053508681883137",
-    "india": "6284779941489812433",
-    "pak": "5913705895375672082",
-    "phone2": "5406809207947142040",
-    "invite": "5244933196230972438",
-    "ticket": "5285515895534278367",
-    "credit": "6267068789146260253",
-    "refresh": "5375338737028841420",
-    "clock": "5382194935057372936",
-    "bolt": "6284971355297290197",
-    "green": "5386367538735104399",
-    "sparkle": "5467683093693354332",
-    "tools": "5462921117423384478",
-    "disabled": "5373165973203348165",
-    "location": "5391032818111363540",
-    "home": "5280955052582785391",
-    "state": "5388927107315283144",
-    "network": "5321141214735508486",
-    "signal": "6147892053796725336",
-    "sim": "5800717980266403037",
-    "chart": "6093382540784046658",
-    "help": "5244933196230972438",
-    "about": "5285515895534278367",
-    "stats": "6093382540784046658",
-    "admin": "6267128480601741166",
-    "rocket": "5195033767969839232"
-}
-
-# For button icons (as INTEGERS for icon_custom_emoji_id)
+# Premium Emoji IDs as INTEGERS for icon_custom_emoji_id
 BUTTON_EMOJI_IDS = {
     "phone": 5947494995798789024,
     "bank": 5264895611517300926,
@@ -143,54 +98,59 @@ BUTTON_EMOJI_IDS = {
     "stats": 6093382540784046658,
     "admin": 6267128480601741166,
     "rocket": 5195033767969839232,
-    "sparkle": 5467683093693354332
+    "sparkle": 5467683093693354332,
+    "magnify": 5258024981144066782,
+    "fire": 6264785189394717307,
+    "earn": 6267068789146260253,
+    "redeem": 5285515895534278367
 }
 
 # --- PREMIUM EMOJIS FOR TEXT MESSAGES ---
 def get_pe(eid, fallback):
     return f'<tg-emoji emoji-id="{eid}">{fallback}</tg-emoji>'
 
-EMOJI_WARN = get_pe(EMOJI_IDS["warn"], "⚠️")
-EMOJI_CHECK = get_pe(EMOJI_IDS["check"], "✅")
-EMOJI_CROSS = get_pe(EMOJI_IDS["cross"], "❌")
-EMOJI_LOCK = get_pe(EMOJI_IDS["lock"], "🔒")
-EMOJI_CROWN = get_pe(EMOJI_IDS["crown"], "👑")
-EMOJI_DIAMOND = get_pe(EMOJI_IDS["diamond"], "💎")
-EMOJI_STAR = get_pe(EMOJI_IDS["star"], "⭐")
-EMOJI_GIFT = get_pe(EMOJI_IDS["gift"], "🎁")
-EMOJI_FIRE = get_pe(EMOJI_IDS["fire"], "🔥")
-EMOJI_SEARCH = get_pe(EMOJI_IDS["search"], "🔍")
-EMOJI_PHONE = get_pe(EMOJI_IDS["phone"], "📞")
-EMOJI_BANK = get_pe(EMOJI_IDS["bank"], "🏦")
-EMOJI_LINK = get_pe(EMOJI_IDS["link"], "🔗")
-EMOJI_CAR = get_pe(EMOJI_IDS["car"], "🚘")
-EMOJI_CARD = get_pe(EMOJI_IDS["card"], "🪪")
-EMOJI_USER = get_pe(EMOJI_IDS["user"], "👤")
-EMOJI_INDIA = get_pe(EMOJI_IDS["india"], "🇮🇳")
-EMOJI_PAK = get_pe(EMOJI_IDS["pak"], "🇵🇰")
-EMOJI_PHONE2 = get_pe(EMOJI_IDS["phone2"], "📲")
-EMOJI_INVITE = get_pe(EMOJI_IDS["invite"], "👥")
-EMOJI_TICKET = get_pe(EMOJI_IDS["ticket"], "🎫")
-EMOJI_CREDIT = get_pe(EMOJI_IDS["credit"], "💰")
-EMOJI_REFRESH = get_pe(EMOJI_IDS["refresh"], "🔄")
-EMOJI_CLOCK = get_pe(EMOJI_IDS["clock"], "⏱")
-EMOJI_BOLT = get_pe(EMOJI_IDS["bolt"], "⚡")
-EMOJI_GREEN = get_pe(EMOJI_IDS["green"], "🟩")
-EMOJI_SPARKLE = get_pe(EMOJI_IDS["sparkle"], "✨")
-EMOJI_ROCKET = get_pe(EMOJI_IDS["rocket"], "🚀")
-EMOJI_TOOLS = get_pe(EMOJI_IDS["tools"], "🛠️")
-EMOJI_DISABLED = get_pe(EMOJI_IDS["disabled"], "📴")
-EMOJI_FATHER = get_pe(EMOJI_IDS["user"], "👨")
-EMOJI_LOCATION = get_pe(EMOJI_IDS["location"], "📍")
-EMOJI_HOME = get_pe(EMOJI_IDS["home"], "🏠")
-EMOJI_STATE = get_pe(EMOJI_IDS["state"], "🏛")
-EMOJI_NETWORK = get_pe(EMOJI_IDS["network"], "📡")
-EMOJI_SIGNAL = get_pe(EMOJI_IDS["signal"], "📶")
-EMOJI_SIM = get_pe(EMOJI_IDS["sim"], "💳")
-EMOJI_CHART = get_pe(EMOJI_IDS["chart"], "📊")
-EMOJI_HELP = get_pe(EMOJI_IDS["help"], "❓")
-EMOJI_ABOUT = get_pe(EMOJI_IDS["about"], "ℹ️")
-EMOJI_STATS = get_pe(EMOJI_IDS["stats"], "📊")
+EMOJI_WARN = get_pe("6267039884016358504", "⚠️")
+EMOJI_CHECK = get_pe("6267008582294705964", "✅")
+EMOJI_CROSS = get_pe("6267000941547885720", "❌")
+EMOJI_LOCK = get_pe("5316522278056399236", "🔒")
+EMOJI_CROWN = get_pe("6267128480601741166", "👑")
+EMOJI_DIAMOND = get_pe("6264791387032523779", "💎")
+EMOJI_STAR = get_pe("6266969287638913443", "⭐")
+EMOJI_GIFT = get_pe("5203996991054432397", "🎁")
+EMOJI_FIRE = get_pe("6264785189394717307", "🔥")
+EMOJI_SEARCH = get_pe("5231012545799666522", "🔍")
+EMOJI_PHONE = get_pe("5947494995798789024", "📞")
+EMOJI_BANK = get_pe("5264895611517300926", "🏦")
+EMOJI_LINK = get_pe("5271604874419647061", "🔗")
+EMOJI_CAR = get_pe("5253752975997803460", "🚘")
+EMOJI_CARD = get_pe("5260561650213220533", "🪪")
+EMOJI_USER = get_pe("5249053508681883137", "👤")
+EMOJI_INDIA = get_pe("6284779941489812433", "🇮🇳")
+EMOJI_PAK = get_pe("5913705895375672082", "🇵🇰")
+EMOJI_PHONE2 = get_pe("5406809207947142040", "📲")
+EMOJI_INVITE = get_pe("5244933196230972438", "👥")
+EMOJI_TICKET = get_pe("5285515895534278367", "🎫")
+EMOJI_CREDIT = get_pe("6267068789146260253", "💰")
+EMOJI_REFRESH = get_pe("5375338737028841420", "🔄")
+EMOJI_CLOCK = get_pe("5382194935057372936", "⏱")
+EMOJI_BOLT = get_pe("6284971355297290197", "⚡")
+EMOJI_GREEN = get_pe("5386367538735104399", "🟩")
+EMOJI_SPARKLE = get_pe("5467683093693354332", "✨")
+EMOJI_ROCKET = get_pe("5195033767969839232", "🚀")
+EMOJI_TOOLS = get_pe("5462921117423384478", "🛠️")
+EMOJI_DISABLED = get_pe("5373165973203348165", "📴")
+EMOJI_FATHER = get_pe("5249053508681883137", "👨")
+EMOJI_LOCATION = get_pe("5391032818111363540", "📍")
+EMOJI_HOME = get_pe("5280955052582785391", "🏠")
+EMOJI_STATE = get_pe("5388927107315283144", "🏛")
+EMOJI_NETWORK = get_pe("5321141214735508486", "📡")
+EMOJI_SIGNAL = get_pe("6147892053796725336", "📶")
+EMOJI_SIM = get_pe("5800717980266403037", "💳")
+EMOJI_CHART = get_pe("6093382540784046658", "📊")
+EMOJI_HELP = get_pe("5244933196230972438", "❓")
+EMOJI_ABOUT = get_pe("5285515895534278367", "ℹ️")
+EMOJI_STATS = get_pe("6093382540784046658", "📊")
+EMOJI_MAGNIFY = get_pe("5258024981144066782", "🔎")
 
 DISCLAIMER = f"\n\n{EMOJI_WARN} ᴅɪꜱᴄʟᴀɪᴍᴇʀ:\nᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ."
 
@@ -361,7 +321,7 @@ def create_styled_row(buttons_config: list) -> list:
     return row
 
 # ============================================================
-# MAIN MENU WITH COLORED INLINE BUTTONS
+# MAIN MENU WITH PREMIUM EMOJI ICONS ONLY
 # ============================================================
 
 async def show_verification_page(message: Message):
@@ -389,10 +349,10 @@ async def show_verification_page(message: Message):
     
     buttons = [
         create_styled_row([
-            {"text": "📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", "url": CHANNEL_LINK, "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
+            {"text": "ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", "url": CHANNEL_LINK, "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
         ]),
         create_styled_row([
-            {"text": "✅ ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", "callback_data": "verify", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["check"]}
+            {"text": "ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", "callback_data": "verify", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["check"]}
         ])
     ]
     
@@ -408,7 +368,7 @@ async def show_verification_page(message: Message):
     asyncio.create_task(schedule_delete(sent2, 120))
 
 async def main_menu(message: Message):
-    """Main menu with colored inline buttons and premium emojis"""
+    """Main menu with premium emoji icons only (no normal emojis in text)"""
     is_admin = message.from_user.id == ADMIN_ID
     user = get_user(message.from_user.id)
     s = get_settings()
@@ -419,72 +379,72 @@ async def main_menu(message: Message):
     # Row 1: TG ID & IFSC
     row1 = []
     if s.get("tgid_enabled", True):
-        row1.append({"text": f"📱 ᴛɢ ɪᴅ ➜ 📲 ɴᴜᴍʙᴇʀ 🔍", "callback_data": "menu_tgid", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["phone"]})
+        row1.append({"text": "ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ", "callback_data": "menu_tgid", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["phone"]})
     if s.get("ifsc_enabled", True):
-        row1.append({"text": f"🏦 ɪꜰꜱᴄ ɪɴꜰᴏ➜🔎", "callback_data": "menu_ifsc", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["bank"]})
+        row1.append({"text": "ɪꜰꜱᴄ ɪɴꜰᴏ", "callback_data": "menu_ifsc", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bank"]})
     if row1:
         kb.append(create_styled_row(row1))
     
     # Row 2: Link Bypass
     if s.get("bypass_enabled", True):
         kb.append(create_styled_row([
-            {"text": f"🔗 ʟɪɴᴋ ʙʏᴘᴀꜱꜱ", "callback_data": "menu_bypass", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
+            {"text": "ʟɪɴᴋ ʙʏᴘᴀꜱꜱ", "callback_data": "menu_bypass", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
         ]))
     
     # Row 3: Aadhaar & India Number
     row2 = []
     if s.get("aadhaar_enabled", True):
-        row2.append({"text": f"🪪 ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ➜👤", "callback_data": "menu_aadhaar", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
+        row2.append({"text": "ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ", "callback_data": "menu_aadhaar", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
     if s.get("mobile_enabled", True):
-        row2.append({"text": f"🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ➜👤", "callback_data": "menu_mobile", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]})
+        row2.append({"text": "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_mobile", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]})
     if row2:
         kb.append(create_styled_row(row2))
     
     # Row 4: RC & GST
     row3 = []
     if s.get("rc_enabled", True):
-        row3.append({"text": f"🚘 ʀᴄ ᴅᴇᴛᴀɪʟꜱ", "callback_data": "menu_rc", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["car"]})
+        row3.append({"text": "ʀᴄ ᴅᴇᴛᴀɪʟꜱ", "callback_data": "menu_rc", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["car"]})
     if s.get("gst_enabled", True):
-        row3.append({"text": f"📋 ɢꜱᴛ ʟᴏᴏᴋᴜᴘ", "callback_data": "menu_gst", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
+        row3.append({"text": "ɢꜱᴛ ʟᴏᴏᴋᴜᴘ", "callback_data": "menu_gst", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
     if row3:
         kb.append(create_styled_row(row3))
     
     # Row 5: Pakistan & India Num 2
     row4 = []
     if s.get("pak_enabled", True):
-        row4.append({"text": f"🇵🇰 ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_pak", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["pak"]})
+        row4.append({"text": "ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_pak", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["pak"]})
     if s.get("indnum_enabled", True):
-        row4.append({"text": f"📲 ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸", "callback_data": "menu_indnum", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["phone2"]})
+        row4.append({"text": "ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸", "callback_data": "menu_indnum", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["phone2"]})
     if row4:
         kb.append(create_styled_row(row4))
     
     # Row 6: India Number 3
     if s.get("indnum3_enabled", True):
         kb.append(create_styled_row([
-            {"text": f"🇮🇳 ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹 ➜👤", "callback_data": "menu_indnum3", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]}
+            {"text": "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹", "callback_data": "menu_indnum3", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]}
         ]))
     
     # Row 7: Invite & Redeem
     kb.append(create_styled_row([
-        {"text": f"👥 ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "callback_data": "menu_invite", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["invite"]},
-        {"text": f"🎫 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", "callback_data": "menu_redeem", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
+        {"text": "ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "callback_data": "menu_invite", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["invite"]},
+        {"text": "ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", "callback_data": "menu_redeem", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
     ]))
     
     # Row 8: Help & About
     kb.append(create_styled_row([
-        {"text": f"❓ ʜᴇʟᴘ", "callback_data": "menu_help", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["help"]},
-        {"text": f"ℹ️ ᴀʙᴏᴜᴛ", "callback_data": "menu_about", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["about"]}
+        {"text": "ʜᴇʟᴘ", "callback_data": "menu_help", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["help"]},
+        {"text": "ᴀʙᴏᴜᴛ", "callback_data": "menu_about", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["about"]}
     ]))
     
     # Row 9: Stats
     kb.append(create_styled_row([
-        {"text": f"📊 ꜱᴛᴀᴛꜱ", "callback_data": "menu_stats", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["stats"]}
+        {"text": "ꜱᴛᴀᴛꜱ", "callback_data": "menu_stats", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["stats"]}
     ]))
     
     # Admin buttons
     if is_admin:
         kb.append(create_styled_row([
-            {"text": f"👑 ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "callback_data": "menu_admin", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["admin"]}
+            {"text": "ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "callback_data": "menu_admin", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["admin"]}
         ]))
     
     flat_kb = []
@@ -694,12 +654,12 @@ async def admin_panel(message: Message):
     
     kb = [
         create_styled_row([
-            {"text": "🎫 ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]},
-            {"text": "📋 ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
+            {"text": "ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]},
+            {"text": "ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
         ]),
         create_styled_row([
-            {"text": "🎁 ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["gift"]},
-            {"text": "📢 ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bolt"]}
+            {"text": "ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["gift"]},
+            {"text": "ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bolt"]}
         ]),
         create_styled_row([
             {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
@@ -745,7 +705,7 @@ async def admin_panel(message: Message):
             {"text": f"{ms('indnum3')} ᴍ", "callback_data": "ad_maint_indnum3", "color": "info"}
         ]),
         create_styled_row([
-            {"text": "❌ ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
+            {"text": "ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
         ])
     ]
     
@@ -769,28 +729,28 @@ async def show_help_inline(callback_query: CallbackQuery):
 
 {EMOJI_STAR} 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒:
 
-📱 𝐓𝐆 𝐈𝐃 ➜ 𝐍𝐔𝐌𝐁𝐄𝐑
+{EMOJI_PHONE} 𝐓𝐆 𝐈𝐃 ➜ 𝐍𝐔𝐌𝐁𝐄𝐑
 Get phone number from Telegram ID
 
-🏦 𝐈𝐅𝐒𝐂 𝐈𝐍𝐅𝐎
+{EMOJI_BANK} 𝐈𝐅𝐒𝐂 𝐈𝐍𝐅𝐎
 Get bank details from IFSC code
 
-🔗 𝐋𝐈𝐍𝐊 𝐁𝐘𝐏𝐀𝐒𝐒
+{EMOJI_LINK} 𝐋𝐈𝐍𝐊 𝐁𝐘𝐏𝐀𝐒𝐒
 Bypass short links
 
-🪪 𝐀𝐀𝐃𝐇𝐀𝐑 𝐈𝐍𝐅𝐎
+{EMOJI_CARD} 𝐀𝐀𝐃𝐇𝐀𝐑 𝐈𝐍𝐅𝐎
 Get details from Aadhaar number
 
-🇮🇳 𝐈𝐍𝐃 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎
+{EMOJI_INDIA} 𝐈𝐍𝐃 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎
 Get Indian number details
 
-🚘 𝐑𝐂 𝐃𝐄𝐓𝐀𝐈𝐋𝐒
+{EMOJI_CAR} 𝐑𝐂 𝐃𝐄𝐓𝐀𝐈𝐋𝐒
 Get vehicle RC details
 
-📋 𝐆𝐒𝐓 𝐋𝐎𝐎𝐊𝐔𝐏
+{EMOJI_CARD} 𝐆𝐒𝐓 𝐋𝐎𝐎𝐊𝐔𝐏
 Get business details from GST
 
-🇵🇰 𝐏𝐀𝐊 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎
+{EMOJI_PAK} 𝐏𝐀𝐊 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎
 Get Pakistan number details
 
 {EMOJI_GIFT} 𝐃𝐀𝐈𝐋𝐘 𝐅𝐑𝐄𝐄: +{DAILY_FREE_CREDITS} ᴄʀᴇᴅɪᴛꜱ
@@ -1335,7 +1295,7 @@ async def run_query(message: Message, mode: str, query: str):
 
 def main():
     print("🔄 Hex Terminal Premium Starting...")
-    print("🎨 Colored Inline Buttons with Premium Emojis Enabled!")
+    print("🎨 Colored Inline Buttons with Premium Emoji Icons Only!")
     print("🤖 Kurigram Version with Full Button Colors!")
     
     try:
@@ -1343,7 +1303,7 @@ def main():
     except: pass
     
     print(f"✅ {BOT_NAME} Ready!")
-    print(f"💎 All buttons are colored InlineButtons with Premium Emojis!")
+    print(f"💎 All buttons use Premium Emoji Icons only (no normal emojis in text)!")
     print(f"⭐ Total Menu Buttons: 14 colored inline buttons")
     print("🚀 Bot is running...")
     
