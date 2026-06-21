@@ -24,11 +24,9 @@ API_HASH = os.environ.get('API_HASH', '47ee9fa07b5eeb865edb3d79ada726a5')
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8687617595:AAGCa0yJTRM52NLItvLkzt7O1mZEkCaNkn4')
 ADMIN_ID = int(os.environ.get('ADMIN_ID', '7898928200'))
 
+# SINGLE CHANNEL ONLY
 CHANNEL_1_ID = int(os.environ.get('CHANNEL_1_ID', '-1003240507339'))
-CHANNEL_2_ID = int(os.environ.get('CHANNEL_2_ID', '-1003806004135'))
-
 LINK_1 = os.environ.get('LINK_1', 'https://t.me/+dP7xLb3AoE1jNmRl')
-LINK_2 = os.environ.get('LINK_2', 'https://t.me/+9vuPcr9LJ8piODdl')
 
 FOOTER = "\n\n⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ @Hexh4ckerOFC"
 SEP = "━━━━━━━━━━━━━━━━━━━"
@@ -59,7 +57,7 @@ BOT_USERNAME = "Hex_Terminal_bot"
 # PREMIUM EMOJI IDs FOR ALL BUTTONS (Colored Inline Buttons)
 # ============================================================
 
-# Color Styles with Premium Emoji IDs (Kurigram/Pyrogram style)
+# Color Styles with Premium Emoji IDs
 BUTTON_STYLES = {
     "primary": {
         "emoji_id": "5258096772776991776",
@@ -263,13 +261,12 @@ def get_settings():
 
 def save_settings(data): save_json(SETTINGS_FILE, data)
 
-# --- 🔍 VERIFY ---
+# --- 🔍 VERIFY - SINGLE CHANNEL ---
 
-async def check_channels(uid):
+async def check_channel(uid):
     try:
-        m1 = await app.get_chat_member(CHANNEL_1_ID, uid)
-        m2 = await app.get_chat_member(CHANNEL_2_ID, uid)
-        return m1.status in ['member','administrator','creator'] and m2.status in ['member','administrator','creator']
+        m = await app.get_chat_member(CHANNEL_1_ID, uid)
+        return m.status in ['member', 'administrator', 'creator']
     except: return False
 
 # --- 🛠️ UTILS ---
@@ -294,15 +291,10 @@ def check_feature_maintenance(feature_key):
 # ============================================================
 
 def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", icon_emoji_id: str = None):
-    """
-    Create a colored inline button with premium emoji icon
-    Colors: "primary" (blue), "success" (green), "danger" (red)
-    """
     style_info = BUTTON_STYLES.get(color, BUTTON_STYLES["primary"])
     emoji_id = icon_emoji_id or style_info["emoji_id"]
     style = style_info["style"]
     
-    # For Kurigram, use icon_custom_emoji_id and style
     try:
         return InlineKeyboardButton(
             text=text,
@@ -327,7 +319,6 @@ def create_colored_button(text: str, callback_data: str = None, url: str = None,
             )
 
 def create_styled_row(buttons_config: list) -> list:
-    """Create a row of colored inline buttons with premium emojis"""
     row = []
     for cfg in buttons_config:
         text = cfg.get("text", "")
@@ -346,16 +337,15 @@ def create_styled_row(buttons_config: list) -> list:
 
 async def show_verification_page(message: Message):
     try:
-        bot_info = await app.get_me()
         caption = (
             f"{EMOJI_DIAMOND} {BOT_NAME} {EMOJI_DIAMOND}\n"
             f"@{BOT_USERNAME}\n\n"
             f"{EMOJI_LOCK} ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ ʀᴇQᴜɪʀᴇᴅ\n"
-            f"ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛᴏ ᴜɴʟᴏᴄᴋ\n\n"
+            f"{EMOJI_INVITE} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴜɴʟᴏᴄᴋ\n\n"
             f"{EMOJI_WARN} ɢᴜɪᴅᴇʟɪɴᴇꜱ:\n"
-            f"• ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ\n"
-            f"• ᴜꜱᴇ ᴏɴ ʏᴏᴜʀ ᴏᴡɴ ᴅᴀᴛᴀ\n"
-            f"• ʀᴇꜱᴘᴇᴄᴛ ᴘʀɪᴠᴀᴄʏ ʟᴀᴡꜱ\n\n"
+            f"{EMOJI_BOLT} ᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ\n"
+            f"{EMOJI_BOLT} ᴜꜱᴇ ᴏɴ ʏᴏᴜʀ ᴏᴡɴ ᴅᴀᴛᴀ\n"
+            f"{EMOJI_BOLT} ʀᴇꜱᴘᴇᴄᴛ ᴘʀɪᴠᴀᴄʏ ʟᴀᴡꜱ\n\n"
             f"{EMOJI_GIFT} +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ {EMOJI_STAR}\n"
             f"{EMOJI_INVITE} +{INVITE_CREDITS} ᴘᴇʀ ɪɴᴠɪᴛᴇ\n"
             f"{EMOJI_CLOCK} {AUTO_DELETE_TIME}ꜱ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ\n\n"
@@ -367,16 +357,13 @@ async def show_verification_page(message: Message):
         asyncio.create_task(schedule_delete(sent, 120))
     except: pass
     
-    # Colored verification buttons with premium emojis
+    # Single channel verification buttons
     buttons = [
         create_styled_row([
-            {"text": "📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟷", "url": LINK_1, "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
+            {"text": f"{EMOJI_LINK} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", "url": LINK_1, "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
         ]),
         create_styled_row([
-            {"text": "📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ 𝟸", "url": LINK_2, "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
-        ]),
-        create_styled_row([
-            {"text": "✅ ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", "callback_data": "verify", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["check"]}
+            {"text": f"{EMOJI_CHECK} ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", "callback_data": "verify", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["check"]}
         ])
     ]
     
@@ -385,7 +372,7 @@ async def show_verification_page(message: Message):
         flat_buttons.append(row)
     
     sent2 = await message.reply_text(
-        f"{EMOJI_LOCK} ᴊᴏɪɴ ʙᴏᴛʜ ᴄʜᴀɴɴᴇʟꜱ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ",
+        f"{EMOJI_LOCK} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ",
         reply_markup=InlineKeyboardMarkup(flat_buttons),
         parse_mode=ParseMode.HTML
     )
@@ -398,7 +385,6 @@ async def main_menu(message: Message):
     s = get_settings()
     cr = user.get("credits", 0)
     
-    # Build colored inline buttons
     kb = []
     
     # Row 1: TG ID & IFSC
@@ -482,9 +468,9 @@ async def main_menu(message: Message):
         f"{EMOJI_DIAMOND} ᴘʀᴇᴍɪᴜᴍ ʜᴜʙ {EMOJI_DIAMOND}\n"
         f"{EMOJI_USER} ᴡᴇʟᴄᴏᴍᴇ ʙᴀᴄᴋ, <code>{message.from_user.first_name}</code>\n\n"
         f"{EMOJI_CHART} ʏᴏᴜʀ ꜱᴛᴀᴛɪꜱᴛɪᴄꜱ:\n"
-        f"┃ {EMOJI_CREDIT} ᴄʀᴇᴅɪᴛꜱ: {cr}\n"
-        f"┃ {EMOJI_SEARCH} Qᴜᴇʀɪᴇꜱ: {user.get('total_queries',0)}\n"
-        f"┃ {EMOJI_INVITE} ɪɴᴠɪᴛᴇꜱ: {user.get('invites',0)}\n\n"
+        f"{EMOJI_CREDIT} ᴄʀᴇᴅɪᴛꜱ: {cr}\n"
+        f"{EMOJI_SEARCH} Qᴜᴇʀɪᴇꜱ: {user.get('total_queries',0)}\n"
+        f"{EMOJI_INVITE} ɪɴᴠɪᴛᴇꜱ: {user.get('invites',0)}\n\n"
         f"{EMOJI_GIFT} ʀᴇᴡᴀʀᴅꜱ:\n"
         f"{EMOJI_REFRESH} +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ ꜰʀᴇᴇ\n"
         f"{EMOJI_INVITE} +{INVITE_CREDITS} ᴘᴇʀ ɪɴᴠɪᴛᴇ\n"
@@ -675,16 +661,16 @@ def format_records_result(records, search_type):
 async def admin_panel(message: Message):
     if message.from_user.id != ADMIN_ID: return
     s = get_settings()
-    ms = lambda key: "🔴" if s.get(f"maint_{key}") else "🟢"
+    ms = lambda key: f"{EMOJI_RED}" if s.get(f"maint_{key}") else f"{EMOJI_GREEN}"
     
     kb = [
         create_styled_row([
-            {"text": "🎫 ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]},
-            {"text": "📋 ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]}
+            {"text": f"{EMOJI_TICKET} ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]},
+            {"text": f"{EMOJI_TICKET} ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": PREMIUM_EMOJI_IDS["ticket"]}
         ]),
         create_styled_row([
-            {"text": "🎁 ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": PREMIUM_EMOJI_IDS["gift"]},
-            {"text": "📢 ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["bolt"]}
+            {"text": f"{EMOJI_GIFT} ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": PREMIUM_EMOJI_IDS["gift"]},
+            {"text": f"{EMOJI_BOLT} ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["bolt"]}
         ]),
         create_styled_row([
             {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
@@ -730,7 +716,7 @@ async def admin_panel(message: Message):
             {"text": f"{ms('indnum3')} ᴍ", "callback_data": "ad_maint_indnum3", "color": "info"}
         ]),
         create_styled_row([
-            {"text": "❌ ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
+            {"text": f"{EMOJI_CROSS} ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
         ])
     ]
     
@@ -738,7 +724,7 @@ async def admin_panel(message: Message):
     for row in kb:
         flat_kb.append(row)
     
-    txt = f"{EMOJI_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ {EMOJI_CROWN}\n{EMOJI_INVITE} ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | {EMOJI_TICKET} ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}"
+    txt = f"{EMOJI_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ {EMOJI_CROWN}\n{EMOJI_USER} ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | {EMOJI_TICKET} ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}"
     
     if hasattr(message, 'edit_text'):
         await message.edit_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
@@ -755,28 +741,28 @@ async def show_help_inline(callback_query: CallbackQuery):
 {EMOJI_STAR} 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒:
 
 {EMOJI_PHONE} 𝐓𝐆 𝐈𝐃 ➜ 𝐍𝐔𝐌𝐁𝐄𝐑
-Get phone number from Telegram ID
+{EMOJI_SEARCH} Get phone number from Telegram ID
 
 {EMOJI_BANK} 𝐈𝐅𝐒𝐂 𝐈𝐍𝐅𝐎
-Get bank details from IFSC code
+{EMOJI_SEARCH} Get bank details from IFSC code
 
 {EMOJI_LINK} 𝐋𝐈𝐍𝐊 𝐁𝐘𝐏𝐀𝐒𝐒
-Bypass short links
+{EMOJI_SEARCH} Bypass short links
 
 {EMOJI_CARD} 𝐀𝐀𝐃𝐇𝐀𝐑 𝐈𝐍𝐅𝐎
-Get details from Aadhaar number
+{EMOJI_SEARCH} Get details from Aadhaar number
 
 {EMOJI_INDIA} 𝐈𝐍𝐃 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎
-Get Indian number details
+{EMOJI_SEARCH} Get Indian number details
 
 {EMOJI_CAR} 𝐑𝐂 𝐃𝐄𝐓𝐀𝐈𝐋𝐒
-Get vehicle RC details
+{EMOJI_SEARCH} Get vehicle RC details
 
 {EMOJI_CARD} 𝐆𝐒𝐓 𝐋𝐎𝐎𝐊𝐔𝐏
-Get business details from GST
+{EMOJI_SEARCH} Get business details from GST
 
 {EMOJI_PAK} 𝐏𝐀𝐊 𝐍𝐔𝐌𝐁𝐄𝐑 𝐈𝐍𝐅𝐎
-Get Pakistan number details
+{EMOJI_SEARCH} Get Pakistan number details
 
 {EMOJI_GIFT} 𝐃𝐀𝐈𝐋𝐘 𝐅𝐑𝐄𝐄: +{DAILY_FREE_CREDITS} ᴄʀᴇᴅɪᴛꜱ
 
@@ -794,21 +780,21 @@ async def show_about_inline(callback_query: CallbackQuery):
     text = f"""
 {EMOJI_ABOUT} 𝐀𝐁𝐎𝐔𝐓 𝐁𝐎𝐓 {EMOJI_ABOUT}
 
-𝐍𝐀𝐌𝐄: {BOT_NAME}
-𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄: @{BOT_USERNAME}
-𝐕𝐄𝐑𝐒𝐈𝐎𝐍: 3.0
+{EMOJI_DIAMOND} 𝐍𝐀𝐌𝐄: {BOT_NAME}
+{EMOJI_USER} 𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄: @{BOT_USERNAME}
+{EMOJI_STAR} 𝐕𝐄𝐑𝐒𝐈𝐎𝐍: 3.0
 
 {EMOJI_DIAMOND} 𝐏𝐑𝐄𝐌𝐈𝐔𝐌 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒
 
-• Telegram ID Lookup
-• IFSC Bank Details
-• Link Bypass
-• Aadhaar Info
-• Mobile Number Tracking
-• RC Details
-• GST Lookup
-• Pakistan Number Info
-• Colored Inline Buttons 🎨
+{EMOJI_CHECK} Telegram ID Lookup
+{EMOJI_CHECK} IFSC Bank Details
+{EMOJI_CHECK} Link Bypass
+{EMOJI_CHECK} Aadhaar Info
+{EMOJI_CHECK} Mobile Number Tracking
+{EMOJI_CHECK} RC Details
+{EMOJI_CHECK} GST Lookup
+{EMOJI_CHECK} Pakistan Number Info
+{EMOJI_CHECK} Colored Inline Buttons 🎨
 
 {EMOJI_CROWN} 𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐄𝐃 𝐁𝐘: @Hexh4ckerOFC
 
@@ -859,7 +845,7 @@ async def start_command(client, message: Message):
                     break
         user = get_user(uid)
         if not user.get("verified"):
-            if await check_channels(uid):
+            if await check_channel(uid):
                 user["verified"] = True
                 save_user(uid, user)
                 await main_menu(message)
@@ -878,24 +864,24 @@ async def callback_handler(client, callback_query: CallbackQuery):
     uid = callback_query.from_user.id
     s = get_settings()
     
-    # Verification
+    # Verification - SINGLE CHANNEL
     if data == "verify":
-        if await check_channels(uid):
+        if await check_channel(uid):
             user = get_user(uid)
             user["verified"] = True
             save_user(uid, user)
-            await callback_query.answer("✅ Verified!", show_alert=True)
+            await callback_query.answer(f"{EMOJI_CHECK} Verified!", show_alert=True)
             try: await callback_query.message.delete()
             except: pass
             await main_menu(callback_query.message)
         else:
-            await callback_query.answer("❌ Join both channels!", show_alert=True)
+            await callback_query.answer(f"{EMOJI_CROSS} Join channel first!", show_alert=True)
         return
     
     # Admin callbacks
     if data.startswith("ad_"):
         if uid != ADMIN_ID:
-            await callback_query.answer("❌ Unauthorized!", show_alert=True)
+            await callback_query.answer(f"{EMOJI_CROSS} Unauthorized!", show_alert=True)
             return
         
         if data == "ad_close":
@@ -907,22 +893,22 @@ async def callback_handler(client, callback_query: CallbackQuery):
             txt = f"{EMOJI_TICKET} ᴄᴏᴅᴇꜱ: {len(codes)}\n"
             for c, v in list(codes.items())[-15:]:
                 txt += f"{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr\n"
-            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_gen":
             ADMIN_STATE[uid] = "gen"
-            await callback_query.message.edit_text(f"{EMOJI_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{EMOJI_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_credit":
             ADMIN_STATE[uid] = "credit"
-            await callback_query.message.edit_text(f"{EMOJI_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{EMOJI_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_bcast":
             ADMIN_STATE[uid] = "bcast"
-            await callback_query.message.edit_text(f"{EMOJI_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{EMOJI_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(f"{EMOJI_REFRESH} ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_maint":
@@ -959,7 +945,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
         # Check verification first
         user = get_user(uid)
         if not user.get("verified"):
-            if await check_channels(uid):
+            if await check_channel(uid):
                 user["verified"] = True
                 save_user(uid, user)
                 await main_menu(callback_query.message)
@@ -1149,7 +1135,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await admin_panel(callback_query.message)
                 await callback_query.answer()
             else:
-                await callback_query.answer("❌ Unauthorized!", show_alert=True)
+                await callback_query.answer(f"{EMOJI_CROSS} Unauthorized!", show_alert=True)
             return
         
         await callback_query.answer()
@@ -1171,7 +1157,7 @@ async def handle_messages(client, message: Message):
         # Check verification
         user = get_user(uid)
         if not user.get("verified"):
-            if await check_channels(uid):
+            if await check_channel(uid):
                 user["verified"] = True
                 save_user(uid, user)
                 await main_menu(message)
@@ -1225,21 +1211,17 @@ async def handle_messages(client, message: Message):
                 return
             
             elif state in ['TG', 'IFSC', 'SHORTLINK', 'MOBILE', 'AADHAAR', 'VEHICLE', 'GST', 'PAK', 'INDNUM', 'INDNUM3']:
-                # Check credits
                 if user.get("credits", 0) <= 0:
                     sent = await message.reply_text(f"{EMOJI_CROSS} No credits! +10 daily | +3 invite", parse_mode=ParseMode.HTML)
                     asyncio.create_task(schedule_delete(sent))
                     return
                 
-                # Run query
                 await run_query(message, state, txt)
                 return
         
-        # Check if any state is pending
         if uid in ADMIN_STATE:
             return
         
-        # If no state, show main menu
         await main_menu(message)
         
     except Exception as e:
@@ -1304,7 +1286,7 @@ async def run_query(message: Message, mode: str, query: str):
 def main():
     print("🔄 Hex Terminal Premium Starting...")
     print("🎨 Colored Inline Buttons with Premium Emojis Enabled!")
-    print("🤖 Kurigram Version with Full Button Colors!")
+    print("📢 Single Channel Verification Mode!")
     
     try:
         subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], capture_output=True, timeout=30)
@@ -1315,7 +1297,6 @@ def main():
     print(f"⭐ Total Menu Buttons: 14 colored inline buttons")
     print("🚀 Bot is running...")
     
-    # Use app.run() instead of asyncio.run(main())
     app.run()
 
 if __name__ == '__main__':
