@@ -24,7 +24,7 @@ API_HASH = os.environ.get('API_HASH', '47ee9fa07b5eeb865edb3d79ada726a5')
 BOT_TOKEN = os.environ.get('BOT_TOKEN', '8687617595:AAGCa0yJTRM52NLItvLkzt7O1mZEkCaNkn4')
 ADMIN_ID = int(os.environ.get('ADMIN_ID', '7898928200'))
 
-# SINGLE CHANNEL - Only one channel required
+# SINGLE CHANNEL
 CHANNEL_ID = int(os.environ.get('CHANNEL_ID', '-1003240507339'))
 CHANNEL_LINK = os.environ.get('CHANNEL_LINK', 'https://t.me/+dP7xLb3AoE1jNmRl')
 
@@ -54,84 +54,84 @@ BOT_NAME = "𝗛𝗲𝘅 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝗹"
 BOT_USERNAME = "Hex_Terminal_bot"
 
 # ============================================================
-# PREMIUM EMOJI IDs FOR ALL BUTTONS (Colored Inline Buttons)
+# PREMIUM EMOJI IDs (as INTEGERS for Pyrogram)
 # ============================================================
 
-# Color Styles with Premium Emoji IDs (Kurigram/Pyrogram style)
+# Color Styles with Premium Emoji IDs
 BUTTON_STYLES = {
     "primary": {
-        "emoji_id": "5258096772776991776",
+        "emoji_id": 5258096772776991776,
         "style": ButtonStyle.PRIMARY,
         "color": "🔵"
     },
     "success": {
-        "emoji_id": "5258503720928288433",
+        "emoji_id": 5258503720928288433,
         "style": ButtonStyle.SUCCESS,
         "color": "🟢"
     },
     "danger": {
-        "emoji_id": "5258331647358540449",
+        "emoji_id": 5258331647358540449,
         "style": ButtonStyle.DANGER,
         "color": "🔴"
     },
     "warning": {
-        "emoji_id": "5258478058097409351",
+        "emoji_id": 5258478058097409351,
         "style": None,
         "color": "🟡"
     },
     "info": {
-        "emoji_id": "5258024981144066782",
+        "emoji_id": 5258024981144066782,
         "style": None,
         "color": "🔵"
     }
 }
 
-# Premium Emoji IDs for Button Icons
+# Premium Emoji IDs as INTEGERS
 PREMIUM_EMOJI_IDS = {
-    "phone": "5947494995798789024",
-    "bank": "5264895611517300926",
-    "link": "5271604874419647061",
-    "car": "5253752975997803460",
-    "card": "5260561650213220533",
-    "user": "5249053508681883137",
-    "india": "6284779941489812433",
-    "pak": "5913705895375672082",
-    "phone2": "5406809207947142040",
-    "invite": "5244933196230972438",
-    "ticket": "5285515895534278367",
-    "credit": "6267068789146260253",
-    "refresh": "5375338737028841420",
-    "clock": "5382194935057372936",
-    "bolt": "6284971355297290197",
-    "green": "5386367538735104399",
-    "search": "5231012545799666522",
-    "magnify": "5258024981144066782",
-    "crown": "6267128480601741166",
-    "diamond": "6264791387032523779",
-    "star": "6266969287638913443",
-    "gift": "5203996991054432397",
-    "fire": "6264785189394717307",
-    "tools": "5462921117423384478",
-    "disabled": "5373165973203348165",
-    "location": "5391032818111363540",
-    "home": "5280955052582785391",
-    "state": "5388927107315283144",
-    "network": "5321141214735508486",
-    "signal": "6147892053796725336",
-    "sim": "5800717980266403037",
-    "chart": "6093382540784046658",
-    "check": "6267008582294705964",
-    "cross": "6267000941547885720",
-    "lock": "5316522278056399236",
-    "warn": "6267039884016358504",
-    "rocket": "5195033767969839232",
-    "sparkle": "5467683093693354332",
-    "help": "5244933196230972438",
-    "about": "5285515895534278367",
-    "stats": "6093382540784046658",
-    "admin": "6267128480601741166",
-    "earn": "6267068789146260253",
-    "redeem": "5285515895534278367"
+    "phone": 5947494995798789024,
+    "bank": 5264895611517300926,
+    "link": 5271604874419647061,
+    "car": 5253752975997803460,
+    "card": 5260561650213220533,
+    "user": 5249053508681883137,
+    "india": 6284779941489812433,
+    "pak": 5913705895375672082,
+    "phone2": 5406809207947142040,
+    "invite": 5244933196230972438,
+    "ticket": 5285515895534278367,
+    "credit": 6267068789146260253,
+    "refresh": 5375338737028841420,
+    "clock": 5382194935057372936,
+    "bolt": 6284971355297290197,
+    "green": 5386367538735104399,
+    "search": 5231012545799666522,
+    "magnify": 5258024981144066782,
+    "crown": 6267128480601741166,
+    "diamond": 6264791387032523779,
+    "star": 6266969287638913443,
+    "gift": 5203996991054432397,
+    "fire": 6264785189394717307,
+    "tools": 5462921117423384478,
+    "disabled": 5373165973203348165,
+    "location": 5391032818111363540,
+    "home": 5280955052582785391,
+    "state": 5388927107315283144,
+    "network": 5321141214735508486,
+    "signal": 6147892053796725336,
+    "sim": 5800717980266403037,
+    "chart": 6093382540784046658,
+    "check": 6267008582294705964,
+    "cross": 6267000941547885720,
+    "lock": 5316522278056399236,
+    "warn": 6267039884016358504,
+    "rocket": 5195033767969839232,
+    "sparkle": 5467683093693354332,
+    "help": 5244933196230972438,
+    "about": 5285515895534278367,
+    "stats": 6093382540784046658,
+    "admin": 6267128480601741166,
+    "earn": 6267068789146260253,
+    "redeem": 5285515895534278367
 }
 
 # --- PREMIUM EMOJIS FOR TEXT MESSAGES ---
@@ -261,22 +261,16 @@ def get_settings():
 
 def save_settings(data): save_json(SETTINGS_FILE, data)
 
-# --- 🔍 VERIFY - FIXED for SINGLE CHANNEL ---
+# --- 🔍 VERIFY ---
 
 async def check_channel(uid):
     """Check if user is a member of the required channel"""
     try:
-        # Try to get chat member
         member = await app.get_chat_member(CHANNEL_ID, uid)
-        
-        # Check if user is member, administrator, or creator
         if member.status in ['member', 'administrator', 'creator']:
             return True
-        
-        # If user is restricted but still can see messages
         if member.status == 'restricted' and member.is_member:
             return True
-            
         return False
     except Exception as e:
         print(f"Channel check error for {uid}: {e}")
@@ -300,10 +294,10 @@ def check_feature_maintenance(feature_key):
     return False, ""
 
 # ============================================================
-# CREATE COLORED INLINE BUTTONS WITH PREMIUM EMOJIS
+# CREATE COLORED INLINE BUTTONS WITH PREMIUM EMOJIS (FIXED)
 # ============================================================
 
-def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", icon_emoji_id: str = None):
+def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", icon_emoji_id: int = None):
     """
     Create a colored inline button with premium emoji icon
     Colors: "primary" (blue), "success" (green), "danger" (red)
@@ -312,7 +306,7 @@ def create_colored_button(text: str, callback_data: str = None, url: str = None,
     emoji_id = icon_emoji_id or style_info["emoji_id"]
     style = style_info["style"]
     
-    # For Kurigram, use icon_custom_emoji_id and style
+    # For Pyrogram/Kurigram, icon_custom_emoji_id must be an integer
     try:
         return InlineKeyboardButton(
             text=text,
@@ -351,7 +345,7 @@ def create_styled_row(buttons_config: list) -> list:
     return row
 
 # ============================================================
-# MAIN MENU WITH COLORED INLINE BUTTONS
+# MAIN MENU WITH COLORED INLINE BUTTONS (FIXED)
 # ============================================================
 
 async def show_verification_page(message: Message):
@@ -377,7 +371,7 @@ async def show_verification_page(message: Message):
         asyncio.create_task(schedule_delete(sent, 120))
     except: pass
     
-    # Colored verification buttons with premium emojis - SINGLE CHANNEL
+    # Colored verification buttons with premium emojis
     buttons = [
         create_styled_row([
             {"text": "📢 ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", "url": CHANNEL_LINK, "color": "primary", "icon_emoji_id": PREMIUM_EMOJI_IDS["link"]}
@@ -873,7 +867,7 @@ async def start_command(client, message: Message):
         
         user = get_user(uid)
         
-        # ADMIN bypass - always verified
+        # ADMIN bypass
         if uid == ADMIN_ID:
             user["verified"] = True
             save_user(uid, user)
@@ -904,7 +898,6 @@ async def callback_handler(client, callback_query: CallbackQuery):
     
     # Verification
     if data == "verify":
-        # ADMIN bypass
         if uid == ADMIN_ID:
             user = get_user(uid)
             user["verified"] = True
@@ -915,7 +908,6 @@ async def callback_handler(client, callback_query: CallbackQuery):
             await main_menu(callback_query.message)
             return
         
-        # Check channel membership
         if await check_channel(uid):
             user = get_user(uid)
             user["verified"] = True
@@ -992,7 +984,6 @@ async def callback_handler(client, callback_query: CallbackQuery):
     
     # Menu callbacks
     if data.startswith("menu_"):
-        # Check verification first (ADMIN bypass)
         if uid != ADMIN_ID:
             user = get_user(uid)
             if not user.get("verified"):
@@ -1205,7 +1196,6 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        # Check verification (ADMIN bypass)
         if uid != ADMIN_ID:
             user = get_user(uid)
             if not user.get("verified"):
@@ -1217,7 +1207,6 @@ async def handle_messages(client, message: Message):
                 await show_verification_page(message)
                 return
         
-        # Admin state handling
         if uid in ADMIN_STATE:
             state = ADMIN_STATE.pop(uid)
             
@@ -1263,22 +1252,18 @@ async def handle_messages(client, message: Message):
                 return
             
             elif state in ['TG', 'IFSC', 'SHORTLINK', 'MOBILE', 'AADHAAR', 'VEHICLE', 'GST', 'PAK', 'INDNUM', 'INDNUM3']:
-                # Check credits
                 user = get_user(uid)
                 if user.get("credits", 0) <= 0:
                     sent = await message.reply_text(f"{EMOJI_CROSS} No credits! +10 daily | +3 invite", parse_mode=ParseMode.HTML)
                     asyncio.create_task(schedule_delete(sent))
                     return
                 
-                # Run query
                 await run_query(message, state, txt)
                 return
         
-        # Check if any state is pending
         if uid in ADMIN_STATE:
             return
         
-        # If no state, show main menu
         await main_menu(message)
         
     except Exception as e:
