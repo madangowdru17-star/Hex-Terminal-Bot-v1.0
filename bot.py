@@ -1154,7 +1154,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
         
         await callback_query.answer()
 
-# --- 📝 MESSAGE HANDLER (FIXED) ---
+# --- 📝 MESSAGE HANDLER ---
 
 @app.on_message(filters.text & ~filters.command("start"))
 async def handle_messages(client, message: Message):
@@ -1301,7 +1301,7 @@ async def run_query(message: Message, mode: str, query: str):
 
 # --- 🚀 MAIN ---
 
-async def main():
+def main():
     print("🔄 Hex Terminal Premium Starting...")
     print("🎨 Colored Inline Buttons with Premium Emojis Enabled!")
     print("🤖 Kurigram Version with Full Button Colors!")
@@ -1315,8 +1315,8 @@ async def main():
     print(f"⭐ Total Menu Buttons: 14 colored inline buttons")
     print("🚀 Bot is running...")
     
-    await app.start()
-    await app.idle()
+    # Use app.run() instead of asyncio.run(main())
+    app.run()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
