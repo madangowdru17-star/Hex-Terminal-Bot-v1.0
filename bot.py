@@ -110,7 +110,7 @@ PREMIUM_EMOJI_IDS = {
     "menu": "6264791387032523779"
 }
 
-# Premium Emoji IDs for button icons (same as above, used in KeyboardButtonStyle)
+# Premium Emoji IDs for button icons (as integers)
 BUTTON_ICON_IDS = {
     "phone": 5947494995798789024,
     "bank": 5264895611517300926,
@@ -228,7 +228,6 @@ DISCLAIMER = f"\n\n{PE_WARN} ᴅɪꜱᴄʟᴀɪᴍᴇʀ:\nᴇᴅᴜᴄᴀᴛɪ�
 client = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
 
 ADMIN_STATE = {}
-USER_STATE = {}
 USER_PAGE = {}
 
 # --- 💾 DATA FUNCTIONS ---
@@ -327,14 +326,25 @@ def check_feature_maintenance(feature_key):
     return False, ""
 
 # ============================================================
+# SEND MESSAGE FUNCTION - FIXED
+# ============================================================
+
+async def send_message(chat_id, text, reply_markup=None, parse_mode=None):
+    """Send message using SendMessageRequest - FIXED"""
+    return await client(functions.messages.SendMessageRequest(
+        peer=chat_id,
+        message=text,
+        random_id=random.getrandbits(63),
+        reply_markup=reply_markup,
+        parse_mode=parse_mode
+    ))
+
+# ============================================================
 # CREATE COLORED KEYBOARD BUTTONS WITH PREMIUM EMOJIS
 # ============================================================
 
 def create_colored_button(text: str, icon_id: int = None, style_type: str = "primary"):
-    """
-    Create a colored keyboard button with premium emoji icon
-    style_type: "primary" (blue), "success" (green), "danger" (red)
-    """
+    """Create a colored keyboard button with premium emoji icon"""
     if style_type == "primary":
         style = KeyboardButtonStyle(bg_primary=True, icon=icon_id)
     elif style_type == "success":
@@ -398,7 +408,7 @@ def get_colored_keyboard(page: int = 1):
             ]),
             create_button_row([
                 create_colored_button("STATS", BUTTON_ICON_IDS["stats"], "info"),
-                create_colored_button("ADMIN PANEL", BUTTON_ICON_IDS["admin"], "danger") if ADMIN_ID else None
+                create_colored_button("ADMIN PANEL", BUTTON_ICON_IDS["admin"], "danger")
             ]),
             create_button_row([
                 create_colored_button("NEXT PAGE", BUTTON_ICON_IDS["next"], "primary")
@@ -430,19 +440,6 @@ def get_colored_keyboard(page: int = 1):
             filtered_rows.append(row)
     
     return create_keyboard_markup(filtered_rows)
-
-# ============================================================
-# SEND MESSAGE WITH KEYBOARD
-# ============================================================
-
-async def send_message_with_keyboard(chat_id, text, keyboard, parse_mode=None):
-    """Send message with reply keyboard markup"""
-    return await client.send_message(
-        chat_id,
-        text,
-        reply_markup=keyboard,
-        parse_mode=parse_mode
-    )
 
 # ============================================================
 # MAIN MENU
@@ -477,7 +474,12 @@ async def show_verification_page(event):
         ]
         keyboard = create_keyboard_markup(rows)
         
-        sent = await event.reply(caption, reply_markup=keyboard, parse_mode='html')
+        sent = await send_message(
+            event.chat_id, 
+            caption, 
+            reply_markup=keyboard, 
+            parse_mode='html'
+        )
         asyncio.create_task(schedule_delete(sent, 120))
     except Exception as e:
         print(f"Verification page error: {e}")
@@ -505,7 +507,12 @@ async def main_menu(event, page: int = 1):
             f"{PE_ROCKET} <b>ᴘᴀɢᴇ:</b> {page}/2"
         )
         
-        sent = await event.reply(txt, reply_markup=keyboard, parse_mode='html')
+        sent = await send_message(
+            event.chat_id, 
+            txt, 
+            reply_markup=keyboard, 
+            parse_mode='html'
+        )
         asyncio.create_task(schedule_delete(sent, AUTO_DELETE_TIME))
         
         USER_PAGE[str(event.sender_id)] = page
@@ -529,7 +536,7 @@ async def start_command(event):
                 if data.get("invite_code") == args[1] and inviter != str(uid):
                     cr = process_invite(inviter, uid)
                     try: 
-                        await client.send_message(
+                        await send_message(
                             int(inviter), 
                             f"{PE_GIFT} +{cr} ᴄʀᴇᴅɪᴛꜱ! ɴᴇᴡ ᴜꜱᴇʀ ᴊᴏɪɴᴇᴅ!"
                         )
@@ -576,7 +583,7 @@ async def handle_messages(event):
             return
         
         if s.get("maintenance_mode", False) and uid != ADMIN_ID:
-            sent = await event.reply(f"{PE_TOOLS} Under maintenance", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_TOOLS} Under maintenance", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
@@ -612,9 +619,9 @@ async def handle_messages(event):
                 try:
                     cr = int(txt)
                     code = generate_redeem_code(cr)
-                    sent = await event.reply(f"{PE_CHECK} <code>{code}</code> | {PE_CREDIT} {cr}cr", parse_mode='html')
+                    sent = await send_message(event.chat_id, f"{PE_CHECK} <code>{code}</code> | {PE_CREDIT} {cr}cr", parse_mode='html')
                 except:
-                    sent = await event.reply(f"{PE_CROSS} Invalid number", parse_mode='html')
+                    sent = await send_message(event.chat_id, f"{PE_CROSS} Invalid number", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             
@@ -622,9 +629,9 @@ async def handle_messages(event):
                 p = txt.split()
                 if len(p) >= 2:
                     bal = add_credits(p[0], int(p[1]))
-                    sent = await event.reply(f"{PE_CHECK} +{p[1]} | {bal}", parse_mode='html')
+                    sent = await send_message(event.chat_id, f"{PE_CHECK} +{p[1]} | {bal}", parse_mode='html')
                 else:
-                    sent = await event.reply(f"{PE_CROSS} Format: ID AMOUNT", parse_mode='html')
+                    sent = await send_message(event.chat_id, f"{PE_CROSS} Format: ID AMOUNT", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             
@@ -633,10 +640,10 @@ async def handle_messages(event):
                 cnt = 0
                 for u in users:
                     try:
-                        await client.send_message(int(u), f"{PE_BOLT} {txt}")
+                        await send_message(int(u), f"{PE_BOLT} {txt}")
                         cnt += 1
                     except: pass
-                sent = await event.reply(f"{PE_CHECK} Sent: {cnt}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_CHECK} Sent: {cnt}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             
@@ -645,14 +652,14 @@ async def handle_messages(event):
                     success, msg = redeem_code(uid, txt)
                 else:
                     msg = f"{PE_CROSS} Invalid code format!"
-                sent = await event.reply(f"{msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             
             elif state in ['TG', 'IFSC', 'SHORTLINK', 'MOBILE', 'AADHAAR', 'VEHICLE', 'GST', 'PAK', 'INDNUM', 'INDNUM3']:
                 user = get_user(uid)
                 if user.get("credits", 0) <= 0:
-                    sent = await event.reply(f"{PE_CROSS} No credits! +10 daily | +3 invite", parse_mode='html')
+                    sent = await send_message(event.chat_id, f"{PE_CROSS} No credits! +10 daily | +3 invite", parse_mode='html')
                     asyncio.create_task(schedule_delete(sent))
                     return
                 
@@ -665,151 +672,151 @@ async def handle_messages(event):
         # Handle feature buttons from keyboard
         if txt == "TG ID ➜ NUMBER":
             if not s.get("tgid_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("tgid")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'TG'
-            sent = await event.reply(f"{PE_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ\n<i>7123181749, 6884112825</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ\n<i>7123181749, 6884112825</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "IFSC INFO":
             if not s.get("ifsc_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("ifsc")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'IFSC'
-            sent = await event.reply(f"{PE_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ\n<i>SBIN0001234, HDFC0001234</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ\n<i>SBIN0001234, HDFC0001234</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "LINK BYPASS":
             if not s.get("bypass_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("bypass")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'SHORTLINK'
-            sent = await event.reply(f"{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n<i>https://indianshortner.in/xxxx</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n<i>https://indianshortner.in/xxxx</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "IND NUMBER INFO":
             if not s.get("mobile_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("mobile")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'MOBILE'
-            sent = await event.reply(f"{PE_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ\n<i>9876543210, 8123456789</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ\n<i>9876543210, 8123456789</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "AADHAR INFO":
             if not s.get("aadhaar_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("aadhaar")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'AADHAAR'
-            sent = await event.reply(f"{PE_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ\n<i>123456789012</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ\n<i>123456789012</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "RC DETAILS":
             if not s.get("rc_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("rc")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'VEHICLE'
-            sent = await event.reply(f"{PE_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ\n<i>KA01AB3256, DL1CX1234</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ\n<i>KA01AB3256, DL1CX1234</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "GST LOOKUP":
             if not s.get("gst_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("gst")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'GST'
-            sent = await event.reply(f"{PE_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ\n<i>19BOKPS7056D1ZI</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ\n<i>19BOKPS7056D1ZI</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "PAK NUMBER INFO":
             if not s.get("pak_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("pak")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'PAK'
-            sent = await event.reply(f"{PE_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ\n<i>923078750447</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ\n<i>923078750447</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "IND NUM INFO 2":
             if not s.get("indnum_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("indnum")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'INDNUM'
-            sent = await event.reply(f"{PE_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ\n<i>6363016966, 9876543210</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ\n<i>6363016966, 9876543210</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
         elif txt == "IND NUMBER INFO 3":
             if not s.get("indnum3_enabled", True):
-                sent = await event.reply(f"{PE_DISABLED} Disabled", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_DISABLED} Disabled", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             maint, msg = check_feature_maintenance("indnum3")
             if maint:
-                sent = await event.reply(f"{PE_TOOLS} {msg}", parse_mode='html')
+                sent = await send_message(event.chat_id, f"{PE_TOOLS} {msg}", parse_mode='html')
                 asyncio.create_task(schedule_delete(sent))
                 return
             ADMIN_STATE[uid] = 'INDNUM3'
-            sent = await event.reply(f"{PE_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ\n<i>6363016966, 9876543210</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ\n<i>6363016966, 9876543210</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent))
             return
         
@@ -817,13 +824,13 @@ async def handle_messages(event):
             user = get_user(uid)
             bot_info = await client.get_me()
             link = f"https://t.me/{bot_info.username}?start={user['invite_code']}"
-            sent = await event.reply(f"{PE_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)\n<code>{link}</code>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)\n<code>{link}</code>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 120))
             return
         
         elif txt == "REDEEM CODE":
             ADMIN_STATE[uid] = 'REDEEM'
-            sent = await event.reply(f"{PE_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
@@ -840,17 +847,17 @@ async def handle_messages(event):
             return
         
         elif txt == "IDENTITY TOOLS":
-            sent = await event.reply(f"{PE_IDENTITY} <b>ɪᴅᴇɴᴛɪᴛʏ ᴛᴏᴏʟꜱ</b>\n\n{PE_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ\n{PE_USER} ᴘᴀɴ ᴄᴀʀᴅ ɪɴꜰᴏ\n{PE_PHONE2} ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ʟᴏᴏᴋᴜᴘ", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_IDENTITY} <b>ɪᴅᴇɴᴛɪᴛʏ ᴛᴏᴏʟꜱ</b>\n\n{PE_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ\n{PE_USER} ᴘᴀɴ ᴄᴀʀᴅ ɪɴꜰᴏ\n{PE_PHONE2} ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ʟᴏᴏᴋᴜᴘ", parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
         elif txt == "OSINT TOOLS":
-            sent = await event.reply(f"{PE_OSINT} <b>ᴏꜱɪɴᴛ ᴛᴏᴏʟꜱ</b>\n\n{PE_SEARCH} ᴛɢ ɪᴅ ʟᴏᴏᴋᴜᴘ\n{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n{PE_NETWORK} ɪᴘ ʟᴏᴏᴋᴜᴘ", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_OSINT} <b>ᴏꜱɪɴᴛ ᴛᴏᴏʟꜱ</b>\n\n{PE_SEARCH} ᴛɢ ɪᴅ ʟᴏᴏᴋᴜᴘ\n{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n{PE_NETWORK} ɪᴘ ʟᴏᴏᴋᴜᴘ", parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
         elif txt == "VIP PREMIUM":
-            sent = await event.reply(f"{PE_VIP} <b>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ</b>\n\n{PE_CREDIT} ᴇxᴛʀᴀ ᴄʀᴇᴅɪᴛꜱ\n{PE_ROCKET} ᴘʀɪᴏʀɪᴛʏ Qᴜᴇʀɪᴇꜱ\n{PE_STAR} ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴀʟʟ ꜰᴇᴀᴛᴜʀᴇꜱ", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_VIP} <b>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ</b>\n\n{PE_CREDIT} ᴇxᴛʀᴀ ᴄʀᴇᴅɪᴛꜱ\n{PE_ROCKET} ᴘʀɪᴏʀɪᴛʏ Qᴜᴇʀɪᴇꜱ\n{PE_STAR} ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴀʟʟ ꜰᴇᴀᴛᴜʀᴇꜱ", parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
@@ -858,14 +865,14 @@ async def handle_messages(event):
             rewards = [1, 2, 3, 5, 8, 10]
             reward = random.choice(rewards)
             bal = add_credits(uid, reward)
-            sent = await event.reply(f"{PE_SPIN} 🎰 <b>ᴅᴀɪʟʏ ꜱᴘɪɴ</b>\n\n{PE_GIFT} ʏᴏᴜ ᴡᴏɴ <b>+{reward}</b> ᴄʀᴇᴅɪᴛꜱ!\n{PE_CREDIT} ɴᴇᴡ ʙᴀʟᴀɴᴄᴇ: <b>{bal}</b>", parse_mode='html')
+            sent = await send_message(event.chat_id, f"{PE_SPIN} 🎰 <b>ᴅᴀɪʟʏ ꜱᴘɪɴ</b>\n\n{PE_GIFT} ʏᴏᴜ ᴡᴏɴ <b>+{reward}</b> ᴄʀᴇᴅɪᴛꜱ!\n{PE_CREDIT} ɴᴇᴡ ʙᴀʟᴀɴᴄᴇ: <b>{bal}</b>", parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
         elif txt == "DASHBOARD":
             user = get_user(uid)
             txt_msg = f"{PE_DASHBOARD} <b>ʏᴏᴜʀ ᴅᴀꜱʜʙᴏᴀʀᴅ</b>\n\n{PE_USER} <b>ᴜꜱᴇʀ:</b> {event.sender.first_name}\n{PE_CREDIT} <b>ᴄʀᴇᴅɪᴛꜱ:</b> {user.get('credits',0)}\n{PE_SEARCH} <b>Qᴜᴇʀɪᴇꜱ:</b> {user.get('total_queries',0)}\n{PE_INVITE} <b>ɪɴᴠɪᴛᴇꜱ:</b> {user.get('invites',0)}"
-            sent = await event.reply(txt_msg, parse_mode='html')
+            sent = await send_message(event.chat_id, txt_msg, parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
@@ -880,7 +887,7 @@ async def handle_messages(event):
                 except:
                     name = f"ᴜꜱᴇʀ {i}"
                 txt_msg += f"{i}. {PE_USER} {name} - {PE_CREDIT} {data.get('credits',0)}\n"
-            sent = await event.reply(txt_msg, parse_mode='html')
+            sent = await send_message(event.chat_id, txt_msg, parse_mode='html')
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
@@ -961,7 +968,7 @@ async def admin_panel(event):
     
     txt = f"{PE_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ {PE_CROWN}\n{PE_INVITE} ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | {PE_TICKET} ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}"
     
-    await event.reply(txt, reply_markup=keyboard, parse_mode='html')
+    await send_message(event.chat_id, txt, reply_markup=keyboard, parse_mode='html')
 
 # ============================================================
 # HELP, ABOUT, STATS
@@ -1003,7 +1010,7 @@ Get Pakistan number details
 
 {PE_CLOCK} 𝐀𝐔𝐓𝐎 𝐃𝐄𝐋𝐄𝐓𝐄: {AUTO_DELETE_TIME}ꜱ
 """
-    sent = await event.reply(text, parse_mode='html')
+    sent = await send_message(event.chat_id, text, parse_mode='html')
     asyncio.create_task(schedule_delete(sent, 60))
 
 async def show_about(event):
@@ -1030,7 +1037,7 @@ async def show_about(event):
 
 {PE_WARN} 𝐅𝐎𝐑 𝐄𝐃𝐔𝐂𝐀𝐓𝐈𝐎𝐍𝐀𝐋 𝐏𝐔𝐑𝐏𝐎𝐒𝐄𝐒 𝐎𝐍𝐋𝐘
 """
-    sent = await event.reply(text, parse_mode='html')
+    sent = await send_message(event.chat_id, text, parse_mode='html')
     asyncio.create_task(schedule_delete(sent, 60))
 
 async def show_stats(event):
@@ -1050,7 +1057,7 @@ async def show_stats(event):
 
 {PE_DIAMOND} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐔𝐒: 🟢 Active
 """
-    sent = await event.reply(text, parse_mode='html')
+    sent = await send_message(event.chat_id, text, parse_mode='html')
     asyncio.create_task(schedule_delete(sent, 60))
 
 # ============================================================
@@ -1189,11 +1196,11 @@ async def indnum3_lookup(session, number):
 
 async def run_query(event, mode, query):
     if not await net_ok():
-        sent = await event.reply(f"{PE_CROSS} No internet", parse_mode='html')
+        sent = await send_message(event.chat_id, f"{PE_CROSS} No internet", parse_mode='html')
         asyncio.create_task(schedule_delete(sent))
         return
     
-    st = await event.reply(f"{PE_GREEN} ꜱᴇᴀʀᴄʜɪɴɢ...", parse_mode='html')
+    st = await send_message(event.chat_id, f"{PE_GREEN} ꜱᴇᴀʀᴄʜɪɴɢ...", parse_mode='html')
     credit_deducted = False
     
     try:
