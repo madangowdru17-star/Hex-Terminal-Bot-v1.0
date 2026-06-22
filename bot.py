@@ -56,12 +56,64 @@ BOT_NAME = "𝗛𝗲𝘅 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝗹"
 BOT_USERNAME = "Hex_Terminal_bot"
 
 # ============================================================
-# PREMIUM EMOJI IDs - All emojis are premium
+# PREMIUM EMOJI IDs - For text messages only
 # ============================================================
 
-# Premium Emoji IDs as INTEGERS for button icons
+PREMIUM_EMOJI_IDS = {
+    "warn": "6267039884016358504",
+    "check": "6267008582294705964",
+    "cross": "6267000941547885720",
+    "lock": "5316522278056399236",
+    "crown": "6267128480601741166",
+    "diamond": "6264791387032523779",
+    "star": "6266969287638913443",
+    "gift": "5203996991054432397",
+    "fire": "6264785189394717307",
+    "search": "5231012545799666522",
+    "phone": "5947494995798789024",
+    "bank": "5264895611517300926",
+    "link": "5271604874419647061",
+    "car": "5253752975997803460",
+    "card": "5260561650213220533",
+    "user": "5249053508681883137",
+    "india": "6284779941489812433",
+    "pak": "5913705895375672082",
+    "phone2": "5406809207947142040",
+    "invite": "5244933196230972438",
+    "ticket": "5285515895534278367",
+    "credit": "6267068789146260253",
+    "refresh": "5375338737028841420",
+    "clock": "5382194935057372936",
+    "bolt": "6284971355297290197",
+    "green": "5386367538735104399",
+    "sparkle": "5467683093693354332",
+    "tools": "5462921117423384478",
+    "disabled": "5373165973203348165",
+    "location": "5391032818111363540",
+    "home": "5280955052582785391",
+    "state": "5388927107315283144",
+    "network": "5321141214735508486",
+    "signal": "6147892053796725336",
+    "sim": "5800717980266403037",
+    "chart": "6093382540784046658",
+    "help": "5244933196230972438",
+    "about": "5285515895534278367",
+    "stats": "6093382540784046658",
+    "magnify": "5258024981144066782",
+    "rocket": "5195033767969839232",
+    "next": "5195033767969839232",
+    "back": "5258024981144066782",
+    "dashboard": "6267128480601741166",
+    "spin": "6266969287638913443",
+    "vip": "6267068789146260253",
+    "osint": "5231012545799666522",
+    "identity": "5260561650213220533",
+    "leaderboard": "6093382540784046658",
+    "menu": "6264791387032523779"
+}
+
+# Button Emoji IDs as INTEGERS for inline buttons
 BUTTON_EMOJI_IDS = {
-    # Main Menu Icons
     "phone": 5947494995798789024,
     "bank": 5264895611517300926,
     "link": 5271604874419647061,
@@ -117,65 +169,10 @@ BUTTON_EMOJI_IDS = {
     "leaderboard": 6093382540784046658
 }
 
-# For text messages - Premium emoji tags
-PREMIUM_EMOJI_IDS = {
-    "warn": "6267039884016358504",
-    "check": "6267008582294705964",
-    "cross": "6267000941547885720",
-    "lock": "5316522278056399236",
-    "crown": "6267128480601741166",
-    "diamond": "6264791387032523779",
-    "star": "6266969287638913443",
-    "gift": "5203996991054432397",
-    "fire": "6264785189394717307",
-    "search": "5231012545799666522",
-    "phone": "5947494995798789024",
-    "bank": "5264895611517300926",
-    "link": "5271604874419647061",
-    "car": "5253752975997803460",
-    "card": "5260561650213220533",
-    "user": "5249053508681883137",
-    "india": "6284779941489812433",
-    "pak": "5913705895375672082",
-    "phone2": "5406809207947142040",
-    "invite": "5244933196230972438",
-    "ticket": "5285515895534278367",
-    "credit": "6267068789146260253",
-    "refresh": "5375338737028841420",
-    "clock": "5382194935057372936",
-    "bolt": "6284971355297290197",
-    "green": "5386367538735104399",
-    "sparkle": "5467683093693354332",
-    "tools": "5462921117423384478",
-    "disabled": "5373165973203348165",
-    "location": "5391032818111363540",
-    "home": "5280955052582785391",
-    "state": "5388927107315283144",
-    "network": "5321141214735508486",
-    "signal": "6147892053796725336",
-    "sim": "5800717980266403037",
-    "chart": "6093382540784046658",
-    "help": "5244933196230972438",
-    "about": "5285515895534278367",
-    "stats": "6093382540784046658",
-    "magnify": "5258024981144066782",
-    "rocket": "5195033767969839232",
-    "next": "5195033767969839232",
-    "back": "5258024981144066782",
-    "dashboard": "6267128480601741166",
-    "spin": "6266969287638913443",
-    "vip": "6267068789146260253",
-    "osint": "5231012545799666522",
-    "identity": "5260561650213220533",
-    "leaderboard": "6093382540784046658",
-    "menu": "6264791387032523779"
-}
-
 # --- PREMIUM EMOJIS FOR TEXT MESSAGES ---
 def get_pe(key):
     return f'<tg-emoji emoji-id="{PREMIUM_EMOJI_IDS[key]}"> </tg-emoji>'
 
-# Create all premium emoji objects for text
 PE_WARN = get_pe("warn")
 PE_CHECK = get_pe("check")
 PE_CROSS = get_pe("cross")
@@ -395,76 +392,71 @@ def create_styled_row(buttons_config: list) -> list:
     return row
 
 # ============================================================
-# KEYBOARD MENU - ONLY PREMIUM EMOJIS
+# KEYBOARD MENU - Plain text only (no emojis in keyboard buttons)
 # ============================================================
 
 def get_keyboard_menu(page=1):
-    """Create keyboard menu with premium emoji icons only"""
-    
-    # For ReplyKeyboardMarkup, we need to use text that shows premium emojis
-    # Since KeyboardButton doesn't support icon_custom_emoji_id,
-    # we use the premium emoji tag in the text - this works in pyrogram
+    """Create keyboard menu with plain text (no emojis in KeyboardButton)"""
     
     if page == 1:
         keyboard = [
             [
-                KeyboardButton(f"{PE_PHONE} ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ"),
-                KeyboardButton(f"{PE_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ")
+                KeyboardButton("TG ID ➜ NUMBER"),
+                KeyboardButton("IFSC INFO")
             ],
             [
-                KeyboardButton(f"{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ")
+                KeyboardButton("LINK BYPASS")
             ],
             [
-                KeyboardButton(f"{PE_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ"),
-                KeyboardButton(f"{PE_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ")
+                KeyboardButton("AADHAR INFO"),
+                KeyboardButton("IND NUMBER INFO")
             ],
             [
-                KeyboardButton(f"{PE_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ"),
-                KeyboardButton(f"{PE_CARD} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ")
+                KeyboardButton("RC DETAILS"),
+                KeyboardButton("GST LOOKUP")
             ],
             [
-                KeyboardButton(f"{PE_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ"),
-                KeyboardButton(f"{PE_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸")
+                KeyboardButton("PAK NUMBER INFO"),
+                KeyboardButton("IND NUM INFO 2")
             ],
             [
-                KeyboardButton(f"{PE_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹")
+                KeyboardButton("IND NUMBER INFO 3")
             ],
             [
-                KeyboardButton(f"{PE_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ"),
-                KeyboardButton(f"{PE_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ")
+                KeyboardButton("INVITE & EARN"),
+                KeyboardButton("REDEEM CODE")
             ],
             [
-                KeyboardButton(f"{PE_HELP} ʜᴇʟᴘ"),
-                KeyboardButton(f"{PE_ABOUT} ᴀʙᴏᴜᴛ")
+                KeyboardButton("HELP"),
+                KeyboardButton("ABOUT")
             ],
             [
-                KeyboardButton(f"{PE_STATS} ꜱᴛᴀᴛꜱ"),
-                KeyboardButton(f"{PE_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ" if ADMIN_ID else "")
+                KeyboardButton("STATS"),
+                KeyboardButton("ADMIN PANEL" if ADMIN_ID else "")
             ],
             [
-                KeyboardButton(f"{PE_NEXT} ɴᴇxᴛ ᴘᴀɢᴇ")
+                KeyboardButton("NEXT PAGE")
             ]
         ]
     else:
         keyboard = [
             [
-                KeyboardButton(f"{PE_IDENTITY} ɪᴅᴇɴᴛɪᴛʏ ᴛᴏᴏʟꜱ"),
-                KeyboardButton(f"{PE_OSINT} ᴏꜱɪɴᴛ ᴛᴏᴏʟꜱ")
+                KeyboardButton("IDENTITY TOOLS"),
+                KeyboardButton("OSINT TOOLS")
             ],
             [
-                KeyboardButton(f"{PE_VIP} ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ"),
-                KeyboardButton(f"{PE_SPIN} ᴅᴀɪʟʏ ꜱᴘɪɴ")
+                KeyboardButton("VIP PREMIUM"),
+                KeyboardButton("DAILY SPIN")
             ],
             [
-                KeyboardButton(f"{PE_DASHBOARD} ᴅᴀꜱʜʙᴏᴀʀᴅ"),
-                KeyboardButton(f"{PE_LEADERBOARD} ʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ")
+                KeyboardButton("DASHBOARD"),
+                KeyboardButton("LEADERBOARD")
             ],
             [
-                KeyboardButton(f"{PE_BACK} ʙᴀᴄᴋ ᴛᴏ ᴍᴇɴᴜ")
+                KeyboardButton("BACK TO MENU")
             ]
         ]
     
-    # Filter out empty buttons
     filtered_keyboard = []
     for row in keyboard:
         filtered_row = [btn for btn in row if btn.text]
@@ -478,7 +470,7 @@ def get_keyboard_menu(page=1):
     )
 
 # ============================================================
-# MAIN MENU WITH KEYBOARD - ALL PREMIUM EMOJIS
+# MAIN MENU WITH KEYBOARD
 # ============================================================
 
 async def show_verification_page(message: Message):
@@ -506,10 +498,10 @@ async def show_verification_page(message: Message):
     
     buttons = [
         create_styled_row([
-            {"text": "ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ", "url": CHANNEL_LINK, "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
+            {"text": "JOIN CHANNEL", "url": CHANNEL_LINK, "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
         ]),
         create_styled_row([
-            {"text": "ɪ'ᴠᴇ ᴊᴏɪɴᴇᴅ - ᴠᴇʀɪꜰʏ", "callback_data": "verify", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["check"]}
+            {"text": "I'VE JOINED - VERIFY", "callback_data": "verify", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["check"]}
         ])
     ]
     
@@ -525,15 +517,13 @@ async def show_verification_page(message: Message):
     asyncio.create_task(schedule_delete(sent2, 120))
 
 async def main_menu(message: Message, page: int = 1):
-    """Main menu with keyboard - ALL PREMIUM EMOJIS"""
+    """Main menu with keyboard - plain text buttons"""
     is_admin = message.from_user.id == ADMIN_ID
     user = get_user(message.from_user.id)
     cr = user.get("credits", 0)
     
-    # Get keyboard menu
     keyboard = get_keyboard_menu(page)
     
-    # All premium emojis in header
     txt = (
         f"{PE_DIAMOND} {BOT_NAME} {PE_DIAMOND}\n"
         f"{PE_USER} <b>ᴡᴇʟᴄᴏᴍᴇ ʙᴀᴄᴋ,</b> <code>{message.from_user.first_name}</code>\n\n"
@@ -740,58 +730,58 @@ async def admin_panel(message: Message):
     
     kb = [
         create_styled_row([
-            {"text": "ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]},
-            {"text": "ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
+            {"text": "GEN CODE", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]},
+            {"text": "CODES", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
         ]),
         create_styled_row([
-            {"text": "ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["gift"]},
-            {"text": "ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bolt"]}
+            {"text": "ADD CR", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["gift"]},
+            {"text": "BCAST", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bolt"]}
         ]),
         create_styled_row([
-            {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
+            {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} GLOBAL", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ", "callback_data": "ad_tgid", "color": "success" if s.get('tgid_enabled',True) else "danger"},
-            {"text": f"{ms('tgid')} ᴍ", "callback_data": "ad_maint_tgid", "color": "info"}
+            {"text": f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} TG", "callback_data": "ad_tgid", "color": "success" if s.get('tgid_enabled',True) else "danger"},
+            {"text": f"{ms('tgid')} M", "callback_data": "ad_maint_tgid", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰ", "callback_data": "ad_ifsc", "color": "success" if s.get('ifsc_enabled',True) else "danger"},
-            {"text": f"{ms('ifsc')} ᴍ", "callback_data": "ad_maint_ifsc", "color": "info"}
+            {"text": f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} IF", "callback_data": "ad_ifsc", "color": "success" if s.get('ifsc_enabled',True) else "danger"},
+            {"text": f"{ms('ifsc')} M", "callback_data": "ad_maint_ifsc", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏ", "callback_data": "ad_bypass_toggle", "color": "success" if s.get('bypass_enabled',True) else "danger"},
-            {"text": f"{ms('bypass')} ᴍ", "callback_data": "ad_maint_bypass", "color": "info"}
+            {"text": f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} BY", "callback_data": "ad_bypass_toggle", "color": "success" if s.get('bypass_enabled',True) else "danger"},
+            {"text": f"{ms('bypass')} M", "callback_data": "ad_maint_bypass", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏ", "callback_data": "ad_mobile", "color": "success" if s.get('mobile_enabled',True) else "danger"},
-            {"text": f"{ms('mobile')} ᴍ", "callback_data": "ad_maint_mobile", "color": "info"}
+            {"text": f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} MO", "callback_data": "ad_mobile", "color": "success" if s.get('mobile_enabled',True) else "danger"},
+            {"text": f"{ms('mobile')} M", "callback_data": "ad_maint_mobile", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀ", "callback_data": "ad_aadhaar", "color": "success" if s.get('aadhaar_enabled',True) else "danger"},
-            {"text": f"{ms('aadhaar')} ᴍ", "callback_data": "ad_maint_aadhaar", "color": "info"}
+            {"text": f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} AA", "callback_data": "ad_aadhaar", "color": "success" if s.get('aadhaar_enabled',True) else "danger"},
+            {"text": f"{ms('aadhaar')} M", "callback_data": "ad_maint_aadhaar", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", "callback_data": "ad_rc", "color": "success" if s.get('rc_enabled',True) else "danger"},
-            {"text": f"{ms('rc')} ᴍ", "callback_data": "ad_maint_rc", "color": "info"}
+            {"text": f"{'🟢' if s.get('rc_enabled',True) else '🔴'} RC", "callback_data": "ad_rc", "color": "success" if s.get('rc_enabled',True) else "danger"},
+            {"text": f"{ms('rc')} M", "callback_data": "ad_maint_rc", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱ", "callback_data": "ad_gst", "color": "success" if s.get('gst_enabled',True) else "danger"},
-            {"text": f"{ms('gst')} ᴍ", "callback_data": "ad_maint_gst", "color": "info"}
+            {"text": f"{'🟢' if s.get('gst_enabled',True) else '🔴'} GS", "callback_data": "ad_gst", "color": "success" if s.get('gst_enabled',True) else "danger"},
+            {"text": f"{ms('gst')} M", "callback_data": "ad_maint_gst", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", "callback_data": "ad_pak", "color": "success" if s.get('pak_enabled',True) else "danger"},
-            {"text": f"{ms('pak')} ᴍ", "callback_data": "ad_maint_pak", "color": "info"}
+            {"text": f"{'🟢' if s.get('pak_enabled',True) else '🔴'} PA", "callback_data": "ad_pak", "color": "success" if s.get('pak_enabled',True) else "danger"},
+            {"text": f"{ms('pak')} M", "callback_data": "ad_maint_pak", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", "callback_data": "ad_indnum", "color": "success" if s.get('indnum_enabled',True) else "danger"},
-            {"text": f"{ms('indnum')} ᴍ", "callback_data": "ad_maint_indnum", "color": "info"}
+            {"text": f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} IN2", "callback_data": "ad_indnum", "color": "success" if s.get('indnum_enabled',True) else "danger"},
+            {"text": f"{ms('indnum')} M", "callback_data": "ad_maint_indnum", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", "callback_data": "ad_indnum3", "color": "success" if s.get('indnum3_enabled',True) else "danger"},
-            {"text": f"{ms('indnum3')} ᴍ", "callback_data": "ad_maint_indnum3", "color": "info"}
+            {"text": f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} IN3", "callback_data": "ad_indnum3", "color": "success" if s.get('indnum3_enabled',True) else "danger"},
+            {"text": f"{ms('indnum3')} M", "callback_data": "ad_maint_indnum3", "color": "info"}
         ]),
         create_styled_row([
-            {"text": "ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
+            {"text": "CLOSE", "callback_data": "ad_close", "color": "danger"}
         ])
     ]
     
@@ -990,22 +980,22 @@ async def callback_handler(client, callback_query: CallbackQuery):
             txt = f"{PE_TICKET} ᴄᴏᴅᴇꜱ: {len(codes)}\n"
             for c, v in list(codes.items())[-15:]:
                 txt += f"{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr\n"
-            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_gen":
             ADMIN_STATE[uid] = "gen"
-            await callback_query.message.edit_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_credit":
             ADMIN_STATE[uid] = "credit"
-            await callback_query.message.edit_text(f"{PE_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{PE_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_bcast":
             ADMIN_STATE[uid] = "bcast"
-            await callback_query.message.edit_text(f"{PE_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{PE_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
         elif data == "ad_maint":
@@ -1242,7 +1232,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
 async def handle_messages(client, message: Message):
     try:
         uid = message.from_user.id
-        txt = message.text.strip()
+        txt = message.text.strip().upper()
         s = get_settings()
         
         if s.get("maintenance_mode", False) and uid != ADMIN_ID:
@@ -1262,15 +1252,15 @@ async def handle_messages(client, message: Message):
                 return
         
         # Handle keyboard navigation
-        if txt == f"{PE_NEXT} ɴᴇxᴛ ᴘᴀɢᴇ":
+        if txt == "NEXT PAGE":
             await main_menu(message, page=2)
             return
-        elif txt == f"{PE_BACK} ʙᴀᴄᴋ ᴛᴏ ᴍᴇɴᴜ":
+        elif txt == "BACK TO MENU":
             await main_menu(message, page=1)
             return
         
         # Handle admin panel via keyboard
-        if txt == f"{PE_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ" and uid == ADMIN_ID:
+        if txt == "ADMIN PANEL" and uid == ADMIN_ID:
             await admin_panel(message)
             return
         
@@ -1280,7 +1270,7 @@ async def handle_messages(client, message: Message):
             
             if state == "gen":
                 try:
-                    cr = int(txt)
+                    cr = int(message.text.strip())
                     code = generate_redeem_code(cr)
                     sent = await message.reply_text(f"{PE_CHECK} <code>{code}</code> | {PE_CREDIT} {cr}cr", parse_mode=ParseMode.HTML)
                 except:
@@ -1289,7 +1279,7 @@ async def handle_messages(client, message: Message):
                 return
             
             elif state == "credit":
-                p = txt.split()
+                p = message.text.strip().split()
                 if len(p) >= 2:
                     bal = add_credits(p[0], int(p[1]))
                     sent = await message.reply_text(f"{PE_CHECK} +{p[1]} | {bal}", parse_mode=ParseMode.HTML)
@@ -1303,7 +1293,7 @@ async def handle_messages(client, message: Message):
                 cnt = 0
                 for u in users:
                     try:
-                        await app.send_message(chat_id=int(u), text=f"{PE_BOLT} {txt}")
+                        await app.send_message(chat_id=int(u), text=f"{PE_BOLT} {message.text.strip()}")
                         cnt += 1
                     except: pass
                 sent = await message.reply_text(f"{PE_CHECK} Sent: {cnt}", parse_mode=ParseMode.HTML)
@@ -1311,8 +1301,8 @@ async def handle_messages(client, message: Message):
                 return
             
             elif state == "REDEEM":
-                if txt.upper().startswith("HEX-"):
-                    success, msg = redeem_code(uid, txt)
+                if message.text.strip().upper().startswith("HEX-"):
+                    success, msg = redeem_code(uid, message.text.strip())
                 else:
                     msg = f"{PE_CROSS} Invalid code format!"
                 sent = await message.reply_text(f"{msg}", parse_mode=ParseMode.HTML)
@@ -1326,14 +1316,14 @@ async def handle_messages(client, message: Message):
                     asyncio.create_task(schedule_delete(sent))
                     return
                 
-                await run_query(message, state, txt)
+                await run_query(message, state, message.text.strip())
                 return
         
         if uid in ADMIN_STATE:
             return
         
-        # Handle feature buttons from keyboard
-        if txt == f"{PE_PHONE} ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ":
+        # Handle feature buttons from keyboard - Using EXACT matches
+        if txt == "TG ID ➜ NUMBER":
             if not s.get("tgid_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1348,7 +1338,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_BANK} ɪꜰꜱᴄ ɪɴꜰᴏ":
+        elif txt == "IFSC INFO":
             if not s.get("ifsc_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1363,7 +1353,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ":
+        elif txt == "LINK BYPASS":
             if not s.get("bypass_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1378,7 +1368,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
+        elif txt == "IND NUMBER INFO":
             if not s.get("mobile_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1393,7 +1383,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ":
+        elif txt == "AADHAR INFO":
             if not s.get("aadhaar_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1408,7 +1398,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_CAR} ʀᴄ ᴅᴇᴛᴀɪʟꜱ":
+        elif txt == "RC DETAILS":
             if not s.get("rc_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1423,7 +1413,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_CARD} ɢꜱᴛ ʟᴏᴏᴋᴜᴘ":
+        elif txt == "GST LOOKUP":
             if not s.get("gst_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1438,7 +1428,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_PAK} ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ":
+        elif txt == "PAK NUMBER INFO":
             if not s.get("pak_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1453,7 +1443,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_PHONE2} ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸":
+        elif txt == "IND NUM INFO 2":
             if not s.get("indnum_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1468,7 +1458,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹":
+        elif txt == "IND NUMBER INFO 3":
             if not s.get("indnum3_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
                 asyncio.create_task(schedule_delete(sent))
@@ -1483,7 +1473,7 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent))
             return
         
-        elif txt == f"{PE_INVITE} ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ":
+        elif txt == "INVITE & EARN":
             user = get_user(uid)
             bot_info = await app.get_me()
             link = f"https://t.me/{bot_info.username}?start={user['invite_code']}"
@@ -1491,41 +1481,40 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent, 120))
             return
         
-        elif txt == f"{PE_TICKET} ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ":
+        elif txt == "REDEEM CODE":
             ADMIN_STATE[uid] = 'REDEEM'
             sent = await message.reply_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
-        elif txt == f"{PE_HELP} ʜᴇʟᴘ":
+        elif txt == "HELP":
             await show_help_inline(message)
             return
         
-        elif txt == f"{PE_ABOUT} ᴀʙᴏᴜᴛ":
+        elif txt == "ABOUT":
             await show_about_inline(message)
             return
         
-        elif txt == f"{PE_STATS} ꜱᴛᴀᴛꜱ":
+        elif txt == "STATS":
             await show_stats_inline(message)
             return
         
-        elif txt == f"{PE_IDENTITY} ɪᴅᴇɴᴛɪᴛʏ ᴛᴏᴏʟꜱ":
+        elif txt == "IDENTITY TOOLS":
             sent = await message.reply_text(f"{PE_IDENTITY} <b>ɪᴅᴇɴᴛɪᴛʏ ᴛᴏᴏʟꜱ</b>\n\n{PE_CARD} ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ\n{PE_USER} ᴘᴀɴ ᴄᴀʀᴅ ɪɴꜰᴏ\n{PE_PHONE2} ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ ʟᴏᴏᴋᴜᴘ", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
-        elif txt == f"{PE_OSINT} ᴏꜱɪɴᴛ ᴛᴏᴏʟꜱ":
+        elif txt == "OSINT TOOLS":
             sent = await message.reply_text(f"{PE_OSINT} <b>ᴏꜱɪɴᴛ ᴛᴏᴏʟꜱ</b>\n\n{PE_SEARCH} ᴛɢ ɪᴅ ʟᴏᴏᴋᴜᴘ\n{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n{PE_NETWORK} ɪᴘ ʟᴏᴏᴋᴜᴘ", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
-        elif txt == f"{PE_VIP} ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ":
+        elif txt == "VIP PREMIUM":
             sent = await message.reply_text(f"{PE_VIP} <b>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ</b>\n\n{PE_CREDIT} ᴇxᴛʀᴀ ᴄʀᴇᴅɪᴛꜱ\n{PE_ROCKET} ᴘʀɪᴏʀɪᴛʏ Qᴜᴇʀɪᴇꜱ\n{PE_STAR} ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴀʟʟ ꜰᴇᴀᴛᴜʀᴇꜱ", parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
-        elif txt == f"{PE_SPIN} ᴅᴀɪʟʏ ꜱᴘɪɴ":
-            # Random spin reward
+        elif txt == "DAILY SPIN":
             rewards = [1, 2, 3, 5, 8, 10]
             reward = random.choice(rewards)
             bal = add_credits(uid, reward)
@@ -1533,25 +1522,25 @@ async def handle_messages(client, message: Message):
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
-        elif txt == f"{PE_DASHBOARD} ᴅᴀꜱʜʙᴏᴀʀᴅ":
+        elif txt == "DASHBOARD":
             user = get_user(uid)
-            txt = f"{PE_DASHBOARD} <b>ʏᴏᴜʀ ᴅᴀꜱʜʙᴏᴀʀᴅ</b>\n\n{PE_USER} <b>ᴜꜱᴇʀ:</b> {message.from_user.first_name}\n{PE_CREDIT} <b>ᴄʀᴇᴅɪᴛꜱ:</b> {user.get('credits',0)}\n{PE_SEARCH} <b>Qᴜᴇʀɪᴇꜱ:</b> {user.get('total_queries',0)}\n{PE_INVITE} <b>ɪɴᴠɪᴛᴇꜱ:</b> {user.get('invites',0)}"
-            sent = await message.reply_text(txt, parse_mode=ParseMode.HTML)
+            txt_msg = f"{PE_DASHBOARD} <b>ʏᴏᴜʀ ᴅᴀꜱʜʙᴏᴀʀᴅ</b>\n\n{PE_USER} <b>ᴜꜱᴇʀ:</b> {message.from_user.first_name}\n{PE_CREDIT} <b>ᴄʀᴇᴅɪᴛꜱ:</b> {user.get('credits',0)}\n{PE_SEARCH} <b>Qᴜᴇʀɪᴇꜱ:</b> {user.get('total_queries',0)}\n{PE_INVITE} <b>ɪɴᴠɪᴛᴇꜱ:</b> {user.get('invites',0)}"
+            sent = await message.reply_text(txt_msg, parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
-        elif txt == f"{PE_LEADERBOARD} ʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ":
+        elif txt == "LEADERBOARD":
             users = load_json(USERS_FILE)
             sorted_users = sorted(users.items(), key=lambda x: x[1].get('credits', 0), reverse=True)[:10]
-            txt = f"{PE_LEADERBOARD} <b>ᴛᴏᴘ 10 ᴜꜱᴇʀꜱ</b>\n\n"
-            for i, (uid, data) in enumerate(sorted_users, 1):
+            txt_msg = f"{PE_LEADERBOARD} <b>ᴛᴏᴘ 10 ᴜꜱᴇʀꜱ</b>\n\n"
+            for i, (uid_, data) in enumerate(sorted_users, 1):
                 try:
-                    user = await app.get_users(int(uid))
+                    user = await app.get_users(int(uid_))
                     name = user.first_name[:15]
                 except:
                     name = f"ᴜꜱᴇʀ {i}"
-                txt += f"{i}. {PE_USER} {name} - {PE_CREDIT} {data.get('credits',0)}\n"
-            sent = await message.reply_text(txt, parse_mode=ParseMode.HTML)
+                txt_msg += f"{i}. {PE_USER} {name} - {PE_CREDIT} {data.get('credits',0)}\n"
+            sent = await message.reply_text(txt_msg, parse_mode=ParseMode.HTML)
             asyncio.create_task(schedule_delete(sent, 30))
             return
         
@@ -1705,16 +1694,16 @@ async def run_query(message: Message, mode: str, query: str):
 
 def main():
     print("🔄 Hex Terminal Premium Starting...")
-    print("🎨 100% Premium Emojis Only - No Normal Emojis!")
-    print("🤖 Kurigram Version with Full Keyboard + Colored Buttons!")
+    print("🎨 Premium Emojis in Text | Plain Text Keyboard Buttons")
+    print("🤖 Kurigram Version with 2 Page Keyboard Menu!")
     
     try:
         subprocess.run([sys.executable, "-m", "pip", "install", "requests", "beautifulsoup4"], capture_output=True, timeout=30)
     except: pass
     
     print(f"✅ {BOT_NAME} Ready!")
-    print(f"💎 All emojis are PREMIUM only!")
-    print(f"⭐ 2 Page Keyboard Menu with Premium Emojis")
+    print(f"💎 Premium emojis in ALL text messages!")
+    print(f"⭐ 2 Page Keyboard Menu with plain text buttons")
     print("🚀 Bot is running...")
     
     app.run()
