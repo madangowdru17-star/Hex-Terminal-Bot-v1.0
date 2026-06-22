@@ -392,11 +392,11 @@ def create_styled_row(buttons_config: list) -> list:
     return row
 
 # ============================================================
-# KEYBOARD MENU - Plain text only (no emojis in keyboard buttons)
+# KEYBOARD MENU - Plain text only
 # ============================================================
 
 def get_keyboard_menu(page=1):
-    """Create keyboard menu with plain text (no emojis in KeyboardButton)"""
+    """Create keyboard menu with plain text"""
     
     if page == 1:
         keyboard = [
@@ -470,7 +470,7 @@ def get_keyboard_menu(page=1):
     )
 
 # ============================================================
-# MAIN MENU WITH KEYBOARD
+# MAIN MENU
 # ============================================================
 
 async def show_verification_page(message: Message):
@@ -494,7 +494,8 @@ async def show_verification_page(message: Message):
         
         sent = await message.reply_text(caption, parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(sent, 120))
-    except: pass
+    except Exception as e:
+        print(f"Verification page error: {e}")
     
     buttons = [
         create_styled_row([
@@ -509,42 +510,48 @@ async def show_verification_page(message: Message):
     for row in buttons:
         flat_buttons.append(row)
     
-    sent2 = await message.reply_text(
-        f"{PE_LOCK} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ",
-        reply_markup=InlineKeyboardMarkup(flat_buttons),
-        parse_mode=ParseMode.HTML
-    )
-    asyncio.create_task(schedule_delete(sent2, 120))
+    try:
+        sent2 = await message.reply_text(
+            f"{PE_LOCK} ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴠᴇʀɪꜰʏ",
+            reply_markup=InlineKeyboardMarkup(flat_buttons),
+            parse_mode=ParseMode.HTML
+        )
+        asyncio.create_task(schedule_delete(sent2, 120))
+    except Exception as e:
+        print(f"Verification reply error: {e}")
 
 async def main_menu(message: Message, page: int = 1):
     """Main menu with keyboard - plain text buttons"""
-    is_admin = message.from_user.id == ADMIN_ID
-    user = get_user(message.from_user.id)
-    cr = user.get("credits", 0)
-    
-    keyboard = get_keyboard_menu(page)
-    
-    txt = (
-        f"{PE_DIAMOND} {BOT_NAME} {PE_DIAMOND}\n"
-        f"{PE_USER} <b>ᴡᴇʟᴄᴏᴍᴇ ʙᴀᴄᴋ,</b> <code>{message.from_user.first_name}</code>\n\n"
-        f"{PE_DASHBOARD} <b>ʏᴏᴜʀ ᴅᴀꜱʜʙᴏᴀʀᴅ</b>\n"
-        f"┃ {PE_CREDIT} <b>ᴄʀᴇᴅɪᴛꜱ:</b> {cr}\n"
-        f"┃ {PE_SPIN} <b>ᴅᴀɪʟʏ ꜱᴘɪɴ:</b> +3 ꜰʀᴇᴇ\n"
-        f"┃ {PE_VIP} <b>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ:</b> {user.get('total_queries',0)} ꜱᴇᴀʀᴄʜ\n\n"
-        f"{PE_STAR} <b>ɴɪᴄʜᴇ ᴅɪʏᴇ ɢʏᴇ ʙᴜᴛᴛᴏɴ ᴜꜱᴇ ᴋʀᴇ</b>\n"
-        f"{PE_HELP} <code>/help</code> ᴛᴏ ꜱᴇᴇ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅꜱ\n\n"
-        f"{PE_CROWN} <b>ᴅᴇᴠ:</b> @Hexh4ckerOFC\n"
-        f"{PE_ROCKET} <b>ᴘᴀɢᴇ:</b> {page}/2"
-    )
-    
-    sent = await message.reply_text(
-        txt,
-        reply_markup=keyboard,
-        parse_mode=ParseMode.HTML
-    )
-    asyncio.create_task(schedule_delete(sent, AUTO_DELETE_TIME))
-    
-    USER_STATE[str(message.from_user.id)] = {"page": page}
+    try:
+        is_admin = message.from_user.id == ADMIN_ID
+        user = get_user(message.from_user.id)
+        cr = user.get("credits", 0)
+        
+        keyboard = get_keyboard_menu(page)
+        
+        txt = (
+            f"{PE_DIAMOND} {BOT_NAME} {PE_DIAMOND}\n"
+            f"{PE_USER} <b>ᴡᴇʟᴄᴏᴍᴇ ʙᴀᴄᴋ,</b> <code>{message.from_user.first_name}</code>\n\n"
+            f"{PE_DASHBOARD} <b>ʏᴏᴜʀ ᴅᴀꜱʜʙᴏᴀʀᴅ</b>\n"
+            f"┃ {PE_CREDIT} <b>ᴄʀᴇᴅɪᴛꜱ:</b> {cr}\n"
+            f"┃ {PE_SPIN} <b>ᴅᴀɪʟʏ ꜱᴘɪɴ:</b> +3 ꜰʀᴇᴇ\n"
+            f"┃ {PE_VIP} <b>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ:</b> {user.get('total_queries',0)} ꜱᴇᴀʀᴄʜ\n\n"
+            f"{PE_STAR} <b>ɴɪᴄʜᴇ ᴅɪʏᴇ ɢʏᴇ ʙᴜᴛᴛᴏɴ ᴜꜱᴇ ᴋʀᴇ</b>\n"
+            f"{PE_HELP} <code>/help</code> ᴛᴏ ꜱᴇᴇ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅꜱ\n\n"
+            f"{PE_CROWN} <b>ᴅᴇᴠ:</b> @Hexh4ckerOFC\n"
+            f"{PE_ROCKET} <b>ᴘᴀɢᴇ:</b> {page}/2"
+        )
+        
+        sent = await message.reply_text(
+            txt,
+            reply_markup=keyboard,
+            parse_mode=ParseMode.HTML
+        )
+        asyncio.create_task(schedule_delete(sent, AUTO_DELETE_TIME))
+        
+        USER_STATE[str(message.from_user.id)] = {"page": page}
+    except Exception as e:
+        print(f"Main menu error: {e}")
 
 # --- 🔗 API FUNCTIONS ---
 
@@ -791,16 +798,22 @@ async def admin_panel(message: Message):
     
     txt = f"{PE_CROWN} ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ {PE_CROWN}\n{PE_INVITE} ᴜꜱᴇʀꜱ: {len(load_json(USERS_FILE))} | {PE_TICKET} ᴄᴏᴅᴇꜱ: {len(load_json(REDEEM_FILE))}"
     
-    if hasattr(message, 'edit_text'):
-        await message.edit_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
-    else:
+    try:
+        if hasattr(message, 'edit_text'):
+            await message.edit_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
+        else:
+            await message.reply_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
+    except Exception as e:
+        print(f"Admin panel error: {e}")
+        # Fallback: send new message
         await message.reply_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
 
 # --- 🚀 HELP, ABOUT, STATS ---
 
 async def show_help_inline(callback_query: CallbackQuery):
-    await callback_query.answer()
-    text = f"""
+    try:
+        await callback_query.answer()
+        text = f"""
 {PE_HELP} 𝐇𝐄𝐋𝐏 & 𝐆𝐔𝐈𝐃𝐄 {PE_HELP}
 
 {PE_STAR} 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒:
@@ -835,14 +848,17 @@ Get Pakistan number details
 
 {PE_CLOCK} 𝐀𝐔𝐓𝐎 𝐃𝐄𝐋𝐄𝐓𝐄: {AUTO_DELETE_TIME}ꜱ
 """
-    await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
-    await asyncio.sleep(60)
-    try: await callback_query.message.delete()
-    except: pass
+        await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
+        await asyncio.sleep(60)
+        try: await callback_query.message.delete()
+        except: pass
+    except Exception as e:
+        print(f"Help inline error: {e}")
 
 async def show_about_inline(callback_query: CallbackQuery):
-    await callback_query.answer()
-    text = f"""
+    try:
+        await callback_query.answer()
+        text = f"""
 {PE_ABOUT} 𝐀𝐁𝐎𝐔𝐓 𝐁𝐎𝐓 {PE_ABOUT}
 
 𝐍𝐀𝐌𝐄: {BOT_NAME}
@@ -865,20 +881,23 @@ async def show_about_inline(callback_query: CallbackQuery):
 
 {PE_WARN} 𝐅𝐎𝐑 𝐄𝐃𝐔𝐂𝐀𝐓𝐈𝐎𝐍𝐀𝐋 𝐏𝐔𝐑𝐏𝐎𝐒𝐄𝐒 𝐎𝐍𝐋𝐘
 """
-    await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
-    await asyncio.sleep(60)
-    try: await callback_query.message.delete()
-    except: pass
+        await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
+        await asyncio.sleep(60)
+        try: await callback_query.message.delete()
+        except: pass
+    except Exception as e:
+        print(f"About inline error: {e}")
 
 async def show_stats_inline(callback_query: CallbackQuery):
-    await callback_query.answer()
-    users = load_json(USERS_FILE)
-    total_users = len(users)
-    total_queries = sum(u.get('total_queries', 0) for u in users.values())
-    total_invites = sum(u.get('invites', 0) for u in users.values())
-    total_credits = sum(u.get('credits', 0) for u in users.values())
-    
-    text = f"""
+    try:
+        await callback_query.answer()
+        users = load_json(USERS_FILE)
+        total_users = len(users)
+        total_queries = sum(u.get('total_queries', 0) for u in users.values())
+        total_invites = sum(u.get('invites', 0) for u in users.values())
+        total_credits = sum(u.get('credits', 0) for u in users.values())
+        
+        text = f"""
 {PE_STATS} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐈𝐒𝐓𝐈𝐂𝐒 {PE_STATS}
 
 {PE_USER} 𝐓𝐎𝐓𝐀𝐋 𝐔𝐒𝐄𝐑𝐒: {total_users}
@@ -888,10 +907,12 @@ async def show_stats_inline(callback_query: CallbackQuery):
 
 {PE_DIAMOND} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐔𝐒: 🟢 Active
 """
-    await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
-    await asyncio.sleep(60)
-    try: await callback_query.message.delete()
-    except: pass
+        await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
+        await asyncio.sleep(60)
+        try: await callback_query.message.delete()
+        except: pass
+    except Exception as e:
+        print(f"Stats inline error: {e}")
 
 # --- 🚀 COMMAND HANDLERS ---
 
@@ -939,292 +960,295 @@ async def start_command(client, message: Message):
 
 @app.on_callback_query()
 async def callback_handler(client, callback_query: CallbackQuery):
-    data = callback_query.data
-    uid = callback_query.from_user.id
-    s = get_settings()
-    
-    if data == "verify":
-        if uid == ADMIN_ID:
-            user = get_user(uid)
-            user["verified"] = True
-            save_user(uid, user)
-            await callback_query.answer("✅ Verified as Admin!", show_alert=True)
-            try: await callback_query.message.delete()
-            except: pass
-            await main_menu(callback_query.message)
-            return
+    try:
+        data = callback_query.data
+        uid = callback_query.from_user.id
+        s = get_settings()
         
-        if await check_channel(uid):
-            user = get_user(uid)
-            user["verified"] = True
-            save_user(uid, user)
-            await callback_query.answer("✅ Verified!", show_alert=True)
-            try: await callback_query.message.delete()
-            except: pass
-            await main_menu(callback_query.message)
-        else:
-            await callback_query.answer("❌ Please join the channel first!", show_alert=True)
-        return
-    
-    if data.startswith("ad_"):
-        if uid != ADMIN_ID:
-            await callback_query.answer("❌ Unauthorized!", show_alert=True)
-            return
-        
-        if data == "ad_close":
-            await callback_query.message.delete()
-            await callback_query.answer()
-            return
-        elif data == "ad_codes":
-            codes = load_json(REDEEM_FILE)
-            txt = f"{PE_TICKET} ᴄᴏᴅᴇꜱ: {len(codes)}\n"
-            for c, v in list(codes.items())[-15:]:
-                txt += f"{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr\n"
-            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        elif data == "ad_gen":
-            ADMIN_STATE[uid] = "gen"
-            await callback_query.message.edit_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        elif data == "ad_credit":
-            ADMIN_STATE[uid] = "credit"
-            await callback_query.message.edit_text(f"{PE_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        elif data == "ad_bcast":
-            ADMIN_STATE[uid] = "bcast"
-            await callback_query.message.edit_text(f"{PE_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        elif data == "ad_maint":
-            s["maintenance_mode"] = not s.get("maintenance_mode", False)
-            save_settings(s)
-            await callback_query.answer(f"Global: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True)
-            await admin_panel(callback_query.message)
-            return
-        elif data.startswith("ad_maint_"):
-            f = data.replace("ad_maint_", "")
-            s[f"maint_{f}"] = not s.get(f"maint_{f}", False)
-            save_settings(s)
-            await callback_query.answer(f"{f}: {'ON' if s[f'maint_{f}'] else 'OFF'}", show_alert=True)
-            await admin_panel(callback_query.message)
-            return
-        elif data.startswith("ad_"):
-            toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_pak":"pak_enabled","ad_indnum":"indnum_enabled","ad_indnum3":"indnum3_enabled"}
-            if data in toggle_map:
-                k = toggle_map[data]
-                s[k] = not s.get(k, True)
-                save_settings(s)
-                await callback_query.answer(f"{k}: {'ON' if s[k] else 'OFF'}", show_alert=True)
-                await admin_panel(callback_query.message)
-            return
-        elif data == "ad_back":
-            await admin_panel(callback_query.message)
-            await callback_query.answer()
-            return
-        await callback_query.answer()
-        return
-    
-    if data.startswith("menu_"):
-        if uid != ADMIN_ID:
-            user = get_user(uid)
-            if not user.get("verified"):
-                if await check_channel(uid):
-                    user["verified"] = True
-                    save_user(uid, user)
-                    await main_menu(callback_query.message)
-                    return
-                await show_verification_page(callback_query.message)
-                await callback_query.answer()
-                return
-        
-        if data == "menu_tgid":
-            if not s.get("tgid_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("tgid")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'TG'
-            await callback_query.message.reply_text(f"{PE_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ\n<i>7123181749, 6884112825</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_ifsc":
-            if not s.get("ifsc_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("ifsc")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'IFSC'
-            await callback_query.message.reply_text(f"{PE_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_bypass":
-            if not s.get("bypass_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("bypass")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'SHORTLINK'
-            await callback_query.message.reply_text(f"{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_mobile":
-            if not s.get("mobile_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("mobile")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'MOBILE'
-            await callback_query.message.reply_text(f"{PE_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_aadhaar":
-            if not s.get("aadhaar_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("aadhaar")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'AADHAAR'
-            await callback_query.message.reply_text(f"{PE_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_rc":
-            if not s.get("rc_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("rc")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'VEHICLE'
-            await callback_query.message.reply_text(f"{PE_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_gst":
-            if not s.get("gst_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("gst")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'GST'
-            await callback_query.message.reply_text(f"{PE_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_pak":
-            if not s.get("pak_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("pak")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'PAK'
-            await callback_query.message.reply_text(f"{PE_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_indnum":
-            if not s.get("indnum_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("indnum")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'INDNUM'
-            await callback_query.message.reply_text(f"{PE_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_indnum3":
-            if not s.get("indnum3_enabled", True):
-                await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            maint, msg = check_feature_maintenance("indnum3")
-            if maint:
-                await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
-                await callback_query.answer()
-                return
-            ADMIN_STATE[uid] = 'INDNUM3'
-            await callback_query.message.reply_text(f"{PE_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_invite":
-            user = get_user(uid)
-            bot_info = await app.get_me()
-            link = f"https://t.me/{bot_info.username}?start={user['invite_code']}"
-            await callback_query.message.reply_text(f"{PE_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)\n<code>{link}</code>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_redeem":
-            ADMIN_STATE[uid] = 'REDEEM'
-            await callback_query.message.reply_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
-            await callback_query.answer()
-            return
-        
-        elif data == "menu_help":
-            await show_help_inline(callback_query)
-            return
-        
-        elif data == "menu_about":
-            await show_about_inline(callback_query)
-            return
-        
-        elif data == "menu_stats":
-            await show_stats_inline(callback_query)
-            return
-        
-        elif data == "menu_admin":
+        if data == "verify":
             if uid == ADMIN_ID:
-                await admin_panel(callback_query.message)
-                await callback_query.answer()
+                user = get_user(uid)
+                user["verified"] = True
+                save_user(uid, user)
+                await callback_query.answer("✅ Verified as Admin!", show_alert=True)
+                try: await callback_query.message.delete()
+                except: pass
+                await main_menu(callback_query.message)
+                return
+            
+            if await check_channel(uid):
+                user = get_user(uid)
+                user["verified"] = True
+                save_user(uid, user)
+                await callback_query.answer("✅ Verified!", show_alert=True)
+                try: await callback_query.message.delete()
+                except: pass
+                await main_menu(callback_query.message)
             else:
-                await callback_query.answer("❌ Unauthorized!", show_alert=True)
+                await callback_query.answer("❌ Please join the channel first!", show_alert=True)
             return
         
-        await callback_query.answer()
+        if data.startswith("ad_"):
+            if uid != ADMIN_ID:
+                await callback_query.answer("❌ Unauthorized!", show_alert=True)
+                return
+            
+            if data == "ad_close":
+                await callback_query.message.delete()
+                await callback_query.answer()
+                return
+            elif data == "ad_codes":
+                codes = load_json(REDEEM_FILE)
+                txt = f"{PE_TICKET} ᴄᴏᴅᴇꜱ: {len(codes)}\n"
+                for c, v in list(codes.items())[-15:]:
+                    txt += f"{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr\n"
+                await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            elif data == "ad_gen":
+                ADMIN_STATE[uid] = "gen"
+                await callback_query.message.edit_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            elif data == "ad_credit":
+                ADMIN_STATE[uid] = "credit"
+                await callback_query.message.edit_text(f"{PE_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            elif data == "ad_bcast":
+                ADMIN_STATE[uid] = "bcast"
+                await callback_query.message.edit_text(f"{PE_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 BACK", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            elif data == "ad_maint":
+                s["maintenance_mode"] = not s.get("maintenance_mode", False)
+                save_settings(s)
+                await callback_query.answer(f"Global: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True)
+                await admin_panel(callback_query.message)
+                return
+            elif data.startswith("ad_maint_"):
+                f = data.replace("ad_maint_", "")
+                s[f"maint_{f}"] = not s.get(f"maint_{f}", False)
+                save_settings(s)
+                await callback_query.answer(f"{f}: {'ON' if s[f'maint_{f}'] else 'OFF'}", show_alert=True)
+                await admin_panel(callback_query.message)
+                return
+            elif data.startswith("ad_"):
+                toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_pak":"pak_enabled","ad_indnum":"indnum_enabled","ad_indnum3":"indnum3_enabled"}
+                if data in toggle_map:
+                    k = toggle_map[data]
+                    s[k] = not s.get(k, True)
+                    save_settings(s)
+                    await callback_query.answer(f"{k}: {'ON' if s[k] else 'OFF'}", show_alert=True)
+                    await admin_panel(callback_query.message)
+                return
+            elif data == "ad_back":
+                await admin_panel(callback_query.message)
+                await callback_query.answer()
+                return
+            await callback_query.answer()
+            return
+        
+        if data.startswith("menu_"):
+            if uid != ADMIN_ID:
+                user = get_user(uid)
+                if not user.get("verified"):
+                    if await check_channel(uid):
+                        user["verified"] = True
+                        save_user(uid, user)
+                        await main_menu(callback_query.message)
+                        return
+                    await show_verification_page(callback_query.message)
+                    await callback_query.answer()
+                    return
+            
+            if data == "menu_tgid":
+                if not s.get("tgid_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("tgid")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'TG'
+                await callback_query.message.reply_text(f"{PE_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ\n<i>7123181749, 6884112825</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_ifsc":
+                if not s.get("ifsc_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("ifsc")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'IFSC'
+                await callback_query.message.reply_text(f"{PE_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_bypass":
+                if not s.get("bypass_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("bypass")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'SHORTLINK'
+                await callback_query.message.reply_text(f"{PE_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_mobile":
+                if not s.get("mobile_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("mobile")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'MOBILE'
+                await callback_query.message.reply_text(f"{PE_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_aadhaar":
+                if not s.get("aadhaar_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("aadhaar")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'AADHAAR'
+                await callback_query.message.reply_text(f"{PE_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_rc":
+                if not s.get("rc_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("rc")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'VEHICLE'
+                await callback_query.message.reply_text(f"{PE_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_gst":
+                if not s.get("gst_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("gst")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'GST'
+                await callback_query.message.reply_text(f"{PE_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_pak":
+                if not s.get("pak_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("pak")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'PAK'
+                await callback_query.message.reply_text(f"{PE_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_indnum":
+                if not s.get("indnum_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("indnum")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'INDNUM'
+                await callback_query.message.reply_text(f"{PE_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_indnum3":
+                if not s.get("indnum3_enabled", True):
+                    await callback_query.message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                maint, msg = check_feature_maintenance("indnum3")
+                if maint:
+                    await callback_query.message.reply_text(f"{PE_TOOLS} {msg}", parse_mode=ParseMode.HTML)
+                    await callback_query.answer()
+                    return
+                ADMIN_STATE[uid] = 'INDNUM3'
+                await callback_query.message.reply_text(f"{PE_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_invite":
+                user = get_user(uid)
+                bot_info = await app.get_me()
+                link = f"https://t.me/{bot_info.username}?start={user['invite_code']}"
+                await callback_query.message.reply_text(f"{PE_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)\n<code>{link}</code>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_redeem":
+                ADMIN_STATE[uid] = 'REDEEM'
+                await callback_query.message.reply_text(f"{PE_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
+                await callback_query.answer()
+                return
+            
+            elif data == "menu_help":
+                await show_help_inline(callback_query)
+                return
+            
+            elif data == "menu_about":
+                await show_about_inline(callback_query)
+                return
+            
+            elif data == "menu_stats":
+                await show_stats_inline(callback_query)
+                return
+            
+            elif data == "menu_admin":
+                if uid == ADMIN_ID:
+                    await admin_panel(callback_query.message)
+                    await callback_query.answer()
+                else:
+                    await callback_query.answer("❌ Unauthorized!", show_alert=True)
+                return
+            
+            await callback_query.answer()
+    except Exception as e:
+        print(f"Callback error: {e}")
 
 # --- 📝 MESSAGE HANDLER ---
 
@@ -1322,7 +1346,7 @@ async def handle_messages(client, message: Message):
         if uid in ADMIN_STATE:
             return
         
-        # Handle feature buttons from keyboard - Using EXACT matches
+        # Handle feature buttons from keyboard
         if txt == "TG ID ➜ NUMBER":
             if not s.get("tgid_enabled", True):
                 sent = await message.reply_text(f"{PE_DISABLED} Disabled", parse_mode=ParseMode.HTML)
@@ -1552,7 +1576,8 @@ async def handle_messages(client, message: Message):
         await main_menu(message)
 
 async def show_help_inline(message: Message):
-    text = f"""
+    try:
+        text = f"""
 {PE_HELP} 𝐇𝐄𝐋𝐏 & 𝐆𝐔𝐈𝐃𝐄 {PE_HELP}
 
 {PE_STAR} 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒:
@@ -1587,11 +1612,14 @@ Get Pakistan number details
 
 {PE_CLOCK} 𝐀𝐔𝐓𝐎 𝐃𝐄𝐋𝐄𝐓𝐄: {AUTO_DELETE_TIME}ꜱ
 """
-    sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
-    asyncio.create_task(schedule_delete(sent, 60))
+        sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
+        asyncio.create_task(schedule_delete(sent, 60))
+    except Exception as e:
+        print(f"Help error: {e}")
 
 async def show_about_inline(message: Message):
-    text = f"""
+    try:
+        text = f"""
 {PE_ABOUT} 𝐀𝐁𝐎𝐔𝐓 𝐁𝐎𝐓 {PE_ABOUT}
 
 𝐍𝐀𝐌𝐄: {BOT_NAME}
@@ -1614,17 +1642,20 @@ async def show_about_inline(message: Message):
 
 {PE_WARN} 𝐅𝐎𝐑 𝐄𝐃𝐔𝐂𝐀𝐓𝐈𝐎𝐍𝐀𝐋 𝐏𝐔𝐑𝐏𝐎𝐒𝐄𝐒 𝐎𝐍𝐋𝐘
 """
-    sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
-    asyncio.create_task(schedule_delete(sent, 60))
+        sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
+        asyncio.create_task(schedule_delete(sent, 60))
+    except Exception as e:
+        print(f"About error: {e}")
 
 async def show_stats_inline(message: Message):
-    users = load_json(USERS_FILE)
-    total_users = len(users)
-    total_queries = sum(u.get('total_queries', 0) for u in users.values())
-    total_invites = sum(u.get('invites', 0) for u in users.values())
-    total_credits = sum(u.get('credits', 0) for u in users.values())
-    
-    text = f"""
+    try:
+        users = load_json(USERS_FILE)
+        total_users = len(users)
+        total_queries = sum(u.get('total_queries', 0) for u in users.values())
+        total_invites = sum(u.get('invites', 0) for u in users.values())
+        total_credits = sum(u.get('credits', 0) for u in users.values())
+        
+        text = f"""
 {PE_STATS} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐈𝐒𝐓𝐈𝐂𝐒 {PE_STATS}
 
 {PE_USER} 𝐓𝐎𝐓𝐀𝐋 𝐔𝐒𝐄𝐑𝐒: {total_users}
@@ -1634,8 +1665,10 @@ async def show_stats_inline(message: Message):
 
 {PE_DIAMOND} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐔𝐒: 🟢 Active
 """
-    sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
-    asyncio.create_task(schedule_delete(sent, 60))
+        sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
+        asyncio.create_task(schedule_delete(sent, 60))
+    except Exception as e:
+        print(f"Stats error: {e}")
 
 async def run_query(message: Message, mode: str, query: str):
     if not await net_ok():
