@@ -54,10 +54,55 @@ BOT_NAME = "𝗛𝗲𝘅 𝗧𝗲𝗿𝗺𝗶𝗻𝗮𝗹"
 BOT_USERNAME = "Hex_Terminal_bot"
 
 # ============================================================
-# PREMIUM EMOJI IDs for Buttons (INTEGERS)
+# PREMIUM EMOJI IDs (ONLY 1 PER TEXT)
 # ============================================================
 
-# Premium Emoji IDs as INTEGERS for icon_custom_emoji_id
+EMOJI_IDS = {
+    "warn": "6267039884016358504",
+    "check": "6267008582294705964",
+    "cross": "6267000941547885720",
+    "lock": "5316522278056399236",
+    "crown": "6267128480601741166",
+    "diamond": "6264791387032523779",
+    "star": "6266969287638913443",
+    "gift": "5203996991054432397",
+    "phone": "5947494995798789024",
+    "bank": "5264895611517300926",
+    "link": "5271604874419647061",
+    "car": "5253752975997803460",
+    "card": "5260561650213220533",
+    "user": "5249053508681883137",
+    "india": "6284779941489812433",
+    "pak": "5913705895375672082",
+    "phone2": "5406809207947142040",
+    "invite": "5244933196230972438",
+    "ticket": "5285515895534278367",
+    "credit": "6267068789146260253",
+    "refresh": "5375338737028841420",
+    "clock": "5382194935057372936",
+    "bolt": "6284971355297290197",
+    "green": "5386367538735104399",
+    "sparkle": "5467683093693354332",
+    "tools": "5462921117423384478",
+    "disabled": "5373165973203348165",
+    "location": "5391032818111363540",
+    "home": "5280955052582785391",
+    "state": "5388927107315283144",
+    "network": "5321141214735508486",
+    "signal": "6147892053796725336",
+    "sim": "5800717980266403037",
+    "chart": "6093382540784046658",
+    "help": "5244933196230972438",
+    "about": "5285515895534278367",
+    "stats": "6093382540784046658",
+    "admin": "6267128480601741166",
+    "rocket": "5195033767969839232",
+    "search": "5231012545799666522",
+    "fire": "6264785189394717307",
+    "magnify": "5258024981144066782"
+}
+
+# For button icons (INTEGERS)
 BUTTON_EMOJI_IDS = {
     "phone": 5947494995798789024,
     "bank": 5264895611517300926,
@@ -100,57 +145,51 @@ BUTTON_EMOJI_IDS = {
     "rocket": 5195033767969839232,
     "sparkle": 5467683093693354332,
     "magnify": 5258024981144066782,
-    "fire": 6264785189394717307,
-    "earn": 6267068789146260253,
-    "redeem": 5285515895534278367
+    "fire": 6264785189394717307
 }
 
-# --- PREMIUM EMOJIS FOR TEXT MESSAGES ---
+# --- PREMIUM EMOJIS FOR TEXT (ONLY 1 PER TEXT) ---
 def get_pe(eid, fallback):
     return f'<tg-emoji emoji-id="{eid}">{fallback}</tg-emoji>'
 
-EMOJI_WARN = get_pe("6267039884016358504", "⚠️")
-EMOJI_CHECK = get_pe("6267008582294705964", "✅")
-EMOJI_CROSS = get_pe("6267000941547885720", "❌")
-EMOJI_LOCK = get_pe("5316522278056399236", "🔒")
-EMOJI_CROWN = get_pe("6267128480601741166", "👑")
-EMOJI_DIAMOND = get_pe("6264791387032523779", "💎")
-EMOJI_STAR = get_pe("6266969287638913443", "⭐")
-EMOJI_GIFT = get_pe("5203996991054432397", "🎁")
-EMOJI_FIRE = get_pe("6264785189394717307", "🔥")
-EMOJI_SEARCH = get_pe("5231012545799666522", "🔍")
-EMOJI_PHONE = get_pe("5947494995798789024", "📞")
-EMOJI_BANK = get_pe("5264895611517300926", "🏦")
-EMOJI_LINK = get_pe("5271604874419647061", "🔗")
-EMOJI_CAR = get_pe("5253752975997803460", "🚘")
-EMOJI_CARD = get_pe("5260561650213220533", "🪪")
-EMOJI_USER = get_pe("5249053508681883137", "👤")
-EMOJI_INDIA = get_pe("6284779941489812433", "🇮🇳")
-EMOJI_PAK = get_pe("5913705895375672082", "🇵🇰")
-EMOJI_PHONE2 = get_pe("5406809207947142040", "📲")
-EMOJI_INVITE = get_pe("5244933196230972438", "👥")
-EMOJI_TICKET = get_pe("5285515895534278367", "🎫")
-EMOJI_CREDIT = get_pe("6267068789146260253", "💰")
-EMOJI_REFRESH = get_pe("5375338737028841420", "🔄")
-EMOJI_CLOCK = get_pe("5382194935057372936", "⏱")
-EMOJI_BOLT = get_pe("6284971355297290197", "⚡")
-EMOJI_GREEN = get_pe("5386367538735104399", "🟩")
-EMOJI_SPARKLE = get_pe("5467683093693354332", "✨")
-EMOJI_ROCKET = get_pe("5195033767969839232", "🚀")
-EMOJI_TOOLS = get_pe("5462921117423384478", "🛠️")
-EMOJI_DISABLED = get_pe("5373165973203348165", "📴")
-EMOJI_FATHER = get_pe("5249053508681883137", "👨")
-EMOJI_LOCATION = get_pe("5391032818111363540", "📍")
-EMOJI_HOME = get_pe("5280955052582785391", "🏠")
-EMOJI_STATE = get_pe("5388927107315283144", "🏛")
-EMOJI_NETWORK = get_pe("5321141214735508486", "📡")
-EMOJI_SIGNAL = get_pe("6147892053796725336", "📶")
-EMOJI_SIM = get_pe("5800717980266403037", "💳")
-EMOJI_CHART = get_pe("6093382540784046658", "📊")
-EMOJI_HELP = get_pe("5244933196230972438", "❓")
-EMOJI_ABOUT = get_pe("5285515895534278367", "ℹ️")
-EMOJI_STATS = get_pe("6093382540784046658", "📊")
-EMOJI_MAGNIFY = get_pe("5258024981144066782", "🔎")
+EMOJI_WARN = get_pe(EMOJI_IDS["warn"], "⚠️")
+EMOJI_CHECK = get_pe(EMOJI_IDS["check"], "✅")
+EMOJI_CROSS = get_pe(EMOJI_IDS["cross"], "❌")
+EMOJI_LOCK = get_pe(EMOJI_IDS["lock"], "🔒")
+EMOJI_CROWN = get_pe(EMOJI_IDS["crown"], "👑")
+EMOJI_DIAMOND = get_pe(EMOJI_IDS["diamond"], "💎")
+EMOJI_STAR = get_pe(EMOJI_IDS["star"], "⭐")
+EMOJI_GIFT = get_pe(EMOJI_IDS["gift"], "🎁")
+EMOJI_PHONE = get_pe(EMOJI_IDS["phone"], "📞")
+EMOJI_BANK = get_pe(EMOJI_IDS["bank"], "🏦")
+EMOJI_LINK = get_pe(EMOJI_IDS["link"], "🔗")
+EMOJI_CAR = get_pe(EMOJI_IDS["car"], "🚘")
+EMOJI_CARD = get_pe(EMOJI_IDS["card"], "🪪")
+EMOJI_USER = get_pe(EMOJI_IDS["user"], "👤")
+EMOJI_INDIA = get_pe(EMOJI_IDS["india"], "🇮🇳")
+EMOJI_PAK = get_pe(EMOJI_IDS["pak"], "🇵🇰")
+EMOJI_PHONE2 = get_pe(EMOJI_IDS["phone2"], "📲")
+EMOJI_INVITE = get_pe(EMOJI_IDS["invite"], "👥")
+EMOJI_TICKET = get_pe(EMOJI_IDS["ticket"], "🎫")
+EMOJI_CREDIT = get_pe(EMOJI_IDS["credit"], "💰")
+EMOJI_REFRESH = get_pe(EMOJI_IDS["refresh"], "🔄")
+EMOJI_CLOCK = get_pe(EMOJI_IDS["clock"], "⏱")
+EMOJI_BOLT = get_pe(EMOJI_IDS["bolt"], "⚡")
+EMOJI_GREEN = get_pe(EMOJI_IDS["green"], "🟩")
+EMOJI_SPARKLE = get_pe(EMOJI_IDS["sparkle"], "✨")
+EMOJI_TOOLS = get_pe(EMOJI_IDS["tools"], "🛠️")
+EMOJI_DISABLED = get_pe(EMOJI_IDS["disabled"], "📴")
+EMOJI_LOCATION = get_pe(EMOJI_IDS["location"], "📍")
+EMOJI_NETWORK = get_pe(EMOJI_IDS["network"], "📡")
+EMOJI_SIGNAL = get_pe(EMOJI_IDS["signal"], "📶")
+EMOJI_SIM = get_pe(EMOJI_IDS["sim"], "💳")
+EMOJI_CHART = get_pe(EMOJI_IDS["chart"], "📊")
+EMOJI_HELP = get_pe(EMOJI_IDS["help"], "❓")
+EMOJI_ABOUT = get_pe(EMOJI_IDS["about"], "ℹ️")
+EMOJI_STATS = get_pe(EMOJI_IDS["stats"], "📊")
+EMOJI_SEARCH = get_pe(EMOJI_IDS["search"], "🔍")
+EMOJI_FIRE = get_pe(EMOJI_IDS["fire"], "🔥")
+EMOJI_MAGNIFY = get_pe(EMOJI_IDS["magnify"], "🔎")
 
 DISCLAIMER = f"\n\n{EMOJI_WARN} ᴅɪꜱᴄʟᴀɪᴍᴇʀ:\nᴇᴅᴜᴄᴀᴛɪᴏɴᴀʟ ᴘᴜʀᴘᴏꜱᴇꜱ ᴏɴʟʏ. ᴜꜱᴇ ʀᴇꜱᴘᴏɴꜱɪʙʟʏ."
 
@@ -163,6 +202,7 @@ app = Client(
 )
 
 ADMIN_STATE = {}
+USER_PAGE = {}  # Track current page per user
 
 # --- 💾 DATA FUNCTIONS ---
 
@@ -265,10 +305,9 @@ def check_feature_maintenance(feature_key):
     return False, ""
 
 # ============================================================
-# CREATE COLORED INLINE BUTTONS WITH PREMIUM EMOJIS
+# CREATE COLORED INLINE BUTTONS
 # ============================================================
 
-# Button color styles
 BUTTON_STYLES = {
     "primary": ButtonStyle.PRIMARY,
     "success": ButtonStyle.SUCCESS,
@@ -276,13 +315,9 @@ BUTTON_STYLES = {
 }
 
 def create_colored_button(text: str, callback_data: str = None, url: str = None, color: str = "primary", icon_emoji_id: int = None):
-    """Create a colored inline button with premium emoji icon"""
     style = BUTTON_STYLES.get(color, ButtonStyle.PRIMARY)
-    
-    # If no icon provided, use a default
     if not icon_emoji_id:
         icon_emoji_id = BUTTON_EMOJI_IDS["star"]
-    
     try:
         return InlineKeyboardButton(
             text=text,
@@ -307,7 +342,6 @@ def create_colored_button(text: str, callback_data: str = None, url: str = None,
             )
 
 def create_styled_row(buttons_config: list) -> list:
-    """Create a row of colored inline buttons with premium emojis"""
     row = []
     for cfg in buttons_config:
         text = cfg.get("text", "")
@@ -315,13 +349,12 @@ def create_styled_row(buttons_config: list) -> list:
         url = cfg.get("url")
         color = cfg.get("color", "primary")
         icon_emoji_id = cfg.get("icon_emoji_id")
-        
         btn = create_colored_button(text, callback_data, url, color, icon_emoji_id)
         row.append(btn)
     return row
 
 # ============================================================
-# MAIN MENU WITH PREMIUM EMOJI ICONS ONLY
+# MAIN MENU WITH PAGINATION (8 BUTTONS PER PAGE)
 # ============================================================
 
 async def show_verification_page(message: Message):
@@ -342,7 +375,6 @@ async def show_verification_page(message: Message):
             f"{EMOJI_CROWN} ᴏᴡɴᴇʀ: @Hexh4ckerOFC\n"
             f"{EMOJI_WARN} ᴍɪꜱᴜꜱᴇ ᴍᴀʏ ʟᴇᴀᴅ ᴛᴏ ʟᴇɢᴀʟ ᴀᴄᴛɪᴏɴ"
         )
-        
         sent = await message.reply_text(caption, parse_mode=ParseMode.HTML)
         asyncio.create_task(schedule_delete(sent, 120))
     except: pass
@@ -367,91 +399,77 @@ async def show_verification_page(message: Message):
     )
     asyncio.create_task(schedule_delete(sent2, 120))
 
-async def main_menu(message: Message):
-    """Main menu with premium emoji icons only (no normal emojis in text)"""
+async def main_menu(message: Message, page: int = 0):
+    """Main menu with 8 buttons per page, 2-color combination"""
     is_admin = message.from_user.id == ADMIN_ID
     user = get_user(message.from_user.id)
     s = get_settings()
     cr = user.get("credits", 0)
     
-    kb = []
+    # All buttons configuration - 2 color combination (Primary + Success alternating)
+    all_buttons = []
     
-    # Row 1: TG ID & IFSC
-    row1 = []
+    # Page 1 - 8 buttons (Primary + Success alternating)
     if s.get("tgid_enabled", True):
-        row1.append({"text": "ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ", "callback_data": "menu_tgid", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["phone"]})
+        all_buttons.append({"text": "ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ", "callback_data": "menu_tgid", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["phone"]})
     if s.get("ifsc_enabled", True):
-        row1.append({"text": "ɪꜰꜱᴄ ɪɴꜰᴏ", "callback_data": "menu_ifsc", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bank"]})
-    if row1:
-        kb.append(create_styled_row(row1))
-    
-    # Row 2: Link Bypass
+        all_buttons.append({"text": "ɪꜰꜱᴄ ɪɴꜰᴏ", "callback_data": "menu_ifsc", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["bank"]})
     if s.get("bypass_enabled", True):
-        kb.append(create_styled_row([
-            {"text": "ʟɪɴᴋ ʙʏᴘᴀꜱꜱ", "callback_data": "menu_bypass", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]}
-        ]))
-    
-    # Row 3: Aadhaar & India Number
-    row2 = []
+        all_buttons.append({"text": "ʟɪɴᴋ ʙʏᴘᴀꜱꜱ", "callback_data": "menu_bypass", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["link"]})
     if s.get("aadhaar_enabled", True):
-        row2.append({"text": "ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ", "callback_data": "menu_aadhaar", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
+        all_buttons.append({"text": "ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ", "callback_data": "menu_aadhaar", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
     if s.get("mobile_enabled", True):
-        row2.append({"text": "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_mobile", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]})
-    if row2:
-        kb.append(create_styled_row(row2))
-    
-    # Row 4: RC & GST
-    row3 = []
+        all_buttons.append({"text": "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_mobile", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]})
     if s.get("rc_enabled", True):
-        row3.append({"text": "ʀᴄ ᴅᴇᴛᴀɪʟꜱ", "callback_data": "menu_rc", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["car"]})
+        all_buttons.append({"text": "ʀᴄ ᴅᴇᴛᴀɪʟꜱ", "callback_data": "menu_rc", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["car"]})
     if s.get("gst_enabled", True):
-        row3.append({"text": "ɢꜱᴛ ʟᴏᴏᴋᴜᴘ", "callback_data": "menu_gst", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
-    if row3:
-        kb.append(create_styled_row(row3))
-    
-    # Row 5: Pakistan & India Num 2
-    row4 = []
+        all_buttons.append({"text": "ɢꜱᴛ ʟᴏᴏᴋᴜᴘ", "callback_data": "menu_gst", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["card"]})
     if s.get("pak_enabled", True):
-        row4.append({"text": "ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_pak", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["pak"]})
+        all_buttons.append({"text": "ᴘᴀᴋ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "callback_data": "menu_pak", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["pak"]})
+    
+    # Page 2 - Remaining buttons
     if s.get("indnum_enabled", True):
-        row4.append({"text": "ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸", "callback_data": "menu_indnum", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["phone2"]})
-    if row4:
-        kb.append(create_styled_row(row4))
-    
-    # Row 6: India Number 3
+        all_buttons.append({"text": "ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸", "callback_data": "menu_indnum", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["phone2"]})
     if s.get("indnum3_enabled", True):
-        kb.append(create_styled_row([
-            {"text": "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹", "callback_data": "menu_indnum3", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]}
-        ]))
+        all_buttons.append({"text": "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹", "callback_data": "menu_indnum3", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["india"]})
+    all_buttons.append({"text": "ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "callback_data": "menu_invite", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["invite"]})
+    all_buttons.append({"text": "ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", "callback_data": "menu_redeem", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]})
+    all_buttons.append({"text": "ʜᴇʟᴘ", "callback_data": "menu_help", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["help"]})
     
-    # Row 7: Invite & Redeem
-    kb.append(create_styled_row([
-        {"text": "ɪɴᴠɪᴛᴇ & ᴇᴀʀɴ", "callback_data": "menu_invite", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["invite"]},
-        {"text": "ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", "callback_data": "menu_redeem", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
-    ]))
-    
-    # Row 8: Help & About
-    kb.append(create_styled_row([
-        {"text": "ʜᴇʟᴘ", "callback_data": "menu_help", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["help"]},
-        {"text": "ᴀʙᴏᴜᴛ", "callback_data": "menu_about", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["about"]}
-    ]))
-    
-    # Row 9: Stats
-    kb.append(create_styled_row([
-        {"text": "ꜱᴛᴀᴛꜱ", "callback_data": "menu_stats", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["stats"]}
-    ]))
-    
-    # Admin buttons
+    # Admin button
     if is_admin:
-        kb.append(create_styled_row([
-            {"text": "ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "callback_data": "menu_admin", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["admin"]}
-        ]))
+        all_buttons.append({"text": "ᴀᴅᴍɪɴ ᴘᴀɴᴇʟ", "callback_data": "menu_admin", "color": "danger", "icon_emoji_id": BUTTON_EMOJI_IDS["admin"]})
+    
+    # Calculate pagination
+    items_per_page = 8
+    total_pages = (len(all_buttons) + items_per_page - 1) // items_per_page
+    start_idx = page * items_per_page
+    end_idx = min(start_idx + items_per_page, len(all_buttons))
+    page_buttons = all_buttons[start_idx:end_idx]
+    
+    # Build keyboard - 2 buttons per row (2-color combination)
+    kb = []
+    for i in range(0, len(page_buttons), 2):
+        row_config = page_buttons[i:i+2]
+        kb.append(create_styled_row(row_config))
+    
+    # Navigation row
+    nav_row = []
+    if page > 0:
+        nav_row.append({"text": "◀️ ʙᴀᴄᴋ", "callback_data": f"page_{page-1}", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["sparkle"]})
+    if page < total_pages - 1:
+        nav_row.append({"text": "ɴᴇxᴛ ▶️", "callback_data": f"page_{page+1}", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["sparkle"]})
+    if nav_row:
+        kb.append(create_styled_row(nav_row))
     
     flat_kb = []
     for row in kb:
         flat_kb.append(row)
     
     markup = InlineKeyboardMarkup(flat_kb)
+    
+    # Page indicator
+    page_info = f"ᴘᴀɢᴇ {page+1}/{total_pages}" if total_pages > 1 else ""
     
     txt = (
         f"{EMOJI_DIAMOND} ᴘʀᴇᴍɪᴜᴍ ʜᴜʙ {EMOJI_DIAMOND}\n"
@@ -464,11 +482,28 @@ async def main_menu(message: Message):
         f"{EMOJI_REFRESH} +{DAILY_FREE_CREDITS} ᴅᴀɪʟʏ ꜰʀᴇᴇ\n"
         f"{EMOJI_INVITE} +{INVITE_CREDITS} ᴘᴇʀ ɪɴᴠɪᴛᴇ\n"
         f"{EMOJI_CLOCK} {AUTO_DELETE_TIME}ꜱ ᴀᴜᴛᴏ ᴅᴇʟᴇᴛᴇ\n\n"
-        f"{EMOJI_STAR} ꜱᴇʟᴇᴄᴛ ᴀ ꜱᴇʀᴠɪᴄᴇ ʙᴇʟᴏᴡ {EMOJI_STAR}"
+        f"{EMOJI_STAR} ꜱᴇʟᴇᴄᴛ ᴀ ꜱᴇʀᴠɪᴄᴇ ʙᴇʟᴏᴡ {EMOJI_STAR}\n"
+        f"{page_info}"
     )
     
     sent = await message.reply_text(txt, reply_markup=markup, parse_mode=ParseMode.HTML)
     asyncio.create_task(schedule_delete(sent, AUTO_DELETE_TIME))
+
+async def show_info_quote(message: Message, title: str, content: str):
+    """Show info in Telegram Quote UI style"""
+    text = f"""
+<blockquote expandable>
+<b>{EMOJI_STAR} {title}</b>
+
+{content}
+</blockquote>
+
+<blockquote>
+<i>{EMOJI_WARN} ᴛʏᴘᴇ ʏᴏᴜʀ ɪɴᴘᴜᴛ ᴛᴏ ᴄᴏɴᴛɪɴᴜᴇ</i>
+</blockquote>
+"""
+    sent = await message.reply_text(text, parse_mode=ParseMode.HTML)
+    asyncio.create_task(schedule_delete(sent, 60))
 
 # --- 🔗 API FUNCTIONS ---
 
@@ -492,10 +527,10 @@ async def chatid_lookup(session, query):
     if isinstance(data, dict) and not data.get("raw_text") and data.get("success"):
         d = data.get("data", data)
         if isinstance(d, dict):
-            result = f"{EMOJI_SPARKLE} {EMOJI_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ɪɴꜰᴏ {EMOJI_SPARKLE}\n"
+            result = f"{EMOJI_SPARKLE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ɪɴꜰᴏ {EMOJI_SPARKLE}\n"
             if d.get('chat_id') or d.get('userid'): result += f"{EMOJI_SEARCH} ᴄʜᴀᴛ ɪᴅ: <code>{d.get('chat_id', d.get('userid', query))}</code>\n"
-            if d.get('number'): result += f"{EMOJI_PHONE2} ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ: <code>{d['number']}</code>\n"
-            if d.get('name'): result += f"{EMOJI_USER} ᴘʀᴏꜰɪʟᴇ ɴᴀᴍᴇ: <code>{d['name']}</code>\n"
+            if d.get('number'): result += f"{EMOJI_PHONE2} ᴘʜᴏɴᴇ: <code>{d['number']}</code>\n"
+            if d.get('name'): result += f"{EMOJI_USER} ɴᴀᴍᴇ: <code>{d['name']}</code>\n"
             return result
     return f"{EMOJI_CROSS} ɴᴏᴛ ꜰᴏᴜɴᴅ"
 
@@ -503,10 +538,10 @@ async def ifsc_lookup(session, code):
     data = await safe_api_fetch(session, f"{IFSC_API}{code.upper()}")
     if not data or isinstance(data, dict) and data.get("raw_text"): return f"{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ"
     if isinstance(data, dict):
-        return (f"{EMOJI_SPARKLE} {EMOJI_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴅᴇᴛᴀɪʟꜱ {EMOJI_SPARKLE}\n"
-                f"{EMOJI_BANK} ʙᴀɴᴋ ɴᴀᴍᴇ: <code>{data.get('BANK','N/A')}</code>\n"
+        return (f"{EMOJI_SPARKLE} ʙᴀɴᴋ ɪꜰꜱᴄ ᴅᴇᴛᴀɪʟꜱ {EMOJI_SPARKLE}\n"
+                f"{EMOJI_BANK} ʙᴀɴᴋ: <code>{data.get('BANK','N/A')}</code>\n"
                 f"{EMOJI_LOCATION} ʙʀᴀɴᴄʜ: <code>{data.get('BRANCH','N/A')}</code>\n"
-                f"{EMOJI_CARD} ɪꜰꜱᴄ ᴄᴏᴅᴇ: <code>{data.get('IFSC',code.upper())}</code>\n"
+                f"{EMOJI_CARD} ɪꜰꜱᴄ: <code>{data.get('IFSC',code.upper())}</code>\n"
                 f"{EMOJI_LOCATION} ᴀᴅᴅʀᴇꜱꜱ: <code>{data.get('ADDRESS','N/A')}</code>")
     return f"{EMOJI_CROSS} ɪɴᴠᴀʟɪᴅ ᴄᴏᴅᴇ"
 
@@ -517,7 +552,7 @@ async def bypass_lookup(session, link):
     if not data or isinstance(data, dict) and data.get("raw_text"): return f"{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ"
     if isinstance(data, dict):
         r = data.get('bypassed_url') or data.get('url') or str(data)
-        return f"{EMOJI_SPARKLE} {EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱᴇᴅ {EMOJI_SPARKLE}\n{EMOJI_LINK} ᴏʀɪɢɪɴᴀʟ ᴜʀʟ: <code>{str(r)}</code>"
+        return f"{EMOJI_SPARKLE} ʟɪɴᴋ ʙʏᴘᴀꜱꜱᴇᴅ {EMOJI_SPARKLE}\n{EMOJI_LINK} ᴜʀʟ: <code>{str(r)}</code>"
     return f"{EMOJI_LINK} ʀᴇꜱᴜʟᴛ: <code>{str(data)}</code>"
 
 async def gst_lookup(session, gst_number):
@@ -525,9 +560,9 @@ async def gst_lookup(session, gst_number):
     if not data or isinstance(data, dict) and data.get("raw_text"): return f"{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ"
     if isinstance(data, dict) and data.get("status") == "success" and data.get("data"):
         d = data["data"]
-        result = f"{EMOJI_SPARKLE} {EMOJI_CARD} ɢꜱᴛ ʙᴜꜱɪɴᴇꜱꜱ ɪɴꜰᴏ {EMOJI_SPARKLE}\n"
-        if d.get('TradeName'): result += f"{EMOJI_BANK} ʙᴜꜱɪɴᴇꜱꜱ ɴᴀᴍᴇ: <code>{d['TradeName']}</code>\n"
-        if d.get('Gstin'): result += f"{EMOJI_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ: <code>{d['Gstin']}</code>\n"
+        result = f"{EMOJI_SPARKLE} ɢꜱᴛ ʙᴜꜱɪɴᴇꜱꜱ ɪɴꜰᴏ {EMOJI_SPARKLE}\n"
+        if d.get('TradeName'): result += f"{EMOJI_BANK} ɴᴀᴍᴇ: <code>{d['TradeName']}</code>\n"
+        if d.get('Gstin'): result += f"{EMOJI_CARD} ɢꜱᴛ: <code>{d['Gstin']}</code>\n"
         return result
     return f"{EMOJI_CROSS} ɪɴᴠᴀʟɪᴅ ɢꜱᴛ"
 
@@ -538,9 +573,9 @@ async def pakistan_lookup(session, number):
         if isinstance(data, dict) and data.get("success") and data.get("data"):
             valid = [r for r in data["data"] if isinstance(r, dict) and any(r.get(k) for k in ['name','number','cnic','address'])]
             if not valid: return f"{EMOJI_CROSS} ɴᴏ ᴅᴀᴛᴀ"
-            result = f"{EMOJI_SPARKLE} {EMOJI_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ {EMOJI_SPARKLE}\n"
+            result = f"{EMOJI_SPARKLE} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ {EMOJI_SPARKLE}\n"
             for i, r in enumerate(valid[:3], 1):
-                if len(valid) > 1: result += f"\n━━ {EMOJI_USER} ʀᴇᴄᴏʀᴅ {i} ━━\n"
+                if len(valid) > 1: result += f"\n━━ ʀᴇᴄᴏʀᴅ {i} ━━\n"
                 if r.get('number'): result += f"{EMOJI_PHONE2} ᴘʜᴏɴᴇ: <code>{r['number']}</code>\n"
                 if r.get('name'): result += f"{EMOJI_USER} ɴᴀᴍᴇ: <code>{r['name']}</code>\n"
                 if r.get('cnic'): result += f"{EMOJI_CARD} ᴄɴɪᴄ: <code>{r['cnic']}</code>\n"
@@ -557,7 +592,7 @@ async def indnum_lookup(session, number):
     if not data or isinstance(data, dict) and data.get("raw_text"): return f"{EMOJI_CROSS} ꜱᴇʀᴠɪᴄᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ"
     results = data.get("results", {})
     if not results: return f"{EMOJI_CROSS} ɴᴏ ʀᴇꜱᴜʟᴛꜱ"
-    result = f"{EMOJI_SPARKLE} {EMOJI_PHONE2} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴀᴅᴠᴀɴᴄᴇᴅ {EMOJI_SPARKLE}\n{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code>\n"
+    result = f"{EMOJI_SPARKLE} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ {EMOJI_SPARKLE}\n{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code>\n"
     found = False
     s3 = results.get("source_3", {}).get("data", {})
     if isinstance(s3, dict):
@@ -577,7 +612,7 @@ async def indnum3_lookup(session, number):
             try:
                 data = json.loads(text)
                 if isinstance(data, dict):
-                    result = f"{EMOJI_SPARKLE} {EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ {EMOJI_SPARKLE}\n{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code>\n"
+                    result = f"{EMOJI_SPARKLE} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ {EMOJI_SPARKLE}\n{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code>\n"
                     for k, v in data.items():
                         if v and str(v).strip():
                             result += f"{EMOJI_SEARCH} {k}: <code>{str(v)[:200]}</code>\n"
@@ -585,7 +620,7 @@ async def indnum3_lookup(session, number):
             except: pass
             clean = re.sub(r'<[^>]+>', '\n', text)
             lines = [l.strip() for l in clean.split('\n') if l.strip() and len(l.strip()) > 1]
-            result = f"{EMOJI_SPARKLE} {EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ {EMOJI_SPARKLE}\n{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code>\n"
+            result = f"{EMOJI_SPARKLE} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ {EMOJI_SPARKLE}\n{EMOJI_PHONE2} ɴᴜᴍʙᴇʀ: <code>{number}</code>\n"
             found = 0
             for line in lines[:20]:
                 if ':' in line:
@@ -622,7 +657,7 @@ def parse_all_india_records(raw):
         section = section.strip()
         if len(section) < 10: continue
         record = {}
-        for field, label in {'Name':f'{EMOJI_USER} ɴᴀᴍᴇ',"Father's Name":f'{EMOJI_FATHER} ꜰᴀᴛʜᴇʀ','Mobile':f'{EMOJI_PHONE2} ᴍᴏʙɪʟᴇ','Address':f'{EMOJI_LOCATION} ᴀᴅᴅʀᴇꜱꜱ','Circle':f'{EMOJI_NETWORK} ᴄɪʀᴄʟᴇ','State':f'{EMOJI_STATE} ꜱᴛᴀᴛᴇ'}.items():
+        for field, label in {'Name':f'{EMOJI_USER} ɴᴀᴍᴇ',"Father's Name":f'{EMOJI_USER} ꜰᴀᴛʜᴇʀ','Mobile':f'{EMOJI_PHONE2} ᴍᴏʙɪʟᴇ','Address':f'{EMOJI_LOCATION} ᴀᴅᴅʀᴇꜱꜱ','Circle':f'{EMOJI_NETWORK} ᴄɪʀᴄʟᴇ','State':f'{EMOJI_STATE} ꜱᴛᴀᴛᴇ'}.items():
             match = re.search(rf'{re.escape(field)}:\s*([^\n]+)', section, re.IGNORECASE)
             if match and match.group(1).strip() not in ['None','','N/A','null']: record[label] = match.group(1).strip()
         if record:
@@ -639,13 +674,13 @@ def parse_all_india_records(raw):
 def format_records_result(records, search_type):
     if not records: return f"{EMOJI_CROSS} ɴᴏ ʀᴇᴄᴏʀᴅꜱ ꜰᴏᴜɴᴅ"
     title = {'aadhaar':f'{EMOJI_CARD} ᴀᴀᴅʜᴀʀ','mobile':f'{EMOJI_INDIA} ɪɴᴅ ɴᴜᴍʙᴇʀ','vehicle':f'{EMOJI_CAR} ᴠᴇʜɪᴄʟᴇ'}.get(search_type, f'{EMOJI_CHART} ʀᴇꜱᴜʟᴛ')
-    result = f"{EMOJI_SPARKLE} {title} {EMOJI_SPARKLE}\n{EMOJI_CHART} ᴛᴏᴛᴀʟ ʀᴇᴄᴏʀᴅꜱ: {len(records)}\n"
+    result = f"{EMOJI_SPARKLE} {title} {EMOJI_SPARKLE}\n{EMOJI_CHART} ᴛᴏᴛᴀʟ: {len(records)}\n"
     for i, record in enumerate(records, 1):
-        if len(records) > 1: result += f"\n━━ {EMOJI_USER} ʀᴇᴄᴏʀᴅ {i} ━━\n"
+        if len(records) > 1: result += f"\n━━ ʀᴇᴄᴏʀᴅ {i} ━━\n"
         for key, value in record.items(): result += f"{key}: <code>{value}</code>\n"
     return result
 
-# --- 👑 ADMIN ---
+# --- 👑 ADMIN PANEL (FIXED) ---
 
 async def admin_panel(message: Message):
     if message.from_user.id != ADMIN_ID: return
@@ -654,58 +689,61 @@ async def admin_panel(message: Message):
     
     kb = [
         create_styled_row([
-            {"text": "ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "ad_gen", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]},
-            {"text": "ᴄᴏᴅᴇꜱ", "callback_data": "ad_codes", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
+            {"text": "ɢᴇɴ ᴄᴏᴅᴇ", "callback_data": "admin_gen", "color": "success", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]},
+            {"text": "ᴄᴏᴅᴇꜱ", "callback_data": "admin_codes", "color": "info", "icon_emoji_id": BUTTON_EMOJI_IDS["ticket"]}
         ]),
         create_styled_row([
-            {"text": "ᴀᴅᴅ ᴄʀ", "callback_data": "ad_credit", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["gift"]},
-            {"text": "ʙᴄᴀꜱᴛ", "callback_data": "ad_bcast", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bolt"]}
+            {"text": "ᴀᴅᴅ ᴄʀ", "callback_data": "admin_credit", "color": "warning", "icon_emoji_id": BUTTON_EMOJI_IDS["gift"]},
+            {"text": "ʙᴄᴀꜱᴛ", "callback_data": "admin_bcast", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["bolt"]}
         ]),
         create_styled_row([
-            {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "ad_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
+            {"text": f"{'🔴' if s.get('maintenance_mode') else '🟢'} ɢʟᴏʙᴀʟ", "callback_data": "admin_maint", "color": "danger" if s.get('maintenance_mode') else "success"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ", "callback_data": "ad_tgid", "color": "success" if s.get('tgid_enabled',True) else "danger"},
-            {"text": f"{ms('tgid')} ᴍ", "callback_data": "ad_maint_tgid", "color": "info"}
+            {"text": f"{'🟢' if s.get('tgid_enabled',True) else '🔴'} ᴛɢ", "callback_data": "admin_tgid", "color": "success" if s.get('tgid_enabled',True) else "danger"},
+            {"text": f"{ms('tgid')} ᴍ", "callback_data": "admin_maint_tgid", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰ", "callback_data": "ad_ifsc", "color": "success" if s.get('ifsc_enabled',True) else "danger"},
-            {"text": f"{ms('ifsc')} ᴍ", "callback_data": "ad_maint_ifsc", "color": "info"}
+            {"text": f"{'🟢' if s.get('ifsc_enabled',True) else '🔴'} ɪꜰ", "callback_data": "admin_ifsc", "color": "success" if s.get('ifsc_enabled',True) else "danger"},
+            {"text": f"{ms('ifsc')} ᴍ", "callback_data": "admin_maint_ifsc", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏ", "callback_data": "ad_bypass_toggle", "color": "success" if s.get('bypass_enabled',True) else "danger"},
-            {"text": f"{ms('bypass')} ᴍ", "callback_data": "ad_maint_bypass", "color": "info"}
+            {"text": f"{'🟢' if s.get('bypass_enabled',True) else '🔴'} ʙʏ", "callback_data": "admin_bypass", "color": "success" if s.get('bypass_enabled',True) else "danger"},
+            {"text": f"{ms('bypass')} ᴍ", "callback_data": "admin_maint_bypass", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏ", "callback_data": "ad_mobile", "color": "success" if s.get('mobile_enabled',True) else "danger"},
-            {"text": f"{ms('mobile')} ᴍ", "callback_data": "ad_maint_mobile", "color": "info"}
+            {"text": f"{'🟢' if s.get('mobile_enabled',True) else '🔴'} ᴍᴏ", "callback_data": "admin_mobile", "color": "success" if s.get('mobile_enabled',True) else "danger"},
+            {"text": f"{ms('mobile')} ᴍ", "callback_data": "admin_maint_mobile", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀ", "callback_data": "ad_aadhaar", "color": "success" if s.get('aadhaar_enabled',True) else "danger"},
-            {"text": f"{ms('aadhaar')} ᴍ", "callback_data": "ad_maint_aadhaar", "color": "info"}
+            {"text": f"{'🟢' if s.get('aadhaar_enabled',True) else '🔴'} ᴀᴀ", "callback_data": "admin_aadhaar", "color": "success" if s.get('aadhaar_enabled',True) else "danger"},
+            {"text": f"{ms('aadhaar')} ᴍ", "callback_data": "admin_maint_aadhaar", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", "callback_data": "ad_rc", "color": "success" if s.get('rc_enabled',True) else "danger"},
-            {"text": f"{ms('rc')} ᴍ", "callback_data": "ad_maint_rc", "color": "info"}
+            {"text": f"{'🟢' if s.get('rc_enabled',True) else '🔴'} ʀᴄ", "callback_data": "admin_rc", "color": "success" if s.get('rc_enabled',True) else "danger"},
+            {"text": f"{ms('rc')} ᴍ", "callback_data": "admin_maint_rc", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱ", "callback_data": "ad_gst", "color": "success" if s.get('gst_enabled',True) else "danger"},
-            {"text": f"{ms('gst')} ᴍ", "callback_data": "ad_maint_gst", "color": "info"}
+            {"text": f"{'🟢' if s.get('gst_enabled',True) else '🔴'} ɢꜱ", "callback_data": "admin_gst", "color": "success" if s.get('gst_enabled',True) else "danger"},
+            {"text": f"{ms('gst')} ᴍ", "callback_data": "admin_maint_gst", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", "callback_data": "ad_pak", "color": "success" if s.get('pak_enabled',True) else "danger"},
-            {"text": f"{ms('pak')} ᴍ", "callback_data": "ad_maint_pak", "color": "info"}
+            {"text": f"{'🟢' if s.get('pak_enabled',True) else '🔴'} ᴘᴀ", "callback_data": "admin_pak", "color": "success" if s.get('pak_enabled',True) else "danger"},
+            {"text": f"{ms('pak')} ᴍ", "callback_data": "admin_maint_pak", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", "callback_data": "ad_indnum", "color": "success" if s.get('indnum_enabled',True) else "danger"},
-            {"text": f"{ms('indnum')} ᴍ", "callback_data": "ad_maint_indnum", "color": "info"}
+            {"text": f"{'🟢' if s.get('indnum_enabled',True) else '🔴'} ɪɴ2", "callback_data": "admin_indnum", "color": "success" if s.get('indnum_enabled',True) else "danger"},
+            {"text": f"{ms('indnum')} ᴍ", "callback_data": "admin_maint_indnum", "color": "info"}
         ]),
         create_styled_row([
-            {"text": f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", "callback_data": "ad_indnum3", "color": "success" if s.get('indnum3_enabled',True) else "danger"},
-            {"text": f"{ms('indnum3')} ᴍ", "callback_data": "ad_maint_indnum3", "color": "info"}
+            {"text": f"{'🟢' if s.get('indnum3_enabled',True) else '🔴'} ɪɴ3", "callback_data": "admin_indnum3", "color": "success" if s.get('indnum3_enabled',True) else "danger"},
+            {"text": f"{ms('indnum3')} ᴍ", "callback_data": "admin_maint_indnum3", "color": "info"}
         ]),
         create_styled_row([
-            {"text": "ᴄʟᴏꜱᴇ", "callback_data": "ad_close", "color": "danger"}
+            {"text": "❌ ᴄʟᴏꜱᴇ", "callback_data": "admin_close", "color": "danger"}
+        ]),
+        create_styled_row([
+            {"text": "🔙 ʙᴀᴄᴋ ᴛᴏ ᴍᴇɴᴜ", "callback_data": "admin_back", "color": "primary", "icon_emoji_id": BUTTON_EMOJI_IDS["sparkle"]}
         ])
     ]
     
@@ -720,12 +758,13 @@ async def admin_panel(message: Message):
     else:
         await message.reply_text(txt, reply_markup=InlineKeyboardMarkup(flat_kb), parse_mode=ParseMode.HTML)
 
-# --- 🚀 HELP, ABOUT, STATS ---
+# --- 🚀 HELP ---
 
 async def show_help_inline(callback_query: CallbackQuery):
     await callback_query.answer()
     text = f"""
-{EMOJI_HELP} 𝐇𝐄𝐋𝐏 & 𝐆𝐔𝐈𝐃𝐄 {EMOJI_HELP}
+<blockquote expandable>
+<b>{EMOJI_HELP} 𝐇𝐄𝐋𝐏 & 𝐆𝐔𝐈𝐃𝐄</b>
 
 {EMOJI_STAR} 𝐀𝐕𝐀𝐈𝐋𝐀𝐁𝐋𝐄 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒:
 
@@ -758,59 +797,7 @@ Get Pakistan number details
 {EMOJI_INVITE} 𝐈𝐍𝐕𝐈𝐓𝐄: +{INVITE_CREDITS} ᴄʀᴇᴅɪᴛꜱ ᴘᴇʀ ᴜꜱᴇʀ
 
 {EMOJI_CLOCK} 𝐀𝐔𝐓𝐎 𝐃𝐄𝐋𝐄𝐓𝐄: {AUTO_DELETE_TIME}ꜱ
-"""
-    await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
-    await asyncio.sleep(60)
-    try: await callback_query.message.delete()
-    except: pass
-
-async def show_about_inline(callback_query: CallbackQuery):
-    await callback_query.answer()
-    text = f"""
-{EMOJI_ABOUT} 𝐀𝐁𝐎𝐔𝐓 𝐁𝐎𝐓 {EMOJI_ABOUT}
-
-𝐍𝐀𝐌𝐄: {BOT_NAME}
-𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄: @{BOT_USERNAME}
-𝐕𝐄𝐑𝐒𝐈𝐎𝐍: 3.0
-
-{EMOJI_DIAMOND} 𝐏𝐑𝐄𝐌𝐈𝐔𝐌 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒
-
-• Telegram ID Lookup
-• IFSC Bank Details
-• Link Bypass
-• Aadhaar Info
-• Mobile Number Tracking
-• RC Details
-• GST Lookup
-• Pakistan Number Info
-• Colored Inline Buttons 🎨
-
-{EMOJI_CROWN} 𝐃𝐄𝐕𝐄𝐋𝐎𝐏𝐄𝐃 𝐁𝐘: @Hexh4ckerOFC
-
-{EMOJI_WARN} 𝐅𝐎𝐑 𝐄𝐃𝐔𝐂𝐀𝐓𝐈𝐎𝐍𝐀𝐋 𝐏𝐔𝐑𝐏𝐎𝐒𝐄𝐒 𝐎𝐍𝐋𝐘
-"""
-    await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
-    await asyncio.sleep(60)
-    try: await callback_query.message.delete()
-    except: pass
-
-async def show_stats_inline(callback_query: CallbackQuery):
-    await callback_query.answer()
-    users = load_json(USERS_FILE)
-    total_users = len(users)
-    total_queries = sum(u.get('total_queries', 0) for u in users.values())
-    total_invites = sum(u.get('invites', 0) for u in users.values())
-    total_credits = sum(u.get('credits', 0) for u in users.values())
-    
-    text = f"""
-{EMOJI_STATS} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐈𝐒𝐓𝐈𝐂𝐒 {EMOJI_STATS}
-
-{EMOJI_USER} 𝐓𝐎𝐓𝐀𝐋 𝐔𝐒𝐄𝐑𝐒: {total_users}
-{EMOJI_SEARCH} 𝐓𝐎𝐓𝐀𝐋 𝐐𝐔𝐄𝐑𝐈𝐄𝐒: {total_queries}
-{EMOJI_INVITE} 𝐓𝐎𝐓𝐀𝐋 𝐈𝐍𝐕𝐈𝐓𝐄𝐒: {total_invites}
-{EMOJI_CREDIT} 𝐓𝐎𝐓𝐀𝐋 𝐂𝐑𝐄𝐃𝐈𝐓𝐒: {total_credits}
-
-{EMOJI_DIAMOND} 𝐁𝐎𝐓 𝐒𝐓𝐀𝐓𝐔𝐒: 🟢 Active
+</blockquote>
 """
     await callback_query.message.edit_text(text, parse_mode=ParseMode.HTML)
     await asyncio.sleep(60)
@@ -843,19 +830,19 @@ async def start_command(client, message: Message):
         if uid == ADMIN_ID:
             user["verified"] = True
             save_user(uid, user)
-            await main_menu(message)
+            await main_menu(message, 0)
             return
         
         if not user.get("verified"):
             if await check_channel(uid):
                 user["verified"] = True
                 save_user(uid, user)
-                await main_menu(message)
+                await main_menu(message, 0)
                 return
             await show_verification_page(message)
             return
         
-        await main_menu(message)
+        await main_menu(message, 0)
     except Exception as e:
         print(f"Start error: {e}")
 
@@ -866,77 +853,100 @@ async def callback_handler(client, callback_query: CallbackQuery):
     data = callback_query.data
     uid = callback_query.from_user.id
     s = get_settings()
+    user = get_user(uid)
     
+    # Page navigation
+    if data.startswith("page_"):
+        page = int(data.split("_")[1])
+        await main_menu(callback_query.message, page)
+        await callback_query.answer()
+        return
+    
+    # Verification
     if data == "verify":
         if uid == ADMIN_ID:
-            user = get_user(uid)
             user["verified"] = True
             save_user(uid, user)
             await callback_query.answer("✅ Verified as Admin!", show_alert=True)
             try: await callback_query.message.delete()
             except: pass
-            await main_menu(callback_query.message)
+            await main_menu(callback_query.message, 0)
             return
         
         if await check_channel(uid):
-            user = get_user(uid)
             user["verified"] = True
             save_user(uid, user)
             await callback_query.answer("✅ Verified!", show_alert=True)
             try: await callback_query.message.delete()
             except: pass
-            await main_menu(callback_query.message)
+            await main_menu(callback_query.message, 0)
         else:
             await callback_query.answer("❌ Please join the channel first!", show_alert=True)
         return
     
-    if data.startswith("ad_"):
+    # --- ADMIN CALLBACKS ---
+    if data.startswith("admin_"):
         if uid != ADMIN_ID:
             await callback_query.answer("❌ Unauthorized!", show_alert=True)
             return
         
-        if data == "ad_close":
+        if data == "admin_close":
             await callback_query.message.delete()
             await callback_query.answer()
             return
-        elif data == "ad_codes":
+        elif data == "admin_back":
+            await main_menu(callback_query.message, 0)
+            await callback_query.answer()
+            return
+        elif data == "admin_codes":
             codes = load_json(REDEEM_FILE)
             txt = f"{EMOJI_TICKET} ᴄᴏᴅᴇꜱ: {len(codes)}\n"
             for c, v in list(codes.items())[-15:]:
                 txt += f"{'✅' if not v.get('used') else '❌'} <code>{c}</code> | {v.get('credits')}cr\n"
-            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(txt, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="admin_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
-        elif data == "ad_gen":
+        elif data == "admin_gen":
             ADMIN_STATE[uid] = "gen"
-            await callback_query.message.edit_text(f"{EMOJI_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{EMOJI_TICKET} ᴇɴᴛᴇʀ ᴄʀᴇᴅɪᴛꜱ:\n<i>100</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="admin_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
-        elif data == "ad_credit":
+        elif data == "admin_credit":
             ADMIN_STATE[uid] = "credit"
-            await callback_query.message.edit_text(f"{EMOJI_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{EMOJI_GIFT} ᴇɴᴛᴇʀ ɪᴅ ᴀᴍᴏᴜɴᴛ:\n<i>123456789 50</i>", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="admin_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
-        elif data == "ad_bcast":
+        elif data == "admin_bcast":
             ADMIN_STATE[uid] = "bcast"
-            await callback_query.message.edit_text(f"{EMOJI_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="ad_back")]]), parse_mode=ParseMode.HTML)
+            await callback_query.message.edit_text(f"{EMOJI_BOLT} ᴇɴᴛᴇʀ ᴍᴇꜱꜱᴀɢᴇ:", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🔄 ʙᴀᴄᴋ", callback_data="admin_back")]]), parse_mode=ParseMode.HTML)
             await callback_query.answer()
             return
-        elif data == "ad_maint":
+        elif data == "admin_maint":
             s["maintenance_mode"] = not s.get("maintenance_mode", False)
             save_settings(s)
             await callback_query.answer(f"Global: {'ON' if s['maintenance_mode'] else 'OFF'}", show_alert=True)
             await admin_panel(callback_query.message)
             return
-        elif data.startswith("ad_maint_"):
-            f = data.replace("ad_maint_", "")
+        elif data.startswith("admin_maint_"):
+            f = data.replace("admin_maint_", "")
             s[f"maint_{f}"] = not s.get(f"maint_{f}", False)
             save_settings(s)
             await callback_query.answer(f"{f}: {'ON' if s[f'maint_{f}'] else 'OFF'}", show_alert=True)
             await admin_panel(callback_query.message)
             return
-        elif data.startswith("ad_"):
-            toggle_map = {"ad_tgid":"tgid_enabled","ad_ifsc":"ifsc_enabled","ad_bypass_toggle":"bypass_enabled","ad_mobile":"mobile_enabled","ad_aadhaar":"aadhaar_enabled","ad_rc":"rc_enabled","ad_gst":"gst_enabled","ad_pak":"pak_enabled","ad_indnum":"indnum_enabled","ad_indnum3":"indnum3_enabled"}
+        elif data in ["admin_tgid", "admin_ifsc", "admin_bypass", "admin_mobile", "admin_aadhaar", "admin_rc", "admin_gst", "admin_pak", "admin_indnum", "admin_indnum3"]:
+            toggle_map = {
+                "admin_tgid": "tgid_enabled",
+                "admin_ifsc": "ifsc_enabled",
+                "admin_bypass": "bypass_enabled",
+                "admin_mobile": "mobile_enabled",
+                "admin_aadhaar": "aadhaar_enabled",
+                "admin_rc": "rc_enabled",
+                "admin_gst": "gst_enabled",
+                "admin_pak": "pak_enabled",
+                "admin_indnum": "indnum_enabled",
+                "admin_indnum3": "indnum3_enabled"
+            }
             if data in toggle_map:
                 k = toggle_map[data]
                 s[k] = not s.get(k, True)
@@ -944,21 +954,17 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer(f"{k}: {'ON' if s[k] else 'OFF'}", show_alert=True)
                 await admin_panel(callback_query.message)
             return
-        elif data == "ad_back":
-            await admin_panel(callback_query.message)
-            await callback_query.answer()
-            return
         await callback_query.answer()
         return
     
+    # --- MENU CALLBACKS ---
     if data.startswith("menu_"):
         if uid != ADMIN_ID:
-            user = get_user(uid)
             if not user.get("verified"):
                 if await check_channel(uid):
                     user["verified"] = True
                     save_user(uid, user)
-                    await main_menu(callback_query.message)
+                    await main_menu(callback_query.message, 0)
                     return
                 await show_verification_page(callback_query.message)
                 await callback_query.answer()
@@ -975,7 +981,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'TG'
-            await callback_query.message.reply_text(f"{EMOJI_PHONE} ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ ᴛᴏ ᴘʜᴏɴᴇ ɴᴜᴍʙᴇʀ\n<i>7123181749, 6884112825</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ᴛɢ ɪᴅ ➜ ɴᴜᴍʙᴇʀ", "ᴇɴᴛᴇʀ ᴛᴇʟᴇɢʀᴀᴍ ɪᴅ:\n<i>7123181749, 6884112825</i>")
             await callback_query.answer()
             return
         
@@ -990,7 +996,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'IFSC'
-            await callback_query.message.reply_text(f"{EMOJI_BANK} ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ\n<i>SBIN0001234, HDFC0001234</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ɪꜰꜱᴄ ɪɴꜰᴏ", "ᴇɴᴛᴇʀ ʙᴀɴᴋ ɪꜰꜱᴄ ᴄᴏᴅᴇ:\n<i>SBIN0001234, HDFC0001234</i>")
             await callback_query.answer()
             return
         
@@ -1005,7 +1011,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'SHORTLINK'
-            await callback_query.message.reply_text(f"{EMOJI_LINK} ʟɪɴᴋ ʙʏᴘᴀꜱꜱ\n<i>https://indianshortner.in/xxxx</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ʟɪɴᴋ ʙʏᴘᴀꜱꜱ", "ᴇɴᴛᴇʀ ꜱʜᴏʀᴛ ʟɪɴᴋ:\n<i>https://indianshortner.in/xxxx</i>")
             await callback_query.answer()
             return
         
@@ -1020,7 +1026,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'MOBILE'
-            await callback_query.message.reply_text(f"{EMOJI_INDIA} ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ\n<i>9876543210, 8123456789</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "ᴇɴᴛᴇʀ ɪɴᴅɪᴀɴ ᴍᴏʙɪʟᴇ ɴᴜᴍʙᴇʀ:\n<i>9876543210, 8123456789</i>")
             await callback_query.answer()
             return
         
@@ -1035,7 +1041,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'AADHAAR'
-            await callback_query.message.reply_text(f"{EMOJI_CARD} ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ\n<i>123456789012</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ᴀᴀᴅʜᴀʀ ɪɴꜰᴏ", "ᴇɴᴛᴇʀ ᴀᴀᴅʜᴀʀ ɴᴜᴍʙᴇʀ:\n<i>123456789012</i>")
             await callback_query.answer()
             return
         
@@ -1050,7 +1056,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'VEHICLE'
-            await callback_query.message.reply_text(f"{EMOJI_CAR} ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ\n<i>KA01AB3256, DL1CX1234</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ʀᴄ ᴅᴇᴛᴀɪʟꜱ", "ᴇɴᴛᴇʀ ᴠᴇʜɪᴄʟᴇ ɴᴜᴍʙᴇʀ:\n<i>KA01AB3256, DL1CX1234</i>")
             await callback_query.answer()
             return
         
@@ -1065,7 +1071,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'GST'
-            await callback_query.message.reply_text(f"{EMOJI_CARD} ɢꜱᴛ ɴᴜᴍʙᴇʀ\n<i>19BOKPS7056D1ZI</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ɢꜱᴛ ʟᴏᴏᴋᴜᴘ", "ᴇɴᴛᴇʀ ɢꜱᴛ ɴᴜᴍʙᴇʀ:\n<i>19BOKPS7056D1ZI</i>")
             await callback_query.answer()
             return
         
@@ -1080,7 +1086,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'PAK'
-            await callback_query.message.reply_text(f"{EMOJI_PAK} ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ\n<i>923078750447</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ", "ᴇɴᴛᴇʀ ᴘᴀᴋɪꜱᴛᴀɴ ɴᴜᴍʙᴇʀ:\n<i>923078750447</i>")
             await callback_query.answer()
             return
         
@@ -1095,7 +1101,7 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'INDNUM'
-            await callback_query.message.reply_text(f"{EMOJI_PHONE2} ᴀᴅᴠᴀɴᴄᴇᴅ ɴᴜᴍʙᴇʀ\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ɪɴᴅ ɴᴜᴍ ɪɴꜰᴏ 𝟸", "ᴇɴᴛᴇʀ ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ:\n<i>6363016966, 9876543210</i>")
             await callback_query.answer()
             return
         
@@ -1110,34 +1116,28 @@ async def callback_handler(client, callback_query: CallbackQuery):
                 await callback_query.answer()
                 return
             ADMIN_STATE[uid] = 'INDNUM3'
-            await callback_query.message.reply_text(f"{EMOJI_INDIA} ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ ᴛʀᴀᴄᴋɪɴɢ\n<i>6363016966, 9876543210</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ɪɴᴅ ɴᴜᴍʙᴇʀ ɪɴꜰᴏ 𝟹", "ᴇɴᴛᴇʀ ɪɴᴅɪᴀɴ ɴᴜᴍʙᴇʀ:\n<i>6363016966, 9876543210</i>")
             await callback_query.answer()
             return
         
         elif data == "menu_invite":
-            user = get_user(uid)
             bot_info = await app.get_me()
             link = f"https://t.me/{bot_info.username}?start={user['invite_code']}"
-            await callback_query.message.reply_text(f"{EMOJI_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)\n<code>{link}</code>", parse_mode=ParseMode.HTML)
+            await callback_query.message.reply_text(
+                f"<blockquote expandable>\n<b>{EMOJI_INVITE} ɪɴᴠɪᴛᴇ (+{INVITE_CREDITS}ᴄʀ)</b>\n\n<code>{link}</code>\n</blockquote>",
+                parse_mode=ParseMode.HTML
+            )
             await callback_query.answer()
             return
         
         elif data == "menu_redeem":
             ADMIN_STATE[uid] = 'REDEEM'
-            await callback_query.message.reply_text(f"{EMOJI_TICKET} ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>", parse_mode=ParseMode.HTML)
+            await show_info_quote(callback_query.message, "ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ", "ᴇɴᴛᴇʀ ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ:\n<i>HEX-XXXXXXXXXX</i>")
             await callback_query.answer()
             return
         
         elif data == "menu_help":
             await show_help_inline(callback_query)
-            return
-        
-        elif data == "menu_about":
-            await show_about_inline(callback_query)
-            return
-        
-        elif data == "menu_stats":
-            await show_stats_inline(callback_query)
             return
         
         elif data == "menu_admin":
@@ -1170,7 +1170,7 @@ async def handle_messages(client, message: Message):
                 if await check_channel(uid):
                     user["verified"] = True
                     save_user(uid, user)
-                    await main_menu(message)
+                    await main_menu(message, 0)
                     return
                 await show_verification_page(message)
                 return
@@ -1232,7 +1232,7 @@ async def handle_messages(client, message: Message):
         if uid in ADMIN_STATE:
             return
         
-        await main_menu(message)
+        await main_menu(message, 0)
         
     except Exception as e:
         print(f"Message handler error: {e}")
@@ -1243,7 +1243,6 @@ async def run_query(message: Message, mode: str, query: str):
         asyncio.create_task(schedule_delete(sent))
         return
     
-    names = {'TG':f'{EMOJI_PHONE}','IFSC':f'{EMOJI_BANK}','SHORTLINK':f'{EMOJI_LINK}','AADHAAR':f'{EMOJI_CARD}','MOBILE':f'{EMOJI_INDIA}','VEHICLE':f'{EMOJI_CAR}','GST':f'{EMOJI_CARD}','PAK':f'{EMOJI_PAK}','INDNUM':f'{EMOJI_PHONE2}','INDNUM3':f'{EMOJI_INDIA}'}
     st = await message.reply_text(f"{EMOJI_GREEN} ꜱᴇᴀʀᴄʜɪɴɢ...", parse_mode=ParseMode.HTML)
     credit_deducted = False
     
@@ -1295,7 +1294,7 @@ async def run_query(message: Message, mode: str, query: str):
 
 def main():
     print("🔄 Hex Terminal Premium Starting...")
-    print("🎨 Colored Inline Buttons with Premium Emoji Icons Only!")
+    print("🎨 Colored Inline Buttons with Pagination (8 per page)!")
     print("🤖 Kurigram Version with Full Button Colors!")
     
     try:
@@ -1303,8 +1302,8 @@ def main():
     except: pass
     
     print(f"✅ {BOT_NAME} Ready!")
-    print(f"💎 All buttons use Premium Emoji Icons only (no normal emojis in text)!")
-    print(f"⭐ Total Menu Buttons: 14 colored inline buttons")
+    print(f"💎 8 buttons per page with 2-color combination!")
+    print(f"⭐ Admin Panel Fixed with proper callbacks!")
     print("🚀 Bot is running...")
     
     app.run()
